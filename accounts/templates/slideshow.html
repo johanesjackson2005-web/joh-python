@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class='hero'>
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Welcome to our website</h1>
+    </div>
+    </div>
+    </div>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .hero {
+            height: 100vh;
+            animation: slideshow 20s infinite;
+        
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            background-repeated: no-repeat;
+        }
+        .overlay {
+            position: absolute;
+            inset: 0;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            background-filter: blur(5px);
+        }
+        .content {
+            position: relative;
+            color: white;
+            text-align: center;
+            top: 50%;
+            font-size: clamp(16px, 3vw, 24px);
+        }
+        .content h1 {
+            font-size: 48px;
+        }
+        @keyframes slideshow {
+            0% {
+                background-image: url("{% static 'image/pic1.jpg' %}");
+            }
+            10% {
+                background-image: url("{% static 'image/pic2.jpg' %}");
+            }
+            20% {
+                background-image: url("{% static 'image/pic.jpg' %}");
+            }
+            30% {
+                background-image: url("{% static 'image/pic4.jpg' %}");
+            }
+            40% {
+                background-image: url("{% static 'image/pic5.jpg' %}");
+            }
+            50% {
+                background-image: url("{% static 'image/pc3.jpg' %}");
+            }
+            60% {
+                background-image: url("{% static 'image/pic6.jpg' %}");
+            }
+            70% {
+                background-image: url("{% static 'image/pic7.jpg' %}");
+            }
+            80%  {
+                    background-image: url("{% static 'image/pic8.jpg' %}");
+                }
+            90% {
+                    background-image: url("{% static 'image/pic10.jpg' %}");
+                }
+            100% {
+                background-image: url("{% static 'image/pic.jpg' %}");
+            }
+
+        }
+            
+
+</body>
+</html>

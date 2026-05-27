@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <div class='login-Box'>
+<form  method="POST" >
+    {% csrf_token %}
+    <label for="login">ACCOUNT</label>
+    <div class='input-Box'>
+        <h1>Username</h1>
+    <input type="text" name="username" placeholder="Username" required><br>
+    <h2>Password</h2>
+    <input type="password" name="password" placeholder="Password" required >
+    </div>
+    <br>
+    <button type="submit">Login</button>
+    <button style="background-color: green; color: white; font-size: 20px;
+          padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            <a href="/register/" style="color: white; text-decoration: none;">Register</a>
+              </button>
+    </div>  
+    <style>
+
+         body {
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+            align-items: center;
+           min-height: 100vh;
+            font-family: Arial, sans-serif;
+            
+    background-color: #0c1b3f ;
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+    
+    .login-Box{
+            position: relative;
+            width: 500px;
+            height: 500px;
+            background-color: #0c1b3f ;
+             border: 20px ;
+            border: 20px ;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+                border: 10px solid #cef5f3;
+        }
+        
+    
+        label {
+            font-size: 40px;
+            font-family: Arial, sans-serif;
+            color: white;
+            background-color:transparent;
+        }
+        button {
+            background-color: blue;
+            color: white;
+            font-size: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        placeholder {
+            color: black;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        .input-Box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        h1{
+            color: #d3c8c8;
+        }
+        h2{
+            color: #f8eaea;
+        }
+    </style>
+           
+          </form>
+
+         </body>
+</html>

@@ -1,0 +1,95 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div class='login-Box'>
+
+<form method="POST">
+    <h2 >REGISTRATION</h2>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div>
+                <button type="submit">Submit</button>
+                <button type="button" style="background-color: #808080;"><a href='/' style='color:white;'>Return Home</a></button>
+            </div>
+        </form>
+    </div>
+
+</body>
+ <style>
+        body {
+            background-image: url("{% static 'image/pic7.jpg' %}");
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .container {
+            position: relative;
+            width: 470px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: 5px solid #cef5f3;
+        }
+        h2 {
+            color: #cef5f3;
+            margin-bottom: 20px;
+        }
+        label {
+            color: #cef5f3;
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #cef5f3;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3be9e0;
+            color: black;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2aa89f;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        .success {
+            color: #90EE90;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+    </style>
+</html>

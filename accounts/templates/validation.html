@@ -1,0 +1,10 @@
+{%if validlink%}
+<h1> set new password</h1>
+<form method='post'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type='submit'> send </button>
+</form>
+{%else%}
+<p>The validation link is not valid </p>
+{% endif %}

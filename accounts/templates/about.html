@@ -1,0 +1,339 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | SetupHub</title>
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="slideshow-container">
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{% static 'image/pic1.jpg' %}');"></div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{% static 'image/pc3.jpg' %}');"></div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{% static 'image/pic5.jpg' %}');"></div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{% static 'image/pic2.jpg' %}');"></div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{% static 'image/pic7.jpg' %}');"></div>
+    </div>
+
+    <div class="content-wrapper">
+        <header class="about-hero">
+            <div class="container">
+                <h1>Empowering Creators & Engineers</h1>
+                <p>Your ultimate destination for verified, hassle-free software setups.</p>
+            </div>
+        </header>
+
+        <section class="about-mission section-padding">
+            <div class="container grid-2">
+                <div class="mission-text">
+                    <h2>Who We Are</h2>
+                    <p>Welcome to our platform, a curated digital repository built to eliminate the frustration of hunting down reliable software installations. Whether you are an engineering student, a software developer, or a digital designer, we bridge the gap between you and the tools you need to succeed.</p>
+                    <p>We specialize in providing clean, reliable environments for industry-standard software, ensuring you spend less time configuring and more time creating.</p>
+                </div>
+                <div class="mission-stats">
+                    <div class="stat-card">
+                        <h3>100%</h3>
+                        <p>Verified Setups</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Fast</h3>
+                        <p>Secure Downloads</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="software-tools section-padding">
+            <div class="container">
+                <h2 class="section-title">The Tools We Provide</h2>
+                <p class="section-subtitle">We support a wide array of environments across multiple disciplines.</p>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <i class="fa-solid fa-code icon-vs"></i>
+                        <h3>Development</h3>
+                        <p>VS Code, Dev C++</p>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fa-solid fa-microchip icon-circuit"></i>
+                        <h3>Simulation & Electronics</h3>
+                        <p>Proteus, Multisim</p>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fa-solid fa-calculator icon-math"></i>
+                        <h3>Computation & Design</h3>
+                        <p>MATLAB, AutoCAD</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="why-us section-padding">
+            <div class="container">
+                <h2 class="section-title">Why Download From Us?</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <h4>Malware Free</h4>
+                        <p>Every setup file is rigorously checked and scanned to keep your system safe.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-bolt"></i>
+                        <h4>One-Click Access</h4>
+                        <p>No confusing ad-walls or endless redirection loops. Just straight downloads.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <h4>Installation Guides</h4>
+                        <p>We don’t just give you the file; we provide the clarity to get it running smoothly.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+<style>
+    /* --- Global Reset & Variables --- */
+:root {
+    --primary-color: #3b82f6;    /* Bright Electric Blue */
+    --secondary-color: #ffffff;  /* High contrast text */
+    --text-main: #f1f5f9;        /* Off-white content text */
+    --text-muted: #cbd5e1;       /* Light grey details */
+    --bg-card: rgba(15, 23, 42, 0.65); /* Sleek Glassmorphism effect */
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0f172a;
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* --- Pure CSS Slideshow Engine --- */
+.slideshow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Keeps it behind the layout */
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    animation: imageFade 25s linear infinite;
+}
+
+/* Delaying slides so they cross-fade evenly */
+.slide:nth-child(1) { animation-delay: 0s; }
+.slide:nth-child(2) { animation-delay: 35s; }
+.slide:nth-child(3) { animation-delay: 50s; }
+.slide:nth-child(4) { animation-delay: 65s; }
+.slide:nth-child(5) { animation-delay: 80s; }
+
+@keyframes imageFade {
+    0% { opacity: 0; }
+    8% { opacity: 1; }
+    20% { opacity: 1; }
+    28% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+/* --- Content Wrapper & Layout --- */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-padding {
+    padding: 100px 0;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 50px;
+}
+
+/* --- Hero Section --- */
+.about-hero {
+    padding: 140px 0;
+    text-align: center;
+}
+
+.about-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
+
+.about-hero p {
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* --- Mission Section --- */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.mission-text {
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mission-text h2 {
+    font-size: 2.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.mission-text p {
+    margin-bottom: 15px;
+}
+
+.mission-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 4px solid var(--primary-color);
+}
+
+.stat-card h3 {
+    font-size: 2.8rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+/* --- Software Tools Section --- */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.tool-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px 30px;
+    border-radius: 12px;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    background: rgba(15, 23, 42, 0.85);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.tool-card i {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.icon-vs { color: #38bdf8; }
+.icon-circuit { color: #34d399; }
+.icon-math { color: #f87171; }
+
+.tool-card h3 {
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+/* --- Why Choose Us Section --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.feature-item {
+    text-align: center;
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px 20px;
+    border-radius: 12px;
+}
+
+.feature-item i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    padding: 20px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.feature-item h4 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+.feature-item p {
+    color: var(--text-muted);
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 768px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+}
+    </style>
+</body>
+</html>
