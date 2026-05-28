@@ -80,7 +80,8 @@ def contactus(request):
             except:
                 pass
             
-            return render(request, 'contact.html', {'success': 'Thank you! We will contact you soon.'})
+            messages.success(request, 'Thank you! We will contact you soon.')
+            return render(request, 'contact.html')
         else:
             form=ContactForm()
     return render(request, 'contact.html')
@@ -142,6 +143,7 @@ def verify_otp(request):
 
         if otp_obj:
             request.session['otp_verified'] = True
+            messages.success(request, 'OTP verified successfully')
             return redirect('reset_password')
 
         else:

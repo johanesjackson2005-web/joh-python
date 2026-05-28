@@ -3,7 +3,35 @@
 <head>
     <title>Verify OTP</title>
 
-    <style>
+    
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>Verify OTP</h2>
+
+    <form method="POST">
+ {% if messages %}
+    {% for message in messages %}
+        <p1>{{ message }}</p1>
+    {% endfor %}
+{% endif %}
+        {% csrf_token %}
+
+        <input type="text" name="otp" placeholder="Enter OTP">
+
+        <button type="submit">
+            Verify OTP
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+<style>
 
         body{
             background: #0f172a;
@@ -33,31 +61,14 @@
             color:white;
             border:none;
         }
+         p1{
+        color: red;
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
 
     </style>
 
-</head>
-
-<body>
-
-<div class="box">
-
-    <h2>Verify OTP</h2>
-
-    <form method="POST">
-
-        {% csrf_token %}
-
-        <input type="text" name="otp" placeholder="Enter OTP">
-
-        <button type="submit">
-            Verify OTP
-        </button>
-
-    </form>
-
-</div>
-
-</body>
 </html>
 
