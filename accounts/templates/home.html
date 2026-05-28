@@ -10,10 +10,11 @@
 </head>
 <body>
 
-    <h2>HOME PAGE</h2>
+    
     
 {% if user.is_authenticated %}
 <p>Welcome {{ user.username }}</p>
+<h2>HOME PAGE</h2>
  <button style="background-color: red; color: white; font-size: 12px;
           padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="/logout/" style="color: white; text-decoration: none;">Logout</a>
@@ -112,10 +113,13 @@
 </style>
 {% else %}
    <div class='button'>
+    <button style='background-color:transparent;'> <h2>HOME PAGE</h2></button>
+    
           <button > <a href="/login" style="color: blue;"> Login<a/> </button>
     <button > <a href="/register/" style="color: green;"> Register<a/> </button>
     <button ><a href="/forgot-password/" style='color: white;'>Forgot password</a></button>
     </div>   
+    
    
     <div class="slideshow-container">
         <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{% static 'image/pic1.jpg' %}');"></div>
@@ -463,14 +467,14 @@ body {
       }
     }
 button{
-    color: green;
-    font-size: 20px;
+
+    font-size: 15px;
     padding: 10px 20px;
-    size: 60px;
+    size: 40px;
     border: 5px solid grey;
     position: relative;
-    left: 20%;
-    top: 1%;
+    left: 1%;
+    upper: 20px;
     background-color: #132347;
      color: white; 
      font-size: 15px;
@@ -481,4 +485,9 @@ button{
 }
 button-hover{
     background: blue;
+}
+h2{
+    color: white;
+    font-size: 15px;
+    position: relative;
 }
