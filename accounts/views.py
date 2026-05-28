@@ -91,17 +91,21 @@ def about(request):
     return render(request, 'about.html')
 
 
-
 def forgot_password(request):
 
     if request.method == 'POST':
 
         email = request.POST.get('email')
 
-        try:
-            user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email=email).first()
 
-            otp = str(random.randint(100000, 999999))
+        if not user:
+            messages.error(request, 'Email does not exist')
+            return redirect('forgot_password')
+
+        otp = str(random.randint(100000, 999999))
+
+        try:
 
             PasswordResetOTP.objects.create(
                 user=user,
@@ -118,11 +122,23 @@ def forgot_password(request):
 
             request.session['reset_email'] = email
 
+            messages.success(request, 'OTP sent successfully')
+
             return redirect('verify_otp')
 
-        except User.DoesNotExist:
-            messages.error(request, 'Email does not exist')
+        except Exception as e:
+
+            print("EMAIL ERROR:", e)
+
+            messages.error(
+                request,
+                f'Error sending email: {e}'
+            )
+
+            return redirect('forgot_password')
+
     return render(request, 'forgot_password.html')
+
 
 
 def verify_otp(request):
