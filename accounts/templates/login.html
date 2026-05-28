@@ -48,10 +48,14 @@
 }
     
     .login-Box{
-        padding: 40px 30px;
+          background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px 50px;
+    border-radius: 12px;
+    transition: var(--transition);
+        padding: 60px 70px;
             position: relative;
-            width: 500px;
-            height: 500px;
             background-color: #0c1b3f ;
              border: 20px ;
             border: 20px ;
@@ -60,18 +64,20 @@
             justify-content: center;
             border-radius: 10px;
                 border: 2px solid #2569e7;
+                box-shadow: 0 10px 25px -5px rgba(19, 94, 124, 0.5);
         }
     .login-Box:hover {
             background-color: #0c1b3f ;
         transform: translateY(-5px);
        background: rgba(7, 45, 133, 0.85);
-         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+         box-shadow: 0 10px 25px -5px rgba(23, 110, 145, 0.5);
 }
         label {
             font-size: 40px;
             font-family: Arial, sans-serif;
             color: white;
             background-color:transparent;
+            padding: 10px 20px;
         }
         button {
             background-color: blue;
