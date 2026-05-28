@@ -122,7 +122,6 @@ def forgot_password(request):
 
         except User.DoesNotExist:
             messages.error(request, 'Email does not exist')
-
     return render(request, 'forgot_password.html')
 
 
