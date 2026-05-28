@@ -5,81 +5,73 @@
     <title>Login</title>
 </head>
 <body>
-    <div class='tools-grid'>
-    <div class='login-Box'>
-<form  method="POST" >
     {% csrf_token %}
-    <label for="login">ACCOUNT</label>
-    <div class='input-Box'>
-        <h1>Username</h1>
-    <input type="text" name="username" placeholder="Username" required><br>
-    <h2>Password</h2>
-    <input type="password" name="password" placeholder="Password" required >
-    </div>
-    <br>
-    <button type="submit">Login</button>
-    <button style="background-color: green; color: white; font-size: 20px;
+    <div class='tools-grid'>
+      <div class='login-Box'>
+        <div class='tool-card'>
+         <form  method="POST" >
+        
+        <label1 for="login">ACCOUNT</label1>
+          <br><br>
+         <label>Username :</label><br>
+        <input type="text" name="username" required><br><br>
+         <label>Password :</label><br>  
+         <input type="password" name="password"  required >
+      <br><br><br>
+        <button type="submit">Login</button>
+        <button style="background-color: green; color: white; font-size: 20px;
           padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
             <a href="/register/" style="color: white; text-decoration: none;">Register</a>
       </button>
       <a href=/forgot-password/ style='color: #e6ff07 ; font-size: 20px'>forgot password</a>
-      </div>
+    </div>
+    </div>
 </div>
 
 
     <style>
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-}
-         body {
-        background-size: cover;
+body {
         display: flex;
         justify-content: center;
-            align-items: center;
-           
+        background-size: cover;
             font-family: Arial, sans-serif;
-            
-    background-color: #0c1b3f ;
+                     
+    background-color: #0c1b3f;
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
+        }
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
 }
-    
-    .login-Box{
-          background: var(--bg-card);
+.tool-card {
+    background: var(--bg-card);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 30px 50px;
-    border-radius: 12px;
+    border: 3px solid rgb(29, 139, 139);
+    border-shadow: 2px 10px 25px -5px rgba(19, 176, 182, 0.5);
+    padding: 80px 60px;
+    border-radius: 12px ;
     transition: var(--transition);
-        padding: 60px 70px;
-            position: relative;
-            background-color: #0c1b3f ;
-             border: 20px ;
-            border: 20px ;
-            display: flex;
-            align-items: center;
+    align-items: center;
             justify-content: center;
-            border-radius: 10px;
-                border: 2px solid #2569e7;
-                box-shadow: 0 10px 25px -5px rgba(19, 94, 124, 0.5);
-        }
-    .login-Box:hover {
-            background-color: #0c1b3f ;
-        transform: translateY(-5px);
-       background: rgba(7, 45, 133, 0.85);
-         box-shadow: 0 10px 25px -5px rgba(23, 110, 145, 0.5);
 }
-        label {
-            font-size: 40px;
-            font-family: Arial, sans-serif;
-            color: white;
-            background-color:transparent;
-            padding: 10px 20px;
-        }
-        button {
+.tool-card:hover {
+    transform: translateY(-5px);
+    background: rgba(7, 45, 133, 0.85);
+    box-shadow: 0 10px 25px -5px rgba(19, 176, 182, 0.5);
+     border: 2px solid rgba(11, 133, 155, 0.2);
+}
+.login-Box{
+                position: relative;
+                background-color: #0c1b3f;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+     button {
             background-color: blue;
             color: white;
             font-size: 20px;
@@ -88,25 +80,61 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        placeholder {
-            color: black;
-        }
         button:hover {
             background-color: darkblue;
         }
-        .input-Box input {
-            width: 100%;
+     label{
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            color: white;
             padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
+        }
+    span {
+        color: red;
+        font-size: 0.1px;
+        
+    }
+#username{
+    width: 70%;
+
+        placeholder: "john@gmail.com";
+            color: black;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            border: 2px solid black;
             border-radius: 5px;
-            font-size: 16px;
-        }
-        h1{
-            color: #d3c8c8;
-        }
-        h2{
-            color: #f8eaea;
+            padding: 10px
+}
+#password{width: 70%;
+
+        placeholder: "john@gmail.com";
+            color: black;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 10px
+}
+input {
+        width: 53%;
+        height: 1%;
+        color: black;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        background-color:  #ccd3e4;
+        border: 2px solid black;
+        border-radius: 5px;
+        padding: 10px;
+    }
+label1{
+            font-size: 40px ;
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            
         }
     </style>
            
