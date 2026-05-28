@@ -5,6 +5,7 @@
     <title>Login</title>
 </head>
 <body>
+    <div class='tools-grid'>
     <div class='login-Box'>
 <form  method="POST" >
     {% csrf_token %}
@@ -22,17 +23,22 @@
             <a href="/register/" style="color: white; text-decoration: none;">Register</a>
       </button>
       <a href=/forgot-password/ style='color: #e6ff07 ; font-size: 20px'>forgot password</a>
+      </div>
 </div>
 
 
     <style>
-
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
          body {
         background-size: cover;
         display: flex;
         justify-content: center;
             align-items: center;
-           min-height: 100vh;
+           
             font-family: Arial, sans-serif;
             
     background-color: #0c1b3f ;
