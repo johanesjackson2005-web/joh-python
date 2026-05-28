@@ -87,21 +87,8 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'johdb',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    
     'default': dj_database_url.parse(config('DATABASE_URL'))
-}        
-           
-}  
-           
-           
-           
+}
 
 
 # Password validation
