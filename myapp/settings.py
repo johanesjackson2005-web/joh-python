@@ -38,7 +38,7 @@ EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER='johboy2026@gmail.com'
 EMAIL_HOST_PASSWORD='tbjxxslnfklhyyfq'
-
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Application definition
 
 INSTALLED_APPS = [
