@@ -12,6 +12,11 @@
       <div class='tool-card'>
         <form method="POST">
       <h2 >REGISTRATION</h2>
+      {% if messages %}
+    {% for message in messages %}
+        <p1>{{ message }}</p1>
+    {% endfor %}
+{% endif %}
       {% csrf_token %}
       {{ form.as_p }}
         <label1>
@@ -151,5 +156,10 @@
         color: white;
         padding: 10px;
     }
-
+    p1{
+        color: red;
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
 </style>
