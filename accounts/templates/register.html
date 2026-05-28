@@ -12,12 +12,18 @@
 <form method="POST">
     <h2 >REGISTRATION</h2>
     {% csrf_token %}
-    {{ form.as_p }}<br>
+    {{ form.as_p }}
+    <p>accept all<p>
+    <input type='checkbox' >
+     <br>
     <button type="submit">Register</button>
     <button style="background-color: green; color: white; font-size: 20px;
           padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
             <a href="/login/" style="color: white; text-decoration: none;">Login</a>
-              </button>
+
+            
+              </button><br><br>
+              <a href=/forgot-password/ style='color: #e6ff07 ; font-size: 20px'>forgot password</a>
       </form>
      
 </div>
@@ -36,8 +42,8 @@
         }
         .login-Box{
                 position: relative;
-                width: 600px;
-                height: 600px;
+                width: 500px;
+                height: 500px;
                 background-color: #0c1b3f;
                  border: 20px ;
                 border: 20px ;
@@ -70,9 +76,10 @@
         
     }
     input {
-        width: 100%;
+        width: 53%;
+        height: 1%;
         color: black;
-        font-size: 20px;
+        font-size: 12px;
         font-family: Arial, sans-serif;
         background-color:  #ccd3e4;
         border: 2px solid black;
@@ -80,19 +87,22 @@
         padding: 10px;
     }
     #id_username {
+        width: 62%;
         placeholder: "Username";
             color: black;
-            font-size: 20px;
+            font-size: 15px;
             font-family: Arial, sans-serif;
             background-color: white;
             border: 2px solid black;
             border-radius: 5px;
             padding: 10px;
     }
-    #id_email {
+    #id_email { 
+        width: 53%;
+
         placeholder: "john@gmail.com";
             color: black;
-            font-size: 20px;
+            font-size: 15px;
             font-family: Arial, sans-serif;
             background-color: white;
             border: 2px solid black;
@@ -100,9 +110,10 @@
             padding: 10px
     }
     #id_password {
+        width: 62%;
          placeholder: "Password";
             color: black;
-            font-size: 20px;
+            font-size: 15px;
             font-family: Arial, sans-serif;
             background-color: white;
             border: 2px solid black;

@@ -94,13 +94,11 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '3306',
-    }
-}
-DATABASES = {
+    
     'default': dj_database_url.parse(config('DATABASE_URL'))
 }        
            
-           
+}  
            
            
            
