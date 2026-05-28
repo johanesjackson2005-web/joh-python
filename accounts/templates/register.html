@@ -7,25 +7,27 @@
     <title>Document</title>
 </head>
 <body>
-<div class='login-Box'>
-
-<form method="POST">
-    <h2 >REGISTRATION</h2>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <p>accept all<p>
-    <input type='checkbox' >
-     <br>
-    <button type="submit">Register</button>
-    <button style="background-color: green; color: white; font-size: 20px;
+ <div class='tools-grid'>
+     <div class='login-Box'>
+      <div class='tool-card'>
+        <form method="POST">
+      <h2 >REGISTRATION</h2>
+      {% csrf_token %}
+      {{ form.as_p }}
+        <label1>
+       <input type="checkbox">
+      I agree to the terms and conditions
+       </label1>
+              <br>
+       <button type="submit">Register</button>
+           <button style="background-color: green; color: white; font-size: 20px;
           padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
             <a href="/login/" style="color: white; text-decoration: none;">Login</a>
-
-            
               </button><br><br>
               <a href=/forgot-password/ style='color: #e6ff07 ; font-size: 20px'>forgot password</a>
-      </form>
-     
+           </form>
+           </div>
+     </div>
 </div>
 </body>
 <style>
@@ -40,18 +42,31 @@
     line-height: 1.6;
     overflow-x: hidden;
         }
-        .login-Box{
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+.tool-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px 70px;
+    border-radius: 12px;
+    text-align: center;
+    transition: var(--transition);
+}
+.tool-card:hover {
+    transform: translateY(-5px);
+    background: rgba(7, 45, 133, 0.85);
+    box-shadow: 0 10px 25px -5px rgba(48, 8, 223, 0.5);
+}
+.login-Box{
                 position: relative;
-                width: 500px;
-                height: 600px;
                 background-color: #0c1b3f;
-                 border: 20px ;
-                border: 20px ;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 10px ;
-                border: 10px solid #2e3544 ;
             }
 
      button {
@@ -128,4 +143,11 @@
         font-family: Arial, sans-serif;
         text-align: center;
     }
+    label1 {
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        color: white;
+        padding: 10px;
+    }
+
 </style>
