@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Browsers & Social</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+</head>
+<body>
+
+<h1>Browsers & Social Media</h1>
+
+<div class="tools-grid">
+
+<!-- Browsers -->
+       <div class="tool-card"><i class="fab fa-chrome icon-vs"></i><h3>Chrome</h3><br>
+       <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+          </div>
+         <div class="tool-card"><i class="fab fa-firefox icon-red"></i><h3>Firefox</h3><br>
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+         </div>
+           <div class="tool-card"><i class="fab fa-edge icon-green"></i><h3>Edge</h3><br>
+            <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+        </div>
+       <div class="tool-card"><i class="fab fa-opera icon-purple"></i><h3>Opera</h3><br>
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+         </div>
+
+<!-- Social -->
+        <div class="tool-card"><i class="fab fa-facebook icon-vs"></i><h3>Facebook</h3><br>
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+         </div>
+        <div class="tool-card"><i class="fab fa-instagram icon-purple"></i><h3>Instagram</h3><br>
+            <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+        </div>
+       <div class="tool-card"><i class="fab fa-tiktok icon-red"></i><h3>TikTok</h3><br>
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+          </div>
+          <div class="tool-card"><i class="fab fa-whatsapp icon-green"></i><h3>WhatsApp</h3><br>
+             <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+              padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+          </div>
+       <div class="tool-card"><i class="fab fa-youtube icon-red"></i><h3>YouTube</h3><br>
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+     </div>
+
+</div>
+
+</body>
+<style>
+body{background:#0f172a;color:#f1f5f9;padding:30px;font-family:Segoe UI;}
+h1{text-align:center;margin-bottom:30px;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;}
+.tool-card{background:rgba(15,23,42,0.65);padding:25px;border-radius:25px;text-align:center;border:1px solid #38bdf8;}
+.tool-card i{font-size:40px;}
+.icon-vs{color:#38bdf8;}
+.icon-green{color:#34d399;}
+.icon-red{color:#f87171;}
+.icon-yellow{color:#facc15;}
+.icon-purple{color:#c084fc;}
+:root {
+    --primary-color: #08285a;
+    --secondary-color: #ffffff;
+    --text-main: #f1f5f9;
+    --text-muted: #cbd5e1;
+    --bg-card: rgba(15, 23, 42, 0.65);
+    --transition: all 0.3s ease;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+    background-color:#0f172a;
+    color:var(--text-main);
+    padding:30px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:40px;
+    color:white;
+}
+
+.section-title{
+    margin:30px 0 20px;
+    font-size:24px;
+    color:#38bdf8;
+}
+
+.tools-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+
+.tool-card{
+    background:var(--bg-card);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(25,10,224,0.664);
+    padding:30px 20px;
+    border-radius:30px;
+    text-align:center;
+    transition:var(--transition);
+}
+
+.tool-card:hover{
+    transform:translateY(-5px);
+    background:rgba(24,37,68,0.85);
+    box-shadow:0 10px 25px -5px rgba(14,144,184,0.5);
+}
+
+.tool-card i{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.tool-card img{
+    width:45px;
+    height:45px;
+    margin-bottom:15px;
+}
+
+.tool-card h3{
+    margin-top:10px;
+    font-size:18px;
+}
+
+.tool-card input{
+    margin-bottom:10px;
+}
+</style>
+</html>

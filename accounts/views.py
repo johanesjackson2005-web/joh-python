@@ -168,7 +168,6 @@ def verify_otp(request):
 
 
 def reset_password(request):
-
     if not request.session.get('otp_verified'):
         messages.error(request, 'OTP verification required')
         return redirect('forgot_password')

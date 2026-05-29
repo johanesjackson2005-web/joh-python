@@ -1,40 +1,35 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Verify OTP</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 </head>
 
 <body>
 
 <div class="box">
 
-    <h2>Reset Password</h2>
+    <h2>Verify OTP</h2>
 
     <form method="POST">
 
         {% csrf_token %}
 
-        <input type="password"
-               name="password1"
-               placeholder="New Password">
+        <input type="text"
+               name="otp"
+               placeholder="Enter OTP"
+               maxlength="6"
+               required>
 
-        <input type="password"
-               name="password2"
-               placeholder="Confirm Password">
-
- {% if messages %}
-    {% for message in messages %}
-        <p1>{{ message }}</p1>
-    {% endfor %}
-{% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
 
         <button type="submit">
-            Reset Password
+            Verify OTP
         </button>
 
     </form>
@@ -45,123 +40,92 @@
 
 <style>
 
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body{
-            background: #0f172a;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+body{
+    background: #0f172a;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
 
-        .box{
-            width: 100%;
-            max-width: 420px;
-            background: white;
-            padding: 35px;
-            border-radius: 12px;
-            border: 10px solid #a0c4c2;
-        }
+.box{
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    border: 10px solid #a0c4c2;
+}
 
-        h2{
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 32px;
-            color: #0f172a;
-        }
+h2{
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 32px;
+    color: #0f172a;
+}
 
-        input{
-            width: 100%;
-            padding: 14px;
-            margin-top: 12px;
-            border: 1px solid gray;
-            border-radius: 6px;
-            font-size: 16px;
-            outline: none;
-        }
+input{
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: 1px solid gray;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+}
 
-        button{
-            width: 100%;
-            padding: 14px;
-            margin-top: 22px;
-            background: green;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 17px;
-            cursor: pointer;
-        }
+button{
+    width: 100%;
+    padding: 14px;
+    margin-top: 22px;
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    cursor: pointer;
+}
 
-        p1{
-            color: red;
-            font-size: 15px;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            display: block;
-            margin-top: 12px;
-        }
+p{
+    color: red;
+    font-size: 15px;
+    text-align: center;
+    margin-top: 12px;
+}
 
-        /* Tablet */
+@media(max-width: 480px){
 
-        @media(max-width: 768px){
+    .box{
+        padding: 22px;
+        border-width: 6px;
+    }
 
-            .box{
-                max-width: 500px;
-                padding: 30px;
-            }
+    h2{
+        font-size: 24px;
+    }
 
-            h2{
-                font-size: 28px;
-            }
+    input{
+        padding: 12px;
+        font-size: 14px;
+    }
 
-            input{
-                font-size: 15px;
-            }
-
-            button{
-                font-size: 16px;
-            }
-        }
-
-        /* Phone */
-
-        @media(max-width: 480px){
-
-            body{
-                padding: 15px;
-            }
-
-            .box{
-                padding: 22px;
-                border-width: 6px;
-            }
-
-            h2{
-                font-size: 24px;
-            }
-
-            input{
-                padding: 12px;
-                font-size: 14px;
-            }
-
-            button{
-                padding: 12px;
-                font-size: 15px;
-            }
-
-            p1{
-                font-size: 14px;
-            }
-        }
+    button{
+        padding: 12px;
+        font-size: 15px;
+    }
+}
 
 </style>
 
+
 </html>
+
+

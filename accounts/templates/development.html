@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Development Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+</head>
+<body>
+
+<h1>Development Tools</h1>
+
+<div class="tools-grid">
+
+       <div class="tool-card"><i class="fab fa-html5 icon-red"></i><h3>HTML5</h3><br>
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+        </div>
+        <div class="tool-card"><i class="fab fa-css3-alt icon-purple"></i><h3>CSS3</h3><br>
+             <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+             padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+         </div>
+        <div class="tool-card"><i class="fab fa-js icon-yellow"></i><h3>JavaScript</h3><br>
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+         </div>
+       <div class="tool-card"><i class="fab fa-python icon-green"></i><h3>Python</h3><br>
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+        </div>
+        <div class="tool-card"><i class="fas fa-code icon-vs"></i><h3>VS Code</h3><br>
+            <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          p   adding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+         </div>
+        <div class="tool-card"><i class="fas fa-database icon-green"></i><h3>MySQL</h3><br>
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+             padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+        </div>
+      <div class="tool-card"><i class="fas fa-server icon-purple"></i><h3>XAMPP</h3><br>
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+        </div>
+       <div class="tool-card"><i class="fas fa-database icon-yellow"></i><h3>HeidiSQL</h3><br>
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="development.html" style="color: white; text-decoration: none;">Download</a>
+              </button>
+       </div>
+
+   </div>
+
+</body>
+<style>
+:root {
+    --text-main:#f1f5f9;
+    --bg-card:rgba(15,23,42,0.65);
+    --transition:all 0.3s ease;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;}
+body{background:#0f172a;color:var(--text-main);padding:30px;}
+h1{text-align:center;margin-bottom:30px;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;}
+.tool-card{background:var(--bg-card);padding:25px;text-align:center;border-radius:25px;border:1px solid #38bdf8;}
+.tool-card i{font-size:40px;margin-bottom:10px;}
+.icon-vs{color:#38bdf8;}
+.icon-green{color:#34d399;}
+.icon-red{color:#f87171;}
+.icon-yellow{color:#facc15;}
+.icon-purple{color:#c084fc;}
+:root {
+    --primary-color: #08285a;
+    --secondary-color: #ffffff;
+    --text-main: #f1f5f9;
+    --text-muted: #cbd5e1;
+    --bg-card: rgba(15, 23, 42, 0.65);
+    --transition: all 0.3s ease;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+    background-color:#0f172a;
+    color:var(--text-main);
+    padding:30px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:40px;
+    color:white;
+}
+
+.section-title{
+    margin:30px 0 20px;
+    font-size:24px;
+    color:#38bdf8;
+}
+
+.tools-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+
+.tool-card{
+    background:var(--bg-card);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(25,10,224,0.664);
+    padding:30px 20px;
+    border-radius:30px;
+    text-align:center;
+    transition:var(--transition);
+}
+
+.tool-card:hover{
+    transform:translateY(-5px);
+    background:rgba(24,37,68,0.85);
+    box-shadow:0 10px 25px -5px rgba(14,144,184,0.5);
+}
+
+.tool-card i{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.tool-card img{
+    width:45px;
+    height:45px;
+    margin-bottom:15px;
+}
+
+.tool-card h3{
+    margin-top:10px;
+    font-size:18px;
+}
+
+.tool-card input{
+    margin-bottom:10px;
+}
+</style>
+</html>
