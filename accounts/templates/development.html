@@ -13,49 +13,49 @@
 <div class="tools-grid">
 
        <div class="tool-card"><i class="fab fa-html5 icon-red"></i><h3>HTML5</h3><br>
-          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
           padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
         </div>
         <div class="tool-card"><i class="fab fa-css3-alt icon-purple"></i><h3>CSS3</h3><br>
-             <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+             <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
              padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
          </div>
         <div class="tool-card"><i class="fab fa-js icon-yellow"></i><h3>JavaScript</h3><br>
-           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
           padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
          </div>
        <div class="tool-card"><i class="fab fa-python icon-green"></i><h3>Python</h3><br>
-          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
             padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
         </div>
         <div class="tool-card"><i class="fas fa-code icon-vs"></i><h3>VS Code</h3><br>
-            <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+            <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
           p   adding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
          </div>
         <div class="tool-card"><i class="fas fa-database icon-green"></i><h3>MySQL</h3><br>
-           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
              padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
         </div>
       <div class="tool-card"><i class="fas fa-server icon-purple"></i><h3>XAMPP</h3><br>
-          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+          <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
             padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
         </div>
        <div class="tool-card"><i class="fas fa-database icon-yellow"></i><h3>HeidiSQL</h3><br>
-           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 12px;
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
             padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
             <a href="development.html" style="color: white; text-decoration: none;">Download</a>
               </button>
@@ -65,20 +65,12 @@
 
 </body>
 <style>
-:root {
-    --text-main:#f1f5f9;
-    --bg-card:rgba(15,23,42,0.65);
-    --transition:all 0.3s ease;
-}
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;}
-body{background:#0f172a;color:var(--text-main);padding:30px;}
+body{background:#0f172a;color:#f1f5f9;padding:30px;font-family:Segoe UI;}
 h1{text-align:center;margin-bottom:30px;}
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;}
-.tool-card{background:var(--bg-card);padding:25px;text-align:center;border-radius:25px;border:1px solid #38bdf8;}
-.tool-card i{font-size:40px;margin-bottom:10px;}
+.tool-card{background:rgba(15,23,42,0.65);padding:25px;border-radius:25px;text-align:center;border:1px solid #38bdf8;}
+.tool-card i{font-size:40px;}
 .icon-vs{color:#38bdf8;}
-.icon-green{color:#34d399;}
-.icon-red{color:#f87171;}
 .icon-yellow{color:#facc15;}
 .icon-purple{color:#c084fc;}
 :root {
@@ -107,6 +99,7 @@ h1{
     text-align:center;
     margin-bottom:40px;
     color:white;
+    font-size:50px;
 }
 
 .section-title{
@@ -117,15 +110,15 @@ h1{
 
 .tools-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(400px,1fr));
+    gap:30px;
 }
 
 .tool-card{
     background:var(--bg-card);
     backdrop-filter:blur(8px);
     border:1px solid rgba(25,10,224,0.664);
-    padding:30px 20px;
+    padding:70px 40px;
     border-radius:30px;
     text-align:center;
     transition:var(--transition);
@@ -138,13 +131,13 @@ h1{
 }
 
 .tool-card i{
-    font-size:45px;
+    font-size:55px;
     margin-bottom:15px;
 }
 
 .tool-card img{
-    width:45px;
-    height:45px;
+    width:50px;
+    height:50px;
     margin-bottom:15px;
 }
 
@@ -154,7 +147,7 @@ h1{
 }
 
 .tool-card input{
-    margin-bottom:10px;
+    margin-bottom:20px;
 }
 </style>
 </html>
