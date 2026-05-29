@@ -195,6 +195,31 @@ def reset_password(request):
 
     return render(request, 'reset_password.html')
     
-    
+def webb_page(request):
+    return render(request, 'webb.html')
+
+
+def os_page(request):
+    return render(request, 'os.html')
+
+
+def security_page(request):
+    return render(request, 'security.html')
+
+
+def simulation_page(request):
+    return render(request, 'simulation.html') 
+
+def utilities(request):
+    return render(request, 'utilities.html')
+
+
+def design(request):
+    return render(request, 'design.html')
+
+
+def development(request):
+    return render(request, 'development.html')
+
 
 # Create your views here.

@@ -27,4 +27,11 @@ urlpatterns = [
         views.reset_password,
         name='reset_password'
     ),
+    path('webb/', views.webb_page, name='webb'),
+    path('os/', views.os_page, name='os'),
+    path('security/', views.security_page, name='security'),
+    path('utilities/', views.utilities, name='utilities'),
+    path('design/', views.design, name='design'),
+    path('development/', views.development, name='development'),
+    path('simulation/', views.simulation_page, name='simulation'),
 ]
