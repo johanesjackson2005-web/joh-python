@@ -12,4 +12,6 @@ class PasswordResetOTP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.user.username} - {self.otp}"
-   
+class Setup(models.Model):
+    name = models.CharField(max_length=100)
+    download_url = models.URLField()
