@@ -29,7 +29,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda x: [host.strip() for host in x.split(',')])
 
-LOGIN_REDIRECT_URL='login'
+LOGIN_REDIRECT_URL='home'
 LOGOUT_REDIRECT_URL='login'
 
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'

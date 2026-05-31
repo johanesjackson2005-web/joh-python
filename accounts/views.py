@@ -53,6 +53,7 @@ def login_view(request):
         if user:
             login(request, user)
             return redirect('home')
+        messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
 
 def logout_view(request):
