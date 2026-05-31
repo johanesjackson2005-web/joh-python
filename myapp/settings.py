@@ -13,21 +13,25 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
-from decouple import config
+from dotenv import load_dotenv
+
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
-SENDGRID_API_KEY = config("SENDGRID_API_KEY")
+SECRET_KEY = os.getenv('SECRET_KEY')
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.getenv('DEBUG', default=False) == 'True'
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda x: [host.strip() for host in x.split(',')])
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='').split(',')
 
 LOGIN_REDIRECT_URL='home'
 LOGOUT_REDIRECT_URL='login'
@@ -80,7 +84,7 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse(config('DATABASE_URL'))
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
 }
 
 
