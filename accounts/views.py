@@ -1,17 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
-import random
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.contrib import messages
-from django.conf import settings
-from .forms import RegisterForm , ContactForm
-from .models import PasswordResetOTP
+import random
 
+from .forms import RegisterForm, ContactForm
+from .models import PasswordResetOTP
+from .email_service import send_otp_email
 
 def home(request):
     return render(request, 'home.html')
@@ -60,49 +55,46 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-
 def contactus(request):
+
     if request.method == 'POST':
+
         form = ContactForm(request.POST)
+
         if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            message = form.cleaned_data['message']
-            
-            # Send email (optional - configure email backend in settings)
-            try:
-                send_mail(
-                    f'Contact from {username}',
-                    message,
-                    email,
-                    [settings.DEFAULT_FROM_EMAIL or 'johboy2026@gmail.com'],
-                    fail_silently=True
-                )
-            except:
-                pass
-            
-            messages.success(request, 'Thank you! We will contact you soon.')
+
+            messages.success(
+                request,
+                'Thank you! We received your message.'
+            )
+
             return render(request, 'contact.html')
-        else:
-            form=ContactForm()
-    return render(request, 'contact.html')
+
+    else:
+        form = ContactForm()
+
+    return render(
+        request,
+        'contact.html',
+        {'form': form}
+    )
+
 def slideshow(request):
     return render(request, 'slideshow.html')
 def about(request):
     return render(request, 'about.html')
 
-
 def forgot_password(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        email = request.POST.get('email')
+        email = request.POST.get("email")
 
         user = User.objects.filter(email=email).first()
 
         if not user:
-            messages.error(request, 'Email does not exist')
-            return redirect('forgot_password')
+            messages.error(request, "Email does not exist")
+            return redirect("forgot_password")
 
         otp = str(random.randint(100000, 999999))
 
@@ -113,89 +105,100 @@ def forgot_password(request):
                 otp=otp
             )
 
-            send_mail(
-                'Password Reset OTP',
-                f'Your OTP is: {otp}',
-                'johanesjackson2005@gmail.com',
-                [email],
-                fail_silently=False,
-            )
+            success = send_otp_email(email, otp)
 
-            request.session['reset_email'] = email
+            if not success:
+                messages.error(request, "Failed to send OTP")
+                return redirect("forgot_password")
 
-            messages.success(request, 'OTP sent successfully')
+            request.session["reset_email"] = email
 
-            return redirect('verify_otp')
+            messages.success(request, "OTP sent successfully")
+
+            return redirect("verify_otp")
 
         except Exception as e:
 
-            print("EMAIL ERROR:", e)
+            print("RESET ERROR:", str(e))
 
             messages.error(
                 request,
-                f'Error sending email: {e}'
+                "System error occurred"
             )
 
-            return redirect('forgot_password')
+            return redirect("forgot_password")
 
-    return render(request, 'forgot_password.html')
-
-
-
+    return render(request, "forgot_password.html")
 def verify_otp(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        entered_otp = request.POST.get('otp')
+        entered_otp = request.POST.get("otp")
 
-        email = request.session.get('reset_email')
+        email = request.session.get("reset_email")
 
         user = User.objects.filter(email=email).first()
+
+        if not user:
+            messages.error(request, "Session expired")
+            return redirect("forgot_password")
 
         otp_obj = PasswordResetOTP.objects.filter(
             user=user,
             otp=entered_otp
         ).last()
 
-        if otp_obj:
-            request.session['otp_verified'] = True
-            messages.success(request, 'OTP verified successfully')
-            return redirect('reset_password')
+        if not otp_obj:
+            messages.error(request, "Invalid OTP")
+            return redirect("verify_otp")
 
-        else:
-            messages.error(request, 'Invalid OTP')
+        request.session["otp_verified"] = True
 
-    return render(request, 'verify_otp.html')
+        messages.success(
+            request,
+            "OTP verified successfully"
+        )
 
+        return redirect("reset_password")
 
+    return render(request, "verify_otp.html")
 def reset_password(request):
-    if not request.session.get('otp_verified'):
-        messages.error(request, 'OTP verification required')
-        return redirect('forgot_password')
 
-    if request.method == 'POST':
+    if not request.session.get("otp_verified"):
+        messages.error(request, "OTP verification required")
+        return redirect("forgot_password")
 
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
+    if request.method == "POST":
 
-        if password1 == password2:
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
 
-            email = request.session.get('reset_email')
+        if password1 != password2:
+            messages.error(request, "Passwords do not match")
+            return redirect("reset_password")
 
-            user = User.objects.get(email=email)
+        email = request.session.get("reset_email")
 
-            user.set_password(password1)
-            user.save()
+        user = User.objects.filter(email=email).first()
 
-            messages.success(request, 'Password changed successfully')
+        if not user:
+            messages.error(request, "User not found")
+            return redirect("forgot_password")
 
-            return redirect('login')
+        user.set_password(password1)
+        user.save()
 
-        else:
-            messages.error(request, 'Passwords do not match')
+        request.session.flush()
 
-    return render(request, 'reset_password.html')
-    
+        messages.success(
+            request,
+            "Password changed successfully"
+        )
+
+        return redirect("login")
+
+    return render(request, "reset_password.html")
+
 def webb_page(request):
     return render(request, 'webb.html')
 

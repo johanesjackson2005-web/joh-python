@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-
+SENDGRID_API_KEY = config("SENDGRID_API_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
@@ -32,14 +32,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda x: [host.strip()
 LOGIN_REDIRECT_URL='home'
 LOGOUT_REDIRECT_URL='login'
 
-EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER='johboy2026@gmail.com'
-EMAIL_HOST_PASSWORD='tbjxxslnfklhyyfq'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
