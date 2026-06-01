@@ -1,4 +1,5 @@
 "Base Cache class."
+
 import time
 import warnings
 
@@ -6,6 +7,7 @@ from asgiref.sync import sync_to_async
 
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.module_loading import import_string
+from django.utils.regex_helper import _lazy_re_compile
 
 
 class InvalidCacheBackendError(ImproperlyConfigured):
@@ -281,8 +283,8 @@ class BaseCache:
 
     def decr(self, key, delta=1, version=None):
         """
-        Subtract delta from value in the cache. If the key does not exist, raise
-        a ValueError exception.
+        Subtract delta from value in the cache. If the key does not exist,
+        raise a ValueError exception.
         """
         return self.incr(key, -delta, version=version)
 
@@ -301,7 +303,7 @@ class BaseCache:
     def set_many(self, data, timeout=DEFAULT_TIMEOUT, version=None):
         """
         Set a bunch of values in the cache at once from a dict of key/value
-        pairs.  For certain backends (memcached), this is much more efficient
+        pairs. For certain backends (memcached), this is much more efficient
         than calling set() multiple times.
 
         If timeout is given, use that timeout for the key; otherwise use the
@@ -388,16 +390,17 @@ class BaseCache:
         pass
 
 
+memcached_error_chars_re = _lazy_re_compile(r"[\x00-\x20\x7f]")
+
+
 def memcache_key_warnings(key):
     if len(key) > MEMCACHE_MAX_KEY_LENGTH:
         yield (
             "Cache key will cause errors if used with memcached: %r "
             "(longer than %s)" % (key, MEMCACHE_MAX_KEY_LENGTH)
         )
-    for char in key:
-        if ord(char) < 33 or ord(char) == 127:
-            yield (
-                "Cache key contains characters that will cause errors if "
-                "used with memcached: %r" % key
-            )
-            break
+    if memcached_error_chars_re.search(key):
+        yield (
+            "Cache key contains characters that will cause errors if used with "
+            f"memcached: {key!r}"
+        )

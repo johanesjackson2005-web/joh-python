@@ -1,11 +1,11 @@
-from cx_Oracle import CLOB
+import oracledb
 
 from django.contrib.gis.db.backends.base.adapter import WKTAdapter
 from django.contrib.gis.geos import GeometryCollection, Polygon
 
 
 class OracleSpatialAdapter(WKTAdapter):
-    input_size = CLOB
+    input_size = oracledb.CLOB
 
     def __init__(self, geom):
         """

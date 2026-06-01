@@ -1,9 +1,10 @@
 import datetime
+import decimal
 
 from .base import Database
 
 
-class InsertVar:
+class BoundVar:
     """
     A late-binding cursor variable that can be passed to Cursor.execute
     as a parameter, in order to receive the id of the row created by an
@@ -20,10 +21,11 @@ class InsertVar:
         "PositiveBigIntegerField": int,
         "PositiveSmallIntegerField": int,
         "PositiveIntegerField": int,
-        "FloatField": Database.NATIVE_FLOAT,
-        "DateTimeField": Database.TIMESTAMP,
-        "DateField": Database.Date,
-        "DecimalField": Database.NUMBER,
+        "BooleanField": int,
+        "FloatField": Database.DB_TYPE_BINARY_DOUBLE,
+        "DateTimeField": Database.DB_TYPE_TIMESTAMP,
+        "DateField": datetime.date,
+        "DecimalField": decimal.Decimal,
     }
 
     def __init__(self, field):
@@ -42,10 +44,10 @@ class InsertVar:
 class Oracle_datetime(datetime.datetime):
     """
     A datetime object, with an additional class attribute
-    to tell cx_Oracle to save the microseconds too.
+    to tell oracledb to save the microseconds too.
     """
 
-    input_size = Database.TIMESTAMP
+    input_size = Database.DB_TYPE_TIMESTAMP
 
     @classmethod
     def from_datetime(cls, dt):

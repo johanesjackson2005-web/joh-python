@@ -3,6 +3,7 @@ from itertools import chain
 
 from django.apps import apps
 from django.conf import settings
+from django.contrib.admin.exceptions import NotRegistered
 from django.contrib.admin.utils import NotRelationField, flatten, get_fields_from_path
 from django.core import checks
 from django.core.exceptions import FieldDoesNotExist
@@ -234,8 +235,9 @@ class BaseModelAdminChecks:
                     obj=obj,
                     id="admin.E038",
                 )
-            related_admin = obj.admin_site._registry.get(field.remote_field.model)
-            if related_admin is None:
+            try:
+                related_admin = obj.admin_site.get_model_admin(field.remote_field.model)
+            except NotRegistered:
                 return [
                     checks.Error(
                         'An admin for model "%s" has to be registered '
@@ -248,19 +250,20 @@ class BaseModelAdminChecks:
                         id="admin.E039",
                     )
                 ]
-            elif not related_admin.search_fields:
-                return [
-                    checks.Error(
-                        '%s must define "search_fields", because it\'s '
-                        "referenced by %s.autocomplete_fields."
-                        % (
-                            related_admin.__class__.__name__,
-                            type(obj).__name__,
-                        ),
-                        obj=obj.__class__,
-                        id="admin.E040",
-                    )
-                ]
+            else:
+                if not related_admin.search_fields:
+                    return [
+                        checks.Error(
+                            '%s must define "search_fields", because it\'s '
+                            "referenced by %s.autocomplete_fields."
+                            % (
+                                related_admin.__class__.__name__,
+                                type(obj).__name__,
+                            ),
+                            obj=obj.__class__,
+                            id="admin.E040",
+                        )
+                    ]
             return []
 
     def _check_raw_id_fields(self, obj):
@@ -313,7 +316,8 @@ class BaseModelAdminChecks:
 
     def _check_fields(self, obj):
         """Check that `fields` only refer to existing fields, doesn't contain
-        duplicates. Check if at most one of `fields` and `fieldsets` is defined.
+        duplicates. Check if at most one of `fields` and `fieldsets` is
+        defined.
         """
 
         if obj.fields is None:
@@ -328,11 +332,15 @@ class BaseModelAdminChecks:
                     id="admin.E005",
                 )
             ]
-        fields = flatten(obj.fields)
-        if len(fields) != len(set(fields)):
+        field_counts = collections.Counter(flatten(obj.fields))
+        if duplicate_fields := [
+            field for field, count in field_counts.items() if count > 1
+        ]:
             return [
                 checks.Error(
                     "The value of 'fields' contains duplicate field(s).",
+                    hint="Remove duplicates of %s."
+                    % ", ".join(map(repr, duplicate_fields)),
                     obj=obj.__class__,
                     id="admin.E006",
                 )
@@ -394,11 +402,20 @@ class BaseModelAdminChecks:
                 id="admin.E008",
             )
 
-        seen_fields.extend(flatten(fieldset[1]["fields"]))
-        if len(seen_fields) != len(set(seen_fields)):
+        fieldset_fields = flatten(fieldset[1]["fields"])
+        seen_fields.extend(fieldset_fields)
+        field_counts = collections.Counter(seen_fields)
+        fieldset_fields_set = set(fieldset_fields)
+        if duplicate_fields := [
+            field
+            for field, count in field_counts.items()
+            if count > 1 and field in fieldset_fields_set
+        ]:
             return [
                 checks.Error(
                     "There are duplicate field(s) in '%s[1]'." % label,
+                    hint="Remove duplicates of %s."
+                    % ", ".join(map(repr, duplicate_fields)),
                     obj=obj.__class__,
                     id="admin.E012",
                 )
@@ -466,10 +483,15 @@ class BaseModelAdminChecks:
             return must_be(
                 "a list or tuple", option="exclude", obj=obj, id="admin.E014"
             )
-        elif len(obj.exclude) > len(set(obj.exclude)):
+        field_counts = collections.Counter(obj.exclude)
+        if duplicate_fields := [
+            field for field, count in field_counts.items() if count > 1
+        ]:
             return [
                 checks.Error(
                     "The value of 'exclude' contains duplicate field(s).",
+                    hint="Remove duplicates of %s."
+                    % ", ".join(map(repr, duplicate_fields)),
                     obj=obj.__class__,
                     id="admin.E015",
                 )
@@ -529,10 +551,20 @@ class BaseModelAdminChecks:
                 field=field_name, option=label, obj=obj, id="admin.E019"
             )
         else:
-            if not field.many_to_many:
+            if not field.many_to_many or isinstance(field, models.ManyToManyRel):
                 return must_be(
                     "a many-to-many field", option=label, obj=obj, id="admin.E020"
                 )
+            elif not field.remote_field.through._meta.auto_created:
+                return [
+                    checks.Error(
+                        f"The value of '{label}' cannot include the ManyToManyField "
+                        f"'{field_name}', because that field manually specifies a "
+                        f"relationship model.",
+                        obj=obj.__class__,
+                        id="admin.E013",
+                    )
+                ]
             else:
                 return []
 
@@ -727,8 +759,7 @@ class BaseModelAdminChecks:
             # this format would be nice, but it's a little fiddly).
             return []
         else:
-            if field_name.startswith("-"):
-                field_name = field_name[1:]
+            field_name = field_name.removeprefix("-")
             if field_name == "pk":
                 return []
             try:
@@ -772,10 +803,11 @@ class BaseModelAdminChecks:
             except FieldDoesNotExist:
                 return [
                     checks.Error(
-                        "The value of '%s' is not a callable, an attribute of "
-                        "'%s', or an attribute of '%s'."
+                        "The value of '%s' refers to '%s', which is not a callable, "
+                        "an attribute of '%s', or an attribute of '%s'."
                         % (
                             label,
+                            field_name,
                             obj.__class__.__name__,
                             obj.model._meta.label,
                         ),
@@ -803,8 +835,7 @@ class ModelAdminChecks(BaseModelAdminChecks):
             *self._check_list_editable(admin_obj),
             *self._check_search_fields(admin_obj),
             *self._check_date_hierarchy(admin_obj),
-            *self._check_action_permission_methods(admin_obj),
-            *self._check_actions_uniqueness(admin_obj),
+            *self._check_actions(admin_obj),
         ]
 
     def _check_save_as(self, obj):
@@ -877,7 +908,7 @@ class ModelAdminChecks(BaseModelAdminChecks):
             return inline(obj.model, obj.admin_site).check()
 
     def _check_list_display(self, obj):
-        """Check that list_display only contains fields or usable attributes."""
+        """Check list_display only contains fields or usable attributes."""
 
         if not isinstance(obj.list_display, (list, tuple)):
             return must_be(
@@ -902,25 +933,27 @@ class ModelAdminChecks(BaseModelAdminChecks):
             try:
                 field = getattr(obj.model, item)
             except AttributeError:
-                return [
-                    checks.Error(
-                        "The value of '%s' refers to '%s', which is not a "
-                        "callable, an attribute of '%s', or an attribute or "
-                        "method on '%s'."
-                        % (
-                            label,
-                            item,
-                            obj.__class__.__name__,
-                            obj.model._meta.label,
-                        ),
-                        obj=obj.__class__,
-                        id="admin.E108",
-                    )
-                ]
-        if isinstance(field, models.ManyToManyField):
+                try:
+                    field = get_fields_from_path(obj.model, item)[-1]
+                except (FieldDoesNotExist, NotRelationField):
+                    return [
+                        checks.Error(
+                            f"The value of '{label}' refers to '{item}', which is not "
+                            f"a callable or attribute of '{obj.__class__.__name__}', "
+                            "or an attribute, method, or field on "
+                            f"'{obj.model._meta.label}'.",
+                            obj=obj.__class__,
+                            id="admin.E108",
+                        )
+                    ]
+        if (
+            getattr(field, "is_relation", False)
+            and (field.many_to_many or field.one_to_many)
+        ) or (getattr(field, "rel", None) and field.rel.field.many_to_one):
             return [
                 checks.Error(
-                    "The value of '%s' must not be a ManyToManyField." % label,
+                    f"The value of '{label}' must not be a many-to-many field or a "
+                    f"reverse foreign key.",
                     obj=obj.__class__,
                     id="admin.E109",
                 )
@@ -980,7 +1013,7 @@ class ModelAdminChecks(BaseModelAdminChecks):
 
     def _check_list_filter_item(self, obj, item, label):
         """
-        Check one item of `list_filter`, i.e. check if it is one of three options:
+        Check one item of `list_filter`, the three valid options are:
         1. 'field' -- a basic field filter, possibly w/ relationships (e.g.
            'field__rel')
         2. ('field', SomeFieldListFilter) - a field-based list filter class
@@ -994,7 +1027,7 @@ class ModelAdminChecks(BaseModelAdminChecks):
                 return must_inherit_from(
                     parent="ListFilter", option=label, obj=obj, id="admin.E113"
                 )
-            # ...  but not a FieldListFilter.
+            # ... but not a FieldListFilter.
             elif issubclass(item, FieldListFilter):
                 return [
                     checks.Error(
@@ -1170,7 +1203,7 @@ class ModelAdminChecks(BaseModelAdminChecks):
                     )
                 ]
             else:
-                if not isinstance(field, (models.DateField, models.DateTimeField)):
+                if field.get_internal_type() not in {"DateField", "DateTimeField"}:
                     return must_be(
                         "a DateField or DateTimeField",
                         option="date_hierarchy",
@@ -1180,13 +1213,12 @@ class ModelAdminChecks(BaseModelAdminChecks):
                 else:
                     return []
 
-    def _check_action_permission_methods(self, obj):
-        """
-        Actions with an allowed_permission attribute require the ModelAdmin to
-        implement a has_<perm>_permission() method for each permission.
-        """
-        actions = obj._get_base_actions()
+    def _check_actions(self, obj):
         errors = []
+        actions = obj._get_base_actions()
+
+        # Actions with an allowed_permission attribute require the ModelAdmin
+        # to implement a has_<perm>_permission() method for each permission.
         for func, name, _ in actions:
             if not hasattr(func, "allowed_permissions"):
                 continue
@@ -1205,12 +1237,8 @@ class ModelAdminChecks(BaseModelAdminChecks):
                             id="admin.E129",
                         )
                     )
-        return errors
-
-    def _check_actions_uniqueness(self, obj):
-        """Check that every action has a unique __name__."""
-        errors = []
-        names = collections.Counter(name for _, name, _ in obj._get_base_actions())
+        # Names need to be unique.
+        names = collections.Counter(name for _, name, _ in actions)
         for name, count in names.items():
             if count > 1:
                 errors.append(

@@ -1,7 +1,8 @@
 """
- This module houses the GEOS ctypes prototype functions for the
- unary and binary predicate operations on geometries.
+This module houses the GEOS ctypes prototype functions for the
+unary and binary predicate operations on geometries.
 """
+
 from ctypes import c_byte, c_char_p, c_double
 
 from django.contrib.gis.geos.libgeos import GEOM_PTR, GEOSFuncFactory
@@ -11,6 +12,7 @@ from django.contrib.gis.geos.prototypes.errcheck import check_predicate
 # ## Binary & unary predicate factories ##
 class UnaryPredicate(GEOSFuncFactory):
     "For GEOS unary predicate functions."
+
     argtypes = [GEOM_PTR]
     restype = c_byte
     errcheck = staticmethod(check_predicate)
@@ -18,11 +20,13 @@ class UnaryPredicate(GEOSFuncFactory):
 
 class BinaryPredicate(UnaryPredicate):
     "For GEOS binary predicate functions."
+
     argtypes = [GEOM_PTR, GEOM_PTR]
 
 
 # ## Unary Predicates ##
 geos_hasz = UnaryPredicate("GEOSHasZ")
+geos_hasm = UnaryPredicate("GEOSHasM")
 geos_isclosed = UnaryPredicate("GEOSisClosed")
 geos_isempty = UnaryPredicate("GEOSisEmpty")
 geos_isring = UnaryPredicate("GEOSisRing")
@@ -38,6 +42,7 @@ geos_equals = BinaryPredicate("GEOSEquals")
 geos_equalsexact = BinaryPredicate(
     "GEOSEqualsExact", argtypes=[GEOM_PTR, GEOM_PTR, c_double]
 )
+geos_equalsidentical = BinaryPredicate("GEOSEqualsIdentical")
 geos_intersects = BinaryPredicate("GEOSIntersects")
 geos_overlaps = BinaryPredicate("GEOSOverlaps")
 geos_relatepattern = BinaryPredicate(

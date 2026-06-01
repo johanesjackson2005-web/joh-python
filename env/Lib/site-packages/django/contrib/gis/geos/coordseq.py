@@ -1,14 +1,15 @@
 """
- This module houses the GEOSCoordSeq object, which is used internally
- by GEOSGeometry to house the actual coordinates of the Point,
- LineString, and LinearRing geometries.
+This module houses the GEOSCoordSeq object, which is used internally
+by GEOSGeometry to house the actual coordinates of the Point,
+LineString, and LinearRing geometries.
 """
+
 from ctypes import byref, c_byte, c_double, c_uint
 
 from django.contrib.gis.geos import prototypes as capi
 from django.contrib.gis.geos.base import GEOSBase
 from django.contrib.gis.geos.error import GEOSException
-from django.contrib.gis.geos.libgeos import CS_PTR, geos_version_tuple
+from django.contrib.gis.geos.libgeos import CS_PTR
 from django.contrib.gis.shortcuts import numpy
 
 
@@ -69,12 +70,12 @@ class GEOSCoordSeq(GEOSBase):
     def _checkindex(self, index):
         "Check the given index."
         if not (0 <= index < self.size):
-            raise IndexError("invalid GEOS Geometry index: %s" % index)
+            raise IndexError(f"Invalid GEOS Geometry index: {index}")
 
     def _checkdim(self, dim):
         "Check the given dimension."
         if dim < 0 or dim > 2:
-            raise GEOSException('invalid ordinate dimension "%d"' % dim)
+            raise GEOSException(f'Invalid ordinate dimension: "{dim:d}"')
 
     def _get_x(self, index):
         return capi.cs_getx(self.ptr, index, byref(c_double()))
@@ -179,8 +180,8 @@ class GEOSCoordSeq(GEOSBase):
     @property
     def kml(self):
         "Return the KML representation for the coordinates."
-        # Getting the substitution string depending on whether the coordinates have
-        #  a Z dimension.
+        # Getting the substitution string depending on whether the coordinates
+        # have a Z dimension.
         if self.hasz:
             substr = "%s,%s,%s "
         else:
@@ -202,16 +203,6 @@ class GEOSCoordSeq(GEOSBase):
     @property
     def is_counterclockwise(self):
         """Return whether this coordinate sequence is counterclockwise."""
-        if geos_version_tuple() < (3, 7):
-            # A modified shoelace algorithm to determine polygon orientation.
-            # See https://en.wikipedia.org/wiki/Shoelace_formula.
-            area = 0.0
-            n = len(self)
-            for i in range(n):
-                j = (i + 1) % n
-                area += self[i][0] * self[j][1]
-                area -= self[j][0] * self[i][1]
-            return area > 0.0
         ret = c_byte()
         if not capi.cs_is_ccw(self.ptr, byref(ret)):
             raise GEOSException(
