@@ -134,8 +134,23 @@ function toggleMenu(){
 </div>
 
 <!-- CONTACT BOX (FINAL SECTION) -->
-<div class="contact-box">
+<h1>ABOUT US<h1>
+ <section class="promo-banner">
+    <img src="{% static 'image/footer.png' %}"
+         alt="JOHBOY SETUPS Advertisement">
+</section>
+<br><br><br>
+<h1>DEVELOPED BY</h1>
+<section class="promo-banner">
+    <img src="{% static 'image/boy.png' %}"
+         alt="JOHBOY SETUPS Advertisement">
+</section>
+    </div>
+</section>
+</div>
 
+<div class="contact-box">
+    <h2> contact us<h2>
     <div class="contact-item">
         <i class="fa-brands fa-whatsapp"></i>
         <h3>WhatsApp</h3>
@@ -161,18 +176,6 @@ function toggleMenu(){
     </div>
 
 </div>
- <section class="promo-banner">
-    <img src="{% static 'image/footer.png' %}"
-         alt="JOHBOY SETUPS Advertisement">
-</section> <br><br><br><br>
-<section class="promo-banner">
-    <img src="{% static 'image/boy.png' %}"
-         alt="JOHBOY SETUPS Advertisement">
-</section>
-    </div>
-</section>
-</div>
-
 {% else %}
 <div class="content-wrapper">
     <div class="hero">
@@ -253,9 +256,9 @@ function toggleMenu(){
  <section class="promo-banner">
     <img src="{% static 'image/footer.png' %}"
          alt="JOHBOY SETUPS Advertisement">
-</section>
+</section><br>
+<h2>Contact us<h2>
 <div class="contact-box">
-
     <div class="contact-item">
         <i class="fa-brands fa-whatsapp green"></i>
         <h3>WhatsApp</h3>
@@ -273,7 +276,6 @@ function toggleMenu(){
         <h3>Email</h3>
         <pre>johanesjackson2005@gmail.com</pre>
     </div>
-
     <div class="contact-item">
         <i class="fa-brands fa-github"></i>
         <h3>GitHub</h3>
@@ -284,6 +286,8 @@ function toggleMenu(){
 </section>
 
 </div>
+<br><br>
+<h1>DEVELOPED BY</h1>
 <section class="promo-banner">
     <img src="{% static 'image/boy.png' %}"
          alt="JOHBOY SETUPS Advertisement">
@@ -636,6 +640,7 @@ p2{
     color: #daf108;
     font-size: 14px;
 }
+
 </style>
 
 </html>
