@@ -189,5 +189,64 @@ function toggleMenu(){
         font-family: Arial, sans-serif;
         text-align: center;
     }
+    .navbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:5px 20px;
+    background:rgba(6, 5, 10, 0.7);
+    backdrop-filter:blur(10px);
+    z-index:1000;
+}
+
+.logo a{
+    color:white;
+    text-decoration:none;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    list-style:none;
+    gap:18px;
+}
+
+.nav-links li a{
+    color:white;
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:6px;
+    transition:0.3s;
+}
+
+.nav-links li a:hover{
+    background:#3b82f6;
+}
+
+.menu-toggle{
+    display:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+@media(max-width:768px){
+    .menu-toggle{display:block;}
+    .nav-links{
+        display:none;
+        flex-direction:column;
+        position:absolute;
+        top:70px;
+        left:0;
+        width:100%;
+        background:#111827;
+        padding:20px;
+    }
+    .nav-links.active{display:flex;}
+}
+
 
 </style>
