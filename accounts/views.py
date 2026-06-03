@@ -63,12 +63,12 @@ def contactus(request):
 
         if form.is_valid():
 
+            form.save()
+
             messages.success(
                 request,
                 'Thank you! We received your message.'
             )
-
-            return render(request, 'contact.html')
 
     else:
         form = ContactForm()
@@ -78,7 +78,6 @@ def contactus(request):
         'contact.html',
         {'form': form}
     )
-
 def slideshow(request):
     return render(request, 'slideshow.html')
 def about(request):
