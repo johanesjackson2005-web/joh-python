@@ -15,3 +15,8 @@ class PasswordResetOTP(models.Model):
 class Setup(models.Model):
     name = models.CharField(max_length=100)
     download_url = models.URLField()
+class Contact(models.Model):
+    username = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
