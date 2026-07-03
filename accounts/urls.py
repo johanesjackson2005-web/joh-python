@@ -34,4 +34,5 @@ urlpatterns = [
     path('design/', views.design, name='design'),
     path('development/', views.development, name='development'),
     path('simulation/', views.simulation_page, name='simulation'),
+     path("category/<int:category_id>/", views.category_softwares, name="category_softwares"),
 ]

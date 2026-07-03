@@ -9,7 +9,8 @@ from .models import Category
 from .forms import RegisterForm, ContactForm
 from .models import PasswordResetOTP
 from .email_service import send_otp_email
-
+from django.shortcuts import render, get_object_or_404
+from .models import Category, Software
 def home(request):
     categories = Category.objects.all()
 
@@ -230,3 +231,11 @@ def design(request):
 def development(request):
     return render(request, 'development.html')
 
+def category_softwares(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    softwares = Software.objects.filter(category=category)
+
+    return render(request, "software.html", {
+        "category": category,
+        "softwares": softwares
+    })

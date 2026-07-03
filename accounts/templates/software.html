@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Design Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+function toggleMenu(){
+    document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo"><a href="/">JOHBOY SETUPS</a></div>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contactus/">Contact</a></li>
+        <li><a href="/logout/">Logout</a></li>
+        <li><a href="/login/">Login</a></li>
+        <li><a href="/register/">Register</a></li>
+        <li><a href="/forgot-password/">Forgot Password</a></li>
+    </ul>
+</nav>
+
+<h1>Design / CAD Tools</h1>
+
+<div class="tools-grid">
+     <div class="tool-card">
+      <i class="fas fa-drafting-compass icon-vs"></i>
+      <h3>AutoCAD 2019</h3><br>
+      <button style="background-color: rgb(228, 10, 10); color: white; font-size: 20px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a class="lia-link-navigation attachment-link" li-bindable="" li-msg-id="7928677" li-desktop-view="true" li-attachments-container-type="MESSAGE" li-attachment-id="684421" li-media-document-lightbox-trigger="" id="link_2698f4e3b9c2f6" href="https://getintopc.com/softwares/3d-cad/autocad-lt-2019-free-download-1471300/" li-compiled="true">
+                Download
+                </a><i class="fas fa-download"></i> 
+              </button>
+      </div>
+      <div class="tool-card"> 
+      <i class="fas fa-building icon-yellow"></i><h3>ArchiCAD</h3><br>
+        <button style="background-color: rgb(235, 10, 18); color: white; font-size: 20px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="https://www.graphisoft.com/en-tz/downloads/?section=product&localization=INT&product=archicad&type=FULL&version=29&platform=mac-apple-silicon" style="color: white; text-decoration: none;">Download</a>
+             <i class="fas fa-download"></i> 
+        </button>
+        </div>
+        <div class="tool-card"><i class="fas fa-cube icon-purple"></i><h3>Blender</h3><br>
+         <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
+          padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="https://www.blender.org/download/" style="color: white; text-decoration: none;">Download</a>
+              <i class="fas fa-download"></i> 
+        </button>
+        </div>
+     <div class="tool-card">
+        <i class="fab fa-figma icon-vs"></i>
+        <h3>Figma</h3></br>
+           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
+            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="https://www.figma.com/downloads/" style="color: white; text-decoration: none;">Download</a>
+            <i class="fas fa-download"></i> 
+        </a>
+              </button>
+     </div>
+     <div class="tools-grid">
+
+    {% for software in softwares %}
+
+    <div class="tool-card">
+        <h3>{{ software.name }}</h3>
+
+        <a href="{{ software.download_link }}">
+            Download
+        </a>
+    </div>
+
+    {% endfor %}
+
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-content">
+        <h3>JOHBOY COMPANY LIMITED</h3>
+        <p>Verified Software Distribution System</p>
+
+        <div class="footer-contact">
+            <i class="fa-solid fa-envelope"></i>
+            <span>johanesjackson2005@gmail.com</span>
+        </div>
+
+        <div class="footer-contact">
+            <i class="fa-brands fa-github"></i>
+            <span>Johanes2005-web</span>
+        </div>
+
+        <p class="copyright">
+            © 2026 JOHBOY COMPANY LIMITED. All Rights Reserved.
+        </p>
+    </div>
+</footer>
+</body>
+<style>
+body{background:#0f172a;color:#f1f5f9;padding:30px;font-family:Segoe UI;}
+h1{text-align:center;margin-bottom:30px;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;}
+.tool-card{background:rgba(15,23,42,0.65);padding:25px;border-radius:25px;text-align:center;border:1px solid #38bdf8;}
+.tool-card i{font-size:40px;}
+.icon-vs{color:#38bdf8;}
+.icon-yellow{color:#facc15;}
+.icon-purple{color:#c084fc;}
+:root {
+    --primary-color: #08285a;
+    --secondary-color: #ffffff;
+    --text-main: #f1f5f9;
+    --text-muted: #cbd5e1;
+    --bg-card: rgba(15, 23, 42, 0.65);
+    --transition: all 0.3s ease;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+    background-color:#0f172a;
+    color:var(--text-main);
+    padding:30px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:40px;
+    color:white;
+    font-size:50px;
+}
+
+.section-title{
+    margin:30px 0 20px;
+    font-size:24px;
+    color:#38bdf8;
+}
+
+.tools-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(400px,1fr));
+    gap:30px;
+}
+
+.tool-card{
+    background:var(--bg-card);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(25,10,224,0.664);
+    padding:70px 40px;
+    border-radius:30px;
+    text-align:center;
+    transition:var(--transition);
+}
+
+.tool-card:hover{
+    transform:translateY(-5px);
+    background:rgba(24,37,68,0.85);
+    box-shadow:0 10px 25px -5px rgba(14,144,184,0.5);
+}
+
+.tool-card i{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.tool-card img{
+    width:50px;
+    height:50px;
+    margin-bottom:15px;
+}
+
+.tool-card h3{
+    margin-top:10px;
+    font-size:18px;
+}
+
+.tool-card input{
+    margin-bottom:20px;
+}
+.navbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:5px 20px;
+    background:rgba(6, 5, 10, 0.7);
+    backdrop-filter:blur(10px);
+    z-index:1000;
+}
+
+.logo a{
+    color:white;
+    text-decoration:none;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    list-style:none;
+    gap:18px;
+}
+
+.nav-links li a{
+    color:white;
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:6px;
+    transition:0.3s;
+}
+
+.nav-links li a:hover{
+    background:#3b82f6;
+}
+
+.menu-toggle{
+    display:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+@media(max-width:768px){
+    .menu-toggle{display:block;}
+    .nav-links{
+        display:none;
+        flex-direction:column;
+        position:absolute;
+        top:70px;
+        left:0;
+        width:100%;
+        background:#111827;
+        padding:20px;
+    }
+    .nav-links.active{display:flex;}
+}
+/* ================= FOOTER ================= */
+.footer{
+    background: #000000;
+    border-top:2px solid rgba(5, 2, 2, 0.19);
+    padding:40px 20px;
+    text-align:center;
+    margin-top:50px;
+}
+
+.footer-content h3{
+    color:#3b82f6;
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.footer-content p{
+    color:#cbd5e1;
+    margin:8px 0;
+}
+
+.footer-contact{
+    margin:12px 0;
+    font-size:16px;
+    color:white;
+}
+
+.footer-contact i{
+    color:#3b82f6;
+    margin-right:8px;
+}
+
+.copyright{
+    margin-top:20px;
+    font-size:14px;
+    color:#94a3b8;
+}
+</style>
+</html>
