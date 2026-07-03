@@ -11,7 +11,11 @@ from .models import PasswordResetOTP
 from .email_service import send_otp_email
 
 def home(request):
-    return render(request, 'home.html')
+    categories = Category.objects.all()
+
+    return render(request, "home.html", {
+        "categories": categories
+    })
 
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -226,9 +230,3 @@ def design(request):
 def development(request):
     return render(request, 'development.html')
 
-
-
-def categories(request):
-    data = Category.objects.all()
-    return render(request, "categories.html", {"categories": data})
-# Create your views here.
