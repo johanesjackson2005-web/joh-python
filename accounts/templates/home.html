@@ -103,6 +103,25 @@ function toggleMenu(){
         <p>avast ,malware ...</p>
         <a class="btn" href="security/">Access</a>
     </div>
+    <div class="categories-grid">
+
+    {% for category in categories %}
+
+    <div class="category-card">
+
+        <h2>{{ category.name }}</h2>
+
+        <p>{{ category.description }}</p>
+
+        <a href="/category/{{ category.id }}/">
+            Open
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
     <div class="tool-card">
         <i class="fa-solid fa-gamepad"></i>
         <h3>Games/Utilities</h3>
@@ -258,7 +277,7 @@ function toggleMenu(){
     <img src="{% static 'image/footer.png' %}"
          alt="JOHBOY SETUPS Advertisement">
 </section><br>
-<h2>Contact us<h2>
+<h2>Contact us</h2>
 <div class="contact-box">
     <div class="contact-item">
         <i class="fa-brands fa-whatsapp green"></i>

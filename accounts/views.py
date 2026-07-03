@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 import random
 
+from .models import Category
+
 from .forms import RegisterForm, ContactForm
 from .models import PasswordResetOTP
 from .email_service import send_otp_email
@@ -225,4 +227,8 @@ def development(request):
     return render(request, 'development.html')
 
 
+
+def categories(request):
+    data = Category.objects.all()
+    return render(request, "categories.html", {"categories": data})
 # Create your views here.
