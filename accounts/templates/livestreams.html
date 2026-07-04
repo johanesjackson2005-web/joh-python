@@ -34,63 +34,58 @@ function toggleMenu(){
     </ul>
 </nav>
 
-<h1>Latest Tutorials</h1>
+
+<h1>Live Streaming</h1>
 
 <div class="tools-grid">
 
-{% for tutorial in tutorials %}
+{% for stream in livestreams %}
 
 <div class="tool-card">
 
-    {% if tutorial.thumbnail %}
-        <img src="{{ tutorial.thumbnail.url }}" width="100%">
-    {% endif %}
+{% if stream.thumbnail %}
+<img src="{{ stream.thumbnail.url }}">
+{% endif %}
 
-    <h3>{{ tutorial.title }}</h3>
+<h2>{{ stream.title }}</h2>
 
-    <p>{{ tutorial.instructor }}</p>
+<p>{{ stream.description }}</p>
 
-    <p>{{ tutorial.duration }}</p>
+{% if stream.status == "LIVE" %}
 
-    <a class="btn"
-   href="{% url 'tutorial_detail' tutorial.id %}">
-    ▶ Watch Tutorial
+<h3 style="color:red;">
+🔴 LIVE NOW
+</h3>
+
+{% elif stream.status == "UPCOMING" %}
+
+<h3 style="color:orange;">
+🟡 Upcoming
+</h3>
+
+{% else %}
+
+<h3 style="color:gray;">
+Ended
+</h3>
+
+{% endif %}
+
+<a
+class="btn"
+href="{{ stream.youtube_live }}"
+target="_blank">
+
+Watch Live
+
 </a>
 
 </div>
 
-{% empty %}
-
-<h2>No tutorials available.</h2>
-
 {% endfor %}
 
 </div>
-
-</div>
-</div>
 </body>
-<!-- FOOTER -->
-<footer class="footer">
-    <div class="footer-content">
-        <h3>JOHBOY COMPANY LIMITED</h3>
-        <p>Verified Software Distribution System</p>
-
-        <div class="footer-contact">
-            <i class="fa-solid fa-envelope"></i>
-            <span>johanesjackson2005@gmail.com</span>
-        </div>
-
-        <div class="footer-contact">
-            <i class="fa-brands fa-github"></i>
-            <span>Johanes2005-web</span>
-        </div>
-
-        <p class="copyright">
-            © 2026 JOHBOY COMPANY LIMITED. All Rights Reserved.
-        </p>
-    </div>
-</footer>
 <style>
 :root {
     --primary-color: #3b82f6;    /* Bright Electric Blue */
@@ -269,7 +264,7 @@ body{
     display:inline-block;
     margin-top:10px;
     padding:10px 16px;
-    background: #f41313;
+    background: #0044b3;
     color:white;
     border-radius:8px;
     text-decoration:none;
@@ -347,7 +342,7 @@ body{
         }
 
         .login-btn{
-            background: red;
+            background:blue;
             color:white;
             justify-content:center;
             align-items:center;
