@@ -29,30 +29,41 @@ function toggleMenu(){
         <li><a href="/login/">Login</a></li>
         <li><a href="/register/">Register</a></li>
         <li><a href="/forgot-password/">Forgot Password</a></li>
+        <li><a href="/tutorials/">Tutorials</a></li>
     </ul>
 </nav>
 
-
-<h1>{{ category.name }}</h1>
+<h1>Latest Tutorials</h1>
 
 <div class="tools-grid">
-     
-     <div class="tools-grid">
 
-    {% for software in softwares %}
+{% for tutorial in tutorials %}
 
-    <div class="tool-card">
-        <h3>{{ software.name }}</h3>
-        <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
-            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
-            <a href="{{ software.download_link }}" style="color: white; text-decoration: none;">Download</a>
-            <i class="fas fa-download"></i> 
-        </a>
-              </button>
-              <p2>{{software.size}}</p2>
-    </div>
+<div class="tool-card">
 
-    {% endfor %}
+    {% if tutorial.thumbnail %}
+        <img src="{{ tutorial.thumbnail.url }}" width="100%">
+    {% endif %}
+
+    <h3>{{ tutorial.title }}</h3>
+
+    <p>{{ tutorial.instructor }}</p>
+
+    <p>{{ tutorial.duration }}</p>
+
+    <a class="btn" href="{{ tutorial.youtube_link }}" target="_blank">
+        ▶ Watch Tutorial
+    </a>
+
+</div>
+
+{% empty %}
+
+<h2>No tutorials available.</h2>
+
+{% endfor %}
+
+</div>
 
 </div>
 </div>

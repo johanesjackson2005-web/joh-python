@@ -4,18 +4,20 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 import random
 
-from .models import Category
+from .models import Category, Tutorial
 
 from .forms import RegisterForm, ContactForm
 from .models import PasswordResetOTP
 from .email_service import send_otp_email
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Software
+from .models import Category, Software, tutorial
 def home(request):
     categories = Category.objects.all()
+    tutorials = Tutorial.objects.order_by("-created_at")[:6]
 
     return render(request, "home.html", {
-        "categories": categories
+        "categories": categories,
+        "tutorials": tutorials
     })
 
 from django.contrib import messages
@@ -238,4 +240,10 @@ def category_softwares(request, category_id):
     return render(request, "software.html", {
         "category": category,
         "softwares": softwares
+    })
+def tutorials(request):
+    tutorials = Tutorial.objects.all().order_by("-created_at")
+
+    return render(request, "tutorials.html", {
+        "tutorials": tutorials
     })
