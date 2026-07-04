@@ -271,43 +271,43 @@ def livestreams(request):
         }
     )
 
+
 def search_view(request):
     query = request.GET.get("q", "").strip()
 
-    if not query:
-        return render(request, "search_results.html", {
-            "query": query,
-            "software_results": [],
-            "tutorial_results": [],
-            "category_results": [],
-            "live_results": []
-        })
+    # split query into tokens (important upgrade)
+    tokens = query.split()
 
-    category_results = Category.objects.filter(
-        name__icontains=query
-    )
+    software_q = Q()
+    tutorial_q = Q()
+    category_q = Q()
+    live_q = Q()
 
-    software_results = Software.objects.filter(
-        Q(name__icontains=query) |
-        Q(category__name__icontains=query)
-    )
+    for word in tokens:
+        software_q |= Q(name__icontains=word)
 
-    tutorial_results = Tutorial.objects.filter(
-        Q(title__icontains=query) |
-        Q(software__name__icontains=query) |
-        Q(category__name__icontains=query)
-    )
+        tutorial_q |= (
+            Q(title__icontains=word) |
+            Q(software__name__icontains=word)
+        )
 
-    live_results = LiveStream.objects.filter(
-        Q(title__icontains=query) |
-        Q(category__name__icontains=query) |
-        Q(software__name__icontains=query)
-    )
+        category_q |= Q(name__icontains=word)
+
+        live_q |= (
+            Q(title__icontains=word) |
+            Q(software__name__icontains=word) |
+            Q(category__name__icontains=word)
+        )
+
+    software_results = Software.objects.filter(software_q).distinct()
+    tutorial_results = Tutorial.objects.filter(tutorial_q).distinct()
+    category_results = Category.objects.filter(category_q).distinct()
+    live_results = LiveStream.objects.filter(live_q).distinct()
 
     return render(request, "search_results.html", {
         "query": query,
-        "category_results": category_results,
         "software_results": software_results,
         "tutorial_results": tutorial_results,
+        "category_results": category_results,
         "live_results": live_results
     })
