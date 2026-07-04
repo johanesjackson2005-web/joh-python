@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from .models import Contact
-from .models import Category, Software
+from .models import Category, Software,Tutorial, LiveStream
 admin.site.site_header = "JOHBOY SETUPS ADMIN"
 admin.site.site_title = "JOHBOY SETUPS"
 admin.site.index_title = "Welcome to JOHBOY SETUPS Dashboard"   
@@ -22,8 +22,27 @@ class ContactAdmin(admin.ModelAdmin):
         'message',
         'admin_reply'
     )
+@admin.register(Tutorial)
+class TutorialAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "category",
+        "instructor",
+        "featured",
+        "created_at",
+    )
 
+    list_filter = (
+        "category",
+        "featured",
+    )
+
+    search_fields = (
+        "title",
+        "description",
+    )
 
 
 admin.site.register(Category)
 admin.site.register(Software)
+admin.site.register(LiveStream)

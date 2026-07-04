@@ -46,3 +46,51 @@ class Software(models.Model):
 
     def __str__(self):
         return self.name
+class Tutorial(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="tutorials"
+    )
+
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    thumbnail = models.ImageField(upload_to="tutorials/", blank=True, null=True)
+    youtube_link = models.URLField(blank=True)
+    video_file = models.FileField(upload_to="tutorials/videos/", blank=True, null=True)
+
+    instructor = models.CharField(max_length=100, blank=True)
+    duration = models.CharField(max_length=30, blank=True)
+
+    featured = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+class LiveStream(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+
+    thumbnail = models.ImageField(
+    upload_to="livestreams/",
+    blank=True,
+    null=True
+)
+
+    youtube_live = models.URLField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("LIVE","LIVE"),
+            ("UPCOMING","UPCOMING"),
+            ("ENDED","ENDED")
+        ],
+        default="UPCOMING"
+    )
+
+    start_time = models.DateTimeField(default=None, blank=True, null=True)
+
+    def __str__(self):
+        return self.title
