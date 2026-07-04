@@ -3,9 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 import random
-
-from .models import Category, Tutorial,LiveStream
-
+from django.db.models import Q
+from .models import Software, Tutorial, Category, LiveStream
 from .forms import RegisterForm, ContactForm
 from .models import PasswordResetOTP
 from .email_service import send_otp_email
@@ -271,3 +270,44 @@ def livestreams(request):
             "livestreams": livestreams
         }
     )
+
+def search_view(request):
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return render(request, "search_results.html", {
+            "query": query,
+            "software_results": [],
+            "tutorial_results": [],
+            "category_results": [],
+            "live_results": []
+        })
+
+    category_results = Category.objects.filter(
+        name__icontains=query
+    )
+
+    software_results = Software.objects.filter(
+        Q(name__icontains=query) |
+        Q(category__name__icontains=query)
+    )
+
+    tutorial_results = Tutorial.objects.filter(
+        Q(title__icontains=query) |
+        Q(software__name__icontains=query) |
+        Q(category__name__icontains=query)
+    )
+
+    live_results = LiveStream.objects.filter(
+        Q(title__icontains=query) |
+        Q(category__name__icontains=query) |
+        Q(software__name__icontains=query)
+    )
+
+    return render(request, "search_results.html", {
+        "query": query,
+        "category_results": category_results,
+        "software_results": software_results,
+        "tutorial_results": tutorial_results,
+        "live_results": live_results
+    })

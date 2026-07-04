@@ -17,6 +17,7 @@ function toggleMenu(){
 <body>
     <nav class="navbar">
     <div class="logo"><a href="/">JOHBOY SETUPS</a></div>
+
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
     <ul class="nav-links" id="navLinks">
@@ -27,6 +28,8 @@ function toggleMenu(){
         <li><a href="/login/">Login</a></li>
         <li><a href="/register/">Register</a></li>
         <li><a href="/forgot-password/">Forgot Password</a></li>
+        <li><a href="/tutorials/">Tutorials</a></li>
+        <li><a href="/livestreams/">Live</a></li>
     </ul>
 </nav>
 
@@ -326,6 +329,32 @@ function toggleMenu(){
     margin-top:20px;
     font-size:14px;
     color:#94a3b8;
+}
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-form input {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    width: 220px;
+}
+
+.search-form button {
+    background: #3b82f6;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background: #2563eb;
 }
     </style>
 

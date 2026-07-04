@@ -23,6 +23,12 @@ function toggleMenu(){
 <!-- NAV -->
 <nav class="navbar">
     <div class="logo"><a href="/">JOHBOY SETUPS</a></div>
+    <form method="GET" action="/search/" class="search-form">
+    <input type="text" name="q" placeholder="Search tools, tutorials..." />
+    <button type="submit">
+        <i class="fas fa-search"></i>
+    </button>
+</form>
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
     <ul class="nav-links" id="navLinks">
@@ -537,7 +543,32 @@ p2{
     font-size:14px;
     color:#94a3b8;
 }
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
+.search-form input {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    width: 220px;
+}
+
+.search-form button {
+    background: #3b82f6;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background: #2563eb;
+}
 
 </style>
 

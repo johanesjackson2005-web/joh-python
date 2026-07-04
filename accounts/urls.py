@@ -42,4 +42,5 @@ urlpatterns = [
     views.tutorial_detail,
     name="tutorial_detail"
 ),
+    path("search/", views.search_view, name="search"),
 ]

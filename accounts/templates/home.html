@@ -22,6 +22,12 @@ function toggleMenu(){
 <!-- NAV -->
 <nav class="navbar">
     <div class="logo"><a href="/">JOHBOY SETUPS</a></div>
+    <form method="GET" action="/search/" class="search-form">
+    <input type="text" name="q" placeholder="Search tools, tutorials..." />
+    <button type="submit">
+        <i class="fas fa-search"></i>
+    </button>
+</form>
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
     <ul class="nav-links" id="navLinks">
