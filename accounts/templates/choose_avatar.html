@@ -1,0 +1,21 @@
+{% load static %}
+
+<h2>Choose Your Avatar</h2>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="avatar-grid">
+
+{% for avatar in avatars %}
+<label>
+    <input type="radio" name="avatar" value="{{ avatar }}" {% if forloop.first %}checked{% endif %}>
+    <img src="{% static 'profile/' %}{{ avatar }}">
+</label>
+{% endfor %}
+
+</div>
+
+<button type="submit">Save Avatar</button>
+
+</form>

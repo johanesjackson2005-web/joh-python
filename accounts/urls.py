@@ -43,4 +43,5 @@ urlpatterns = [
     name="tutorial_detail"
 ),
     path("search/", views.search_view, name="search"),
+    path("choose-avatar/", views.choose_avatar, name="choose_avatar"),
 ]

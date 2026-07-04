@@ -14,8 +14,6 @@ function toggleMenu(){
 </script>
 </head>
 <body>
-    <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
     <nav class="navbar">
     <div class="logo"><a href="/">JOHBOY SETUPS</a></div>
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
@@ -47,8 +45,6 @@ function toggleMenu(){
        <input type="checkbox">
       I agree to the terms and conditions
        </label1>
-       <label>Profile Photo</label>
-{{ form.photo }}
               <br>
        <button type="submit">Register</button>
            <button style="background-color: green; color: white; font-size: 20px;

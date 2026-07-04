@@ -12,6 +12,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Category, Software, Tutorial
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     categories = Category.objects.all()
@@ -24,10 +25,9 @@ def home(request):
     })
 
 
-
 def register(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST, request.FILES)
+        form = RegisterForm(request.POST)
 
         if form.is_valid():
 
@@ -41,13 +41,7 @@ def register(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
 
-            # Save profile photo
-            photo = request.FILES.get("photo")
-
-            Profile.objects.create(
-                user=user,
-                photo=photo
-            )
+            # Save selected avatar here
 
             messages.success(request, "Account created successfully")
             return redirect('login')
@@ -56,6 +50,7 @@ def register(request):
         form = RegisterForm()
 
     return render(request, 'register.html', {'form': form})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -311,4 +306,22 @@ def search_view(request):
         "software_results": software_results,
         "category_results": category_results,
         "livestream_results": livestream_results,
+    })
+
+
+AVATARS = [f"avatar{i}.png" for i in range(1, 21)]
+
+@login_required
+def choose_avatar(request):
+
+    profile = request.user.profile
+
+    if request.method == "POST":
+        selected_avatar = request.POST.get("avatar")
+        profile.avatar = selected_avatar
+        profile.save()
+        return redirect("home")  # or dashboard
+
+    return render(request, "choose_avatar.html", {
+        "avatars": AVATARS
     })

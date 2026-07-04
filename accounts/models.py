@@ -108,12 +108,7 @@ class LiveStream(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo = models.ImageField(
-        upload_to="profile_photos/",
-        default="profile_photos/default.png",
-        blank=True,
-        null=True
-    )
+    avatar = models.CharField(max_length=50, default="avatar1.png")
 
     def __str__(self):
         return self.user.username
