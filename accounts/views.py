@@ -241,6 +241,13 @@ def category_softwares(request, category_id):
         "category": category,
         "softwares": softwares
     })
+
+def tutorials(request):
+    tutorials = Tutorial.objects.all().order_by("-created_at")
+
+    return render(request, "tutorials.html", {
+        "tutorials": tutorials
+    })
 def tutorial_detail(request, tutorial_id):
     tutorial = get_object_or_404(Tutorial, id=tutorial_id)
 

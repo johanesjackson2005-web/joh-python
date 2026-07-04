@@ -35,6 +35,7 @@ urlpatterns = [
     path('development/', views.development, name='development'),
     path('simulation/', views.simulation_page, name='simulation'),
      path("category/<int:category_id>/", views.category_softwares, name="category_softwares"),
+     path("tutorials/", views.tutorials, name="tutorials"),
     path(
     "tutorial/<int:tutorial_id>/",
     views.tutorial_detail,
