@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ tutorial.title }}</title>
+</head>
+
+<body>
+
+<h1>{{ tutorial.title }}</h1>
+
+{% if tutorial.thumbnail %}
+<img src="{{ tutorial.thumbnail.url }}" width="500">
+{% endif %}
+
+<h3>{{ tutorial.instructor }}</h3>
+
+<p>{{ tutorial.description }}</p>
+
+<a href="{{ tutorial.youtube_link }}" target="_blank">
+    ▶ Watch on YouTube
+</a>
+
+<hr>
+
+<h2>Related Tutorials</h2>
+
+{% for item in related %}
+
+<div>
+
+<h3>{{ item.title }}</h3>
+
+<a href="{% url 'tutorial_detail' item.id %}">
+Open
+</a>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>

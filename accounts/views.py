@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -241,9 +241,14 @@ def category_softwares(request, category_id):
         "category": category,
         "softwares": softwares
     })
-def tutorials(request):
-    tutorials = Tutorial.objects.all().order_by("-created_at")
+def tutorial_detail(request, tutorial_id):
+    tutorial = get_object_or_404(Tutorial, id=tutorial_id)
 
-    return render(request, "tutorials.html", {
-        "tutorials": tutorials
+    related = Tutorial.objects.filter(
+        category=tutorial.category
+    ).exclude(id=tutorial.id)[:4]
+
+    return render(request, "tutorial_detail.html", {
+        "tutorial": tutorial,
+        "related": related,
     })

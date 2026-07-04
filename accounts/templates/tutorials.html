@@ -51,9 +51,10 @@ function toggleMenu(){
 
     <p>{{ tutorial.duration }}</p>
 
-    <a class="btn" href="{{ tutorial.youtube_link }}" target="_blank">
-        ▶ Watch Tutorial
-    </a>
+    <a class="btn"
+   href="{% url 'tutorial_detail' tutorial.id %}">
+    Watch Tutorial
+</a>
 
 </div>
 
