@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 import random
 
-from .models import Category, Tutorial
+from .models import Category, Tutorial,LiveStream
 
 from .forms import RegisterForm, ContactForm
 from .models import PasswordResetOTP
@@ -14,6 +14,7 @@ from .models import Category, Software, tutorial
 def home(request):
     categories = Category.objects.all()
     tutorials = Tutorial.objects.order_by("-created_at")[:6]
+    livestreams = LiveStream.objects.order_by("-created_at")[:4]
 
     return render(request, "home.html", {
         "categories": categories,
@@ -259,3 +260,14 @@ def tutorial_detail(request, tutorial_id):
         "tutorial": tutorial,
         "related": related,
     })
+def livestreams(request):
+
+    livestreams = LiveStream.objects.order_by("-created_at")
+
+    return render(
+        request,
+        "livestreams.html",
+        {
+            "livestreams": livestreams
+        }
+    )

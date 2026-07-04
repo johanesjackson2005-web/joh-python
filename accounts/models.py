@@ -68,29 +68,39 @@ class Tutorial(models.Model):
 
     def __str__(self):
         return self.title
+    
+from django.utils import timezone
+
 class LiveStream(models.Model):
+
+    STATUS_CHOICES = [
+        ("LIVE", "Live"),
+        ("UPCOMING", "Upcoming"),
+        ("ENDED", "Ended"),
+    ]
+
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
     thumbnail = models.ImageField(
-    upload_to="livestreams/",
-    blank=True,
-    null=True
-)
+        upload_to="livestreams/",
+        blank=True,
+        null=True
+    )
 
     youtube_live = models.URLField()
 
     status = models.CharField(
         max_length=20,
-        choices=[
-            ("LIVE","LIVE"),
-            ("UPCOMING","UPCOMING"),
-            ("ENDED","ENDED")
-        ],
+        choices=STATUS_CHOICES,
         default="UPCOMING"
     )
 
-    start_time = models.DateTimeField(default=None, blank=True, null=True)
+    start_time = models.DateTimeField(
+        default=timezone.now
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title

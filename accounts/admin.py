@@ -39,7 +39,7 @@ class TutorialAdmin(admin.ModelAdmin):
 
     search_fields = (
         "title",
-        "description",
+        
     )
 
 
