@@ -59,12 +59,7 @@ function toggleMenu(){
      <div class="tool-card">
         <i class="fab fa-figma icon-vs"></i>
         <h3>Figma</h3></br>
-           <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
-            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
-            <a href="https://www.figma.com/downloads/" style="color: white; text-decoration: none;">Download</a>
-            <i class="fas fa-download"></i> 
-        </a>
-              </button>
+           
      </div>
      <div class="tools-grid">
 
@@ -72,10 +67,12 @@ function toggleMenu(){
 
     <div class="tool-card">
         <h3>{{ software.name }}</h3>
-
-        <a class="btn" href="{{ software.download_link }}">
-            Download
+        <button style="background-color: rgb(219, 10, 10); color: white; font-size: 20px;
+            padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer;">
+            <a href="{{ software.download_link }}" style="color: white; text-decoration: none;">Download</a>
+            <i class="fas fa-download"></i> 
         </a>
+              </button>
     </div>
 
     {% endfor %}
