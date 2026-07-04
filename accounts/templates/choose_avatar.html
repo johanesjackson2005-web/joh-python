@@ -1,27 +1,41 @@
 {% load static %}
-
-<h2>Select Your Profile Picture</h2>
-
-<form method="POST">
-{% csrf_token %}
-
-<div class="avatar-grid">
-
-{% for avatar in avatars %}
-<label class="avatar-item">
-
-    <input type="radio" name="avatar" value="{{ avatar }}">
-
-    <img src="{% static 'profile/' %}{{ avatar }}">
-
-</label>
-{% endfor %}
-
+<h2>select you profile picture</h2>
+<p>click photo to select your profile picture then press Continue button </p>
+<div class="top-right">
+<button type="submit" id="continueBtn" disabled>
+    Continue → <i class="fas fa-arrow-right"></i>
+</button>
 </div>
+<form method="POST">
+    {% csrf_token %}
 
-<button type="submit">Continue</button>
+    <div class="avatar-grid">
+        {% for avatar in avatars %}
+        <label class="avatar-item">
+            <input
+                type="radio"
+                name="avatar"
+                value="{{ avatar }}"
+                onchange="enableButton()"
+                hidden>
 
+            <img src="{% static 'profile/' %}{{ avatar }}"
+                 width="150"
+                 height="150">
+        </label>
+        {% endfor %}
+    </div>
+
+    <br>
+
+    
 </form>
+
+<script>
+function enableButton() {
+    document.getElementById("continueBtn").disabled = false;
+}
+</script>
 <style>
 .avatar-grid{
     display:grid;
@@ -454,5 +468,25 @@ p2{
 
 .search-form button:hover {
     background: #2563eb;
+
+}
+button[type="submit"] {
+    background: #63dbebec;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    right: 20px;
+}
+button[type="submit"]:hover {
+    background: #1254e1;
+}
+.top-right{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
 }
 </style>
