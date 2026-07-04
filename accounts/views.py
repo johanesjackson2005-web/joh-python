@@ -10,7 +10,7 @@ from .forms import RegisterForm, ContactForm
 from .models import PasswordResetOTP
 from .email_service import send_otp_email
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Software, tutorial
+from .models import Category, Software, Tutorial
 def home(request):
     categories = Category.objects.all()
     tutorials = Tutorial.objects.order_by("-created_at")[:6]
