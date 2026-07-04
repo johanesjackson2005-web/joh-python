@@ -312,7 +312,7 @@ def search_view(request):
 def choose_avatar(request):
 
     profile = request.user.profile
-    avatars = [f"avatar{i}.png" for i in range(1, 71)]
+    avatars = [f"avatar{i}.jpg" for i in range(1, 71)]
 
     if request.method == "POST":
         profile.avatar = request.POST.get("avatar")

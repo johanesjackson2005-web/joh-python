@@ -4,7 +4,6 @@ from .models import Contact
 
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
-    avatar = forms.ChoiceField(choices=[(f"avatar{i}.png", f"Avatar {i}") for i in range(1, 71)])
 
     class Meta:
         model = User
