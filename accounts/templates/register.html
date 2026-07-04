@@ -42,12 +42,12 @@ function toggleMenu(){
       {% csrf_token %}
       <div class="form-group">
         {% if form.username.errors %}
-        <pre>❌Don't use special characters
-❌Do not use Emojis like 😀, 😎, etc
-❌Do not leave spaces like "John Doe"</pre>
             <span class="error">{{ form.username.errors }}</span>
         {% endif %}
-      {{ form.as_p }}
+      {{ form.as_p }} <pre>❌Don't use special characters
+❌Do not use Emojis like 😀, 😎, etc
+❌Do not leave spaces like "John Doe"
+❌Maximum length is 100 characters</pre>
         <label1>
        <input type="checkbox">
       I agree to the terms and conditions
