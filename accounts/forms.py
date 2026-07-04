@@ -4,6 +4,11 @@ from .models import Contact
 
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
+    username =forms.CharField(label='First Name',
+    help_text='do not use special characters,Emojis, or do no leave spaces',
+            max_length=100, 
+            widget=forms.TextInput
+            (attrs={'placeholder': 'First Name'}))
 
     class Meta:
         model = User
