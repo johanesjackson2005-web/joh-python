@@ -308,20 +308,17 @@ def search_view(request):
         "livestream_results": livestream_results,
     })
 
-
-AVATARS = [f"avatar{i}.png" for i in range(1, 21)]
-
 @login_required
 def choose_avatar(request):
 
     profile = request.user.profile
+    avatars = [f"avatar{i}.png" for i in range(1, 71)]
 
     if request.method == "POST":
-        selected_avatar = request.POST.get("avatar")
-        profile.avatar = selected_avatar
+        profile.avatar = request.POST.get("avatar")
         profile.save()
-        return redirect("home")  # or dashboard
+        return redirect("home")
 
     return render(request, "choose_avatar.html", {
-        "avatars": AVATARS
+        "avatars": avatars
     })
