@@ -42,6 +42,9 @@ function toggleMenu(){
       {% csrf_token %}
       <div class="form-group">
         {% if form.username.errors %}
+        <pre>❌Don't use special characters
+❌Do not use Emojis like 😀, 😎, etc
+❌Do not leave spaces like "John Doe"</pre>
             <span class="error">{{ form.username.errors }}</span>
         {% endif %}
       {{ form.as_p }}
@@ -281,6 +284,11 @@ function toggleMenu(){
     margin-top:20px;
     font-size:14px;
     color:#94a3b8;
+}
+pre{
+    color: #ff4d07;
+    font-size: 17px;
+    font-family: arial, sans-serif;
 }
 
 

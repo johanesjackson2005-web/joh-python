@@ -45,7 +45,7 @@ def register(request):
             email = form.cleaned_data['email']
 
             if User.objects.filter(email=email).exists():
-                messages.error(request, "Email already exists")
+                messages.error(request, "⚠️Email already exists")
                 return redirect('register')
 
             user = form.save(commit=False)
@@ -54,7 +54,7 @@ def register(request):
 
             # Save selected avatar here
 
-            messages.success(request, "Account created successfully")
+            messages.success(request, "✅Account created successfully")
             return redirect('login')
 
     else:
@@ -72,7 +72,7 @@ def login_view(request):
         if user:
             login(request, user)
             return redirect('home')
-        messages.error(request, 'Invalid username or password')
+        messages.error(request, '⚠️ Invalid username or password')
     return render(request, 'login.html')
 
 def logout_view(request):
@@ -116,7 +116,7 @@ def forgot_password(request):
         user = User.objects.filter(email=email).first()
 
         if not user:
-            messages.error(request, "Email does not exist")
+            messages.error(request, "⚠️Email does not exist")
             return redirect("forgot_password")
 
         otp = str(random.randint(100000, 999999))
@@ -131,12 +131,12 @@ def forgot_password(request):
             success = send_otp_email(email, otp)
 
             if not success:
-                messages.error(request, "Failed to send OTP")
+                messages.error(request, "⚠️Failed to send OTP")
                 return redirect("forgot_password")
 
             request.session["reset_email"] = email
 
-            messages.success(request, "OTP sent successfully")
+            messages.success(request, "✅OTP sent successfully")
 
             return redirect("verify_otp")
 
@@ -146,7 +146,7 @@ def forgot_password(request):
 
             messages.error(
                 request,
-                "System error occurred"
+                "⚠️ System error occurred"
             )
 
             return redirect("forgot_password")
@@ -163,7 +163,7 @@ def verify_otp(request):
         user = User.objects.filter(email=email).first()
 
         if not user:
-            messages.error(request, "Session expired")
+            messages.error(request, "⚠️Session expired")
             return redirect("forgot_password")
 
         otp_obj = PasswordResetOTP.objects.filter(
@@ -172,14 +172,14 @@ def verify_otp(request):
         ).last()
 
         if not otp_obj:
-            messages.error(request, "Invalid OTP")
+            messages.error(request, "⚠️Invalid OTP")
             return redirect("verify_otp")
 
         request.session["otp_verified"] = True
 
         messages.success(
             request,
-            "OTP verified successfully"
+            "✅OTP verified successfully"
         )
 
         return redirect("reset_password")
@@ -205,7 +205,7 @@ def reset_password(request):
         user = User.objects.filter(email=email).first()
 
         if not user:
-            messages.error(request, "User not found")
+            messages.error(request, "⚠️ User not found")
             return redirect("forgot_password")
 
         user.set_password(password1)
@@ -215,7 +215,7 @@ def reset_password(request):
 
         messages.success(
             request,
-            "Password changed successfully"
+            "✅Password changed successfully"
         )
 
         return redirect("login")
