@@ -6,10 +6,13 @@ import random
 from django.db.models import Q
 from .models import Software, Tutorial, Category, LiveStream
 from .forms import RegisterForm, ContactForm
-from .models import PasswordResetOTP
+from .models import PasswordResetOTP, Profile
 from .email_service import send_otp_email
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Software, Tutorial
+from django.contrib import messages
+from django.contrib.auth.models import User
+
 def home(request):
     categories = Category.objects.all()
     tutorials = Tutorial.objects.order_by("-created_at")[:6]
@@ -20,26 +23,31 @@ def home(request):
         "tutorials": tutorials
     })
 
-from django.contrib import messages
-from django.contrib.auth.models import User
+
 
 def register(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = RegisterForm(request.POST, request.FILES)
 
         if form.is_valid():
 
             email = form.cleaned_data['email']
 
-            # CHECK IF EMAIL EXISTS
             if User.objects.filter(email=email).exists():
                 messages.error(request, "Email already exists")
                 return redirect('register')
 
-            # CREATE USER
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
+
+            # Save profile photo
+            photo = request.FILES.get("photo")
+
+            Profile.objects.create(
+                user=user,
+                photo=photo
+            )
 
             messages.success(request, "Account created successfully")
             return redirect('login')
@@ -48,6 +56,7 @@ def register(request):
         form = RegisterForm()
 
     return render(request, 'register.html', {'form': form})
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']

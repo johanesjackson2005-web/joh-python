@@ -4,14 +4,14 @@ from .models import Contact
 
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
+    photo = forms.ImageField(required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password', 'photo']
 
 
 class ContactForm(forms.ModelForm):
-
     class Meta:
         model = Contact
         fields = ['username', 'email', 'message']
