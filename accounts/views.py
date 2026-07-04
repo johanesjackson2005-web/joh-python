@@ -13,17 +13,28 @@ from .models import Category, Software, Tutorial
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import Category, Tutorial, LiveStream, Profile
 
 def home(request):
+
     categories = Category.objects.all()
     tutorials = Tutorial.objects.order_by("-created_at")[:6]
     livestreams = LiveStream.objects.order_by("-created_at")[:4]
 
+    if request.user.is_authenticated:
+
+        profile, _ = Profile.objects.get_or_create(user=request.user)
+
+        # CRITICAL CONTROL LOGIC
+        if profile.avatar == "default.jpg":
+            return redirect("choose_avatar")
+
     return render(request, "home.html", {
         "categories": categories,
-        "tutorials": tutorials
+        "tutorials": tutorials,
+        "livestreams": livestreams
     })
-
 
 def register(request):
     if request.method == 'POST':
@@ -308,6 +319,7 @@ def search_view(request):
         "livestream_results": livestream_results,
     })
 
+
 @login_required
 def choose_avatar(request):
 
@@ -315,8 +327,11 @@ def choose_avatar(request):
     avatars = [f"avatar{i}.jpg" for i in range(1, 71)]
 
     if request.method == "POST":
-        profile.avatar = request.POST.get("avatar")
+        selected = request.POST.get("avatar")
+
+        profile.avatar = selected
         profile.save()
+
         return redirect("home")
 
     return render(request, "choose_avatar.html", {
