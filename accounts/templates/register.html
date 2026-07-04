@@ -41,7 +41,6 @@ function toggleMenu(){
 {% endif %}
       {% csrf_token %}
       <div class="form-group">
-        {{ form.username.label_tag }}
         {{ form.username }}
         {% if form.username.errors %}
             <span class="error">{{ form.username.errors }}</span>
