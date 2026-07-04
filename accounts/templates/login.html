@@ -43,15 +43,16 @@ function toggleMenu(){
 
                 {% csrf_token %}
 
-                <label for="username">Username :</label>
+                <label for="username">First Name :</label>
 
                 <input 
                     type="text"
                     id="username"
                     name="username"
-                    placeholder="Enter username"
+                    placeholder="Enter first name"
                     required
                 >
+                {{ form.username.help_text }}<br>
 
                 <label for="password">Password :</label>
 
