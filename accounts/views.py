@@ -286,10 +286,7 @@ def search_view(request):
     for word in tokens:
         software_q |= Q(name__icontains=word)
 
-        tutorial_q |= (
-            Q(title__icontains=word) |
-            Q(software__name__icontains=word)
-        )
+        tutorial_q = Q(software__name__icontains=query) | Q(title__icontains=query)
 
         category_q |= Q(name__icontains=word)
 
