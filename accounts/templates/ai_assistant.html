@@ -9,7 +9,8 @@
   <style>
     body{background:#071428;color: #f2f4f6;font-family:Segoe UI,Arial;min-height:100vh}
     .assistant-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-    .assistant-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.04)}
+    .assistant-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.04);box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    @media (max-width:480px){.assistant-avatar{width:60px;height:60px}}
     .chat-wrap{max-width:820px;margin:90px auto;padding:20px}
     .chat-box{background:rgba(255,255,255,0.03);border-radius:12px;padding:16px;height:60vh;overflow:auto}
     .input-row{display:flex;gap:8px;margin-top:12px}

@@ -1,8 +1,12 @@
 /* Styles for AI widget */
 #ai-widget{position:fixed;right:18px;bottom:18px;z-index:1200}
 .ai-open-btn{background:transparent;border:0;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
-.ai-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.06);box-shadow:0 6px 18px rgba(2,6,23,0.6);display:block}
-@media (max-width:480px){.ai-avatar{width:48px;height:48px}}
+.ai-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.06);box-shadow:0 8px 22px rgba(2,6,23,0.6);display:block}
+@media (max-width:480px){.ai-avatar{width:60px;height:60px}}
+
+/* label next to avatar */
+.ai-label{margin-left:10px;color:white;font-weight:700;font-size:0.95rem;display:inline-block;vertical-align:middle}
+@media (max-width:420px){.ai-label{display:none}}
 
 /* unread badge */
 .ai-badge{position:absolute;top:-4px;right:-4px;min-width:14px;height:14px;border-radius:50%;background:#ef4444;color:white;font-size:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(2,6,23,0.4);transform-origin:center;animation:none}
