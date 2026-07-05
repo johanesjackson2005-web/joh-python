@@ -8,14 +8,16 @@
   // choose a room name: allow 'public' for site-wide chat or 'pm_<id1>_<id2>' for private
   function computeRoomName(){
     const scope = qs('#chat-scope') ? qs('#chat-scope').value : null;
-    const target = qs('#chat-target') ? qs('#chat-target').value.trim() : '';
+    const targetRaw = qs('#chat-target') ? qs('#chat-target').value.trim() : '';
+    // normalize function for usernames to make safe room tokens
+    function normalizeName(s){ return String(s||'').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '_'); }
+    const target = normalizeName(targetRaw);
+    const meName = normalizeName(username);
     if(scope === 'public' || (!scope && !userId)) return 'public';
     if(scope === 'private'){
-      const me = parseInt(userId)||null;
-      const other = parseInt(target)||null;
-      if(me && other && me !== other){
-        const ids = [me, other].sort((a,b)=>a-b);
-        return 'pm_' + ids[0] + '_' + ids[1];
+      if(meName && target && meName !== target){
+        const parts = [meName, target].sort();
+        return 'pm_' + parts[0] + '_' + parts[1];
       }
       // invalid private target -> fallback to public
       return 'public';
@@ -68,7 +70,7 @@
     const list = qs('#chat-messages');
     if(!list) return;
     const el = document.createElement('div');
-    el.className = 'chat-line' + (outgoing? ' outgoing':'');
+    el.className = 'chat-line' + (outgoing? ' outgoing':' incoming');
     el.innerHTML = '<strong>'+escapeHtml(user)+':</strong> '+escapeHtml(text);
     list.appendChild(el);
     list.scrollTop = list.scrollHeight;
@@ -134,6 +136,63 @@
   }
 
   // UI wiring
+  // Emoji UI
+  const emojiBtn = qs('#emoji-btn');
+  const emojiPicker = qs('#emoji-picker');
+  function insertEmoji(ch){ const input = qs('#chat-input'); if(!input) return; try{ const start = input.selectionStart || 0; const end = input.selectionEnd || 0; const v = input.value; input.value = v.slice(0,start) + ch + v.slice(end); input.selectionStart = input.selectionEnd = start + ch.length; input.focus(); }catch(e){ input.value = input.value + ch; } }
+  if(emojiPicker){
+    emojiPicker.addEventListener('click', function(e){ if(e.target && e.target.classList && e.target.classList.contains('emoji-swatch')){ insertEmoji(e.target.textContent); emojiPicker.style.display='none'; } });
+    // keyboard navigation for emoji picker
+    (function(){
+      const swatches = Array.from(emojiPicker.querySelectorAll('.emoji-swatch'));
+      if(!swatches.length) return;
+      let active = -1;
+      function setActive(i){
+        if(active >= 0 && swatches[active]) swatches[active].classList.remove('emoji-active');
+        active = i;
+        if(active >= 0 && swatches[active]){
+          swatches[active].classList.add('emoji-active');
+          swatches[active].scrollIntoView({block:'nearest'});
+        }
+      }
+      swatches.forEach((s, idx)=>{
+        s.tabIndex = 0;
+        s.setAttribute('role','button');
+        s.addEventListener('keydown', function(ev){ if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); s.click(); } });
+        s.addEventListener('mouseover', ()=> setActive(idx));
+      });
+
+      function onKey(e){
+        if(emojiPicker.style.display !== 'block') return;
+        const cols = Math.max(1, Math.floor(emojiPicker.clientWidth / 32));
+        if(e.key === 'ArrowRight'){
+          e.preventDefault(); setActive(Math.min(active+1, swatches.length-1));
+        } else if(e.key === 'ArrowLeft'){
+          e.preventDefault(); setActive(Math.max(active-1, 0));
+        } else if(e.key === 'ArrowDown'){
+          e.preventDefault(); setActive(Math.min(active + cols, swatches.length-1));
+        } else if(e.key === 'ArrowUp'){
+          e.preventDefault(); setActive(Math.max(active - cols, 0));
+        } else if(e.key === 'Enter' && active >= 0){
+          e.preventDefault(); swatches[active].click();
+        } else if(e.key === 'Escape'){
+          emojiPicker.style.display = 'none';
+        }
+      }
+
+      // when opening the picker via button, set focus to first swatch and enable key listener
+      if(emojiBtn){
+        emojiBtn.addEventListener('click', function(){ if(emojiPicker.style.display === 'block'){ setActive(0); document.addEventListener('keydown', onKey); } else { document.removeEventListener('keydown', onKey); } });
+        // ensure we remove listener when picker is closed by outside click
+        document.addEventListener('click', function(ev){ if(emojiPicker && emojiPicker.style.display === 'block' && ev.target !== emojiBtn && !emojiPicker.contains(ev.target)){ document.removeEventListener('keydown', onKey); } });
+      }
+    })();
+  }
+  if(emojiBtn){
+    emojiBtn.addEventListener('click', function(e){ e.stopPropagation(); if(!emojiPicker) return; emojiPicker.style.display = (emojiPicker.style.display === 'block' ? 'none' : 'block'); });
+    // hide picker when clicking outside
+    document.addEventListener('click', function(e){ if(emojiPicker && e.target !== emojiBtn && !emojiPicker.contains(e.target)){ emojiPicker.style.display='none'; } });
+  }
   qs('#chat-open') && qs('#chat-open').addEventListener('click', function(){ const modal = qs('#chat-modal'); var willOpen = modal.style.display !== 'block'; modal.style.display = willOpen ? 'block' : 'none'; qs('#chat-input') && qs('#chat-input').focus(); if(willOpen){ // clear unread count when opening
     unreadCount = 0; if(badgeEl){ badgeEl.style.display='none'; badgeEl.classList.remove('pulse'); badgeEl.innerText = ''; } }
   });
@@ -146,7 +205,48 @@
     scopeEl.addEventListener('change', function(){ connect(); });
   }
   if(targetEl){
-    targetEl.addEventListener('blur', function(){ connect(); });
+      targetEl.addEventListener('blur', function(){ setTimeout(()=> dropdown.style.display='none', 150); connect(); });
+        // autocomplete dropdown
+        const dropdown = document.createElement('div');
+        dropdown.style.position = 'absolute';
+        dropdown.style.background = '#fff';
+        dropdown.style.color = '#000';
+        dropdown.style.border = '1px solid rgba(0,0,0,0.08)';
+        dropdown.style.zIndex = 9999;
+        dropdown.style.display = 'none';
+        dropdown.style.maxHeight = '180px';
+        dropdown.style.overflow = 'auto';
+        dropdown.style.minWidth = '160px';
+        targetEl.parentElement.style.position = 'relative';
+        targetEl.parentElement.appendChild(dropdown);
+
+        let acTimer = null;
+        targetEl.addEventListener('input', function(){
+          const q = targetEl.value.trim();
+          if(acTimer) clearTimeout(acTimer);
+          if(!q){ dropdown.style.display='none'; return; }
+          acTimer = setTimeout(()=>{
+            fetch('/accounts/users/search/?q=' + encodeURIComponent(q))
+              .then(r=>r.json())
+              .then(data=>{
+                dropdown.innerHTML='';
+                (data.results||[]).forEach(name=>{
+                  const item = document.createElement('div');
+                  item.textContent = name;
+                  item.style.padding = '6px 8px';
+                  item.style.cursor = 'pointer';
+                  item.addEventListener('click', ()=>{
+                    targetEl.value = name;
+                    dropdown.style.display='none';
+                    connect();
+                  });
+                  dropdown.appendChild(item);
+                });
+                dropdown.style.display = dropdown.children.length ? 'block' : 'none';
+              })
+              .catch(()=>{ dropdown.style.display='none'; });
+          }, 220);
+        });
   }
   document.addEventListener('keydown', function(e){ if(e.key === 'Enter' && document.activeElement.id === 'chat-input'){ e.preventDefault(); sendMessage(); } });
 

@@ -35,13 +35,49 @@
 						<option value="public">Public</option>
 						<option value="private">Private</option>
 					</select>
-					<input id="chat-target" placeholder="User ID" style="width:60px;padding:4px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:white" />
+					<input id="chat-target" placeholder="Username" style="width:120px;padding:4px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:white" />
 					<button id="chat-close" style="background:transparent;border:none;color:white;cursor:pointer">✕</button>
 				</div>
 			</div>
 			<div id="chat-messages" style="padding:12px;height:calc(100% - 94px);overflow:auto;color:#dbeafe"></div>
-			<div style="display:flex;gap:8px;padding:10px;background:rgba(255,255,255,0.02)">
-				<input id="chat-input" placeholder="Say hello..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit">
+			<div style="display:flex;gap:8px;padding:10px;background:rgba(255,255,255,0.02);align-items:center">
+				<button id="emoji-btn" class="emoji-btn" title="Insert emoji">😊</button>
+				<div style="position:relative;flex:1">
+					<input id="chat-input" placeholder="Say hello..." style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit">
+					<div id="emoji-picker">
+						<!-- expanded emoji palette (30) -->
+						<span class="emoji-swatch">😀</span>
+						<span class="emoji-swatch">😁</span>
+						<span class="emoji-swatch">😂</span>
+						<span class="emoji-swatch">🤣</span>
+						<span class="emoji-swatch">😊</span>
+						<span class="emoji-swatch">🙂</span>
+						<span class="emoji-swatch">😉</span>
+						<span class="emoji-swatch">😍</span>
+						<span class="emoji-swatch">😘</span>
+						<span class="emoji-swatch">😎</span>
+						<span class="emoji-swatch">🤩</span>
+						<span class="emoji-swatch">🤔</span>
+						<span class="emoji-swatch">😅</span>
+						<span class="emoji-swatch">😭</span>
+						<span class="emoji-swatch">😡</span>
+						<span class="emoji-swatch">😴</span>
+						<span class="emoji-swatch">🤝</span>
+						<span class="emoji-swatch">👍</span>
+						<span class="emoji-swatch">👎</span>
+						<span class="emoji-swatch">🎉</span>
+						<span class="emoji-swatch">🔥</span>
+						<span class="emoji-swatch">🚀</span>
+						<span class="emoji-swatch">❤️</span>
+						<span class="emoji-swatch">🙏</span>
+						<span class="emoji-swatch">🥳</span>
+						<span class="emoji-swatch">🤗</span>
+						<span class="emoji-swatch">🤖</span>
+						<span class="emoji-swatch">🫶</span>
+						<span class="emoji-swatch">💯</span>
+						<span class="emoji-swatch">🔔</span>
+					</div>
+				</div>
 				<button id="chat-send" style="background:#06b6d4;border:none;color:#021018;padding:8px 12px;border-radius:8px">Send</button>
 			</div>
 		</div>

@@ -22,3 +22,16 @@
 
 /* small screen */
 @media (max-width:420px){#ai-modal{right:12px;left:12px;width:auto;height:60vh;bottom:80px}}
+
+/* Chat message bubbles */
+.chat-line{display:block;margin:6px 0;padding:8px 12px;border-radius:12px;max-width:78%;word-wrap:break-word;background:rgba(255,255,255,0.03);color:#e6eef8}
+.chat-line.outgoing{margin-left:auto;background:#fef3c7;color:#082224;text-align:right;border-bottom-right-radius:4px}
+.chat-line.incoming{margin-right:auto;background:rgba(255,255,255,0.04);color:#e6eef8;border-bottom-left-radius:4px}
+
+/* Emoji picker */
+#emoji-picker{display:none;position:absolute;bottom:48px;left:0;background:#071428;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;box-shadow:0 10px 30px rgba(2,6,23,0.6);z-index:1400;max-width:260px}
+.emoji-swatch{cursor:pointer;padding:6px;font-size:18px;display:inline-block}
+.emoji-btn{background:transparent;border:none;color:white;cursor:pointer;font-size:18px}
+/* active keyboard focus state */
+.emoji-swatch.emoji-active{outline:2px solid rgba(96,165,250,0.9);border-radius:6px;background:rgba(96,165,250,0.06)}
+.emoji-swatch:focus{outline:2px solid rgba(96,165,250,0.9);border-radius:6px}

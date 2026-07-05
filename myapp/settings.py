@@ -161,14 +161,22 @@ REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
 if REDIS_URL.startswith('redis://') and 'upstash.io' in REDIS_URL:
     REDIS_URL = REDIS_URL.replace('redis://', 'rediss://', 1)
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [REDIS_URL],
+# Use in-memory channel layer for local development (when DEBUG=True)
+if DEBUG:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+            },
+        },
+    }
 
 
 # CSRF and security settings

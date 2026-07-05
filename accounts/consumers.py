@@ -30,12 +30,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 else:
                     allowed = (user.id == uid)
 
-        # Private (peer-to-peer) rooms: format 'pm_<id1>_<id2>' where either participant may join
+        # Private (peer-to-peer) rooms: format 'pm_<name1>_<name2>' where either participant may join
         elif self.room_name.startswith('pm_'):
             try:
                 parts = self.room_name.split('_', 2)
-                a = int(parts[1])
-                b = int(parts[2])
+                a = parts[1]
+                b = parts[2]
             except Exception:
                 a = b = None
 
@@ -46,7 +46,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 if user.is_staff:
                     allowed = True
                 else:
-                    allowed = (user.id == a or user.id == b)
+                    uname = getattr(user, 'username', '')
+                    allowed = (uname == a or uname == b)
 
         if not allowed:
             await self.close()

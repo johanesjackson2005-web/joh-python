@@ -21,11 +21,13 @@ import json
 import requests
 from django.contrib.admin.views.decorators import staff_member_required
 
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.http import HttpResponse
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
 
 
 @csrf_exempt
@@ -408,6 +410,7 @@ def choose_avatar(request):
 
 
 @xframe_options_exempt
+@ensure_csrf_cookie
 def ai_assistant(request):
     """Render AI assistant chat page.
 
@@ -461,7 +464,6 @@ def ai_assistant_api(request):
 
     if not message:
         return JsonResponse({'answer': "Please ask a question about the site or features."})
-
     # If OpenAI API key provided in Django settings, forward the request
     api_key = getattr(settings, 'OPENAI_API_KEY', None)
 
@@ -539,3 +541,14 @@ def ai_assistant_api(request):
         answer = "I can help with site navigation (tutorials, downloads, livestreams, contact). Try asking 'Where are tutorials?' or 'How to download software?'."
 
     return JsonResponse({'answer': answer})
+
+
+def user_search(request):
+    """Return JSON list of usernames matching query param `q` for autocomplete."""
+    q = request.GET.get('q', '').strip()
+    User = get_user_model()
+    results = []
+    if q:
+        qs = User.objects.filter(username__icontains=q).order_by('username')[:12]
+        results = [u.username for u in qs]
+    return JsonResponse({'results': results})
