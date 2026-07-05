@@ -136,7 +136,7 @@ def forgot_password(request):
 
             request.session["reset_email"] = email
 
-            messages.success(request, "✅OTP sent successfully   check your email inbox or spam folderfor the OTP")
+            messages.success(request, "✅OTP sent successfully   check your email inbox or spam folder for the OTP")
 
             return redirect("verify_otp")
 
