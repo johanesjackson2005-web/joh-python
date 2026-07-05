@@ -22,6 +22,8 @@ import requests
 from django.contrib.admin.views.decorators import staff_member_required
 
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.http import HttpResponse
 
 
 @csrf_exempt
@@ -388,9 +390,41 @@ def choose_avatar(request):
     })
 
 
+@xframe_options_exempt
 def ai_assistant(request):
-    """Render AI assistant chat page."""
+    """Render AI assistant chat page.
+
+    Exempt from X-Frame-Options so the page can be embedded in a site-wide iframe/widget.
+    """
     return render(request, 'ai_assistant.html')
+
+
+def healthz(request):
+    """Simple health endpoint to verify the app is responding."""
+    return JsonResponse({'status': 'ok'})
+
+
+def header_inspector(request):
+    """Return key response headers as seen after clickjacking middleware.
+
+    This manually runs the XFrameOptions middleware to show whether
+    the `X-Frame-Options` header would be present for a normal response.
+    Use this to confirm embedding is allowed on the deployed host.
+    """
+    from django.middleware.clickjacking import XFrameOptionsMiddleware
+
+    resp = JsonResponse({'ok': True})
+    try:
+        # Let the middleware attach any frame options header it would normally add
+        processed = XFrameOptionsMiddleware().process_response(request, resp)
+        if processed is not None:
+            resp = processed
+    except Exception:
+        pass
+
+    keys = ['X-Frame-Options', 'Content-Security-Policy']
+    headers = {k: resp.get(k) for k in keys}
+    return JsonResponse({'headers': headers})
 
 
 def ai_assistant_api(request):

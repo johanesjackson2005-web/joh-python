@@ -1,0 +1,24 @@
+/* Base page styles used by site pages */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #051622;
+  color: #edf2f7;
+}
+a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
