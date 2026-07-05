@@ -169,3 +169,24 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+# CSRF and security settings
+# Allow configuring trusted origins via the CSRF_TRUSTED_ORIGINS env var (comma-separated).
+env_csrf = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if env_csrf:
+    CSRF_TRUSTED_ORIGINS = [s.strip() for s in env_csrf.split(',') if s.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://johanes2005.onrender.com',
+        'http://localhost:8001',
+        'http://127.0.0.1:8001',
+    ]
+
+# Secure cookie settings: enable when not in DEBUG (production)
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+# Optionally redirect HTTP to HTTPS in production
+SECURE_SSL_REDIRECT = not DEBUG
