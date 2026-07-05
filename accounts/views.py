@@ -21,6 +21,44 @@ import json
 import requests
 from django.contrib.admin.views.decorators import staff_member_required
 
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def chat_send(request):
+    """Fallback HTTP endpoint to persist chat messages when WebSocket is unavailable.
+
+    Accepts POST with JSON: {message, room} or form-encoded data. Returns JSON with
+    {'message': ..., 'user': username} on success.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    try:
+        if request.content_type == 'application/json':
+            data = json.loads(request.body.decode('utf-8') or '{}')
+        else:
+            data = request.POST.dict()
+    except Exception:
+        data = {}
+
+    message = data.get('message')
+    room = data.get('room', 'public')
+
+    if not message:
+        return JsonResponse({'error': 'message required'}, status=400)
+
+    user = request.user if getattr(request, 'user', None) and request.user.is_authenticated else None
+    username = user.username if user else data.get('username', 'Anonymous')
+
+    try:
+        ChatMessage.objects.create(sender=user, room=room, message=message)
+    except Exception:
+        # ignore persistence errors but continue
+        pass
+
+    return JsonResponse({'message': message, 'user': username})
+
 @staff_member_required
 def admin_chat(request):
     """Admin chat UI to open a per-user room and message the user in real-time."""

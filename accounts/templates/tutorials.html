@@ -42,11 +42,25 @@ function toggleMenu(){
             <li><a href="/forgot-password/">Forgot Password</a></li>
         {% endif %}
     </ul>
-{% empty %}
+    </ul>
 
-<h2>No tutorials available.</h2>
+<div class="content-wrapper">
+    <div class="hero">
+        <h1>Tutorials</h1>
+        <p>Browse our latest tutorials and guides.</p>
+    </div>
 
-{% endfor %}
+    <div class="tools-grid">
+        {% for tutorial in tutorials %}
+        <div class="tool-card">
+            <h3>{{ tutorial.title }}</h3>
+            <p>{{ tutorial.description|truncatewords:30 }}</p>
+            <a href="{% url 'tutorial_detail' tutorial.id %}" class="btn">View</a>
+        </div>
+        {% empty %}
+        <h2>No tutorials available.</h2>
+        {% endfor %}
+    </div>
 
 </div>
 {% include 'partials/contact.html' %}

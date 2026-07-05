@@ -34,11 +34,43 @@
   function sendMessage(){
     const input = qs('#chat-input');
     const text = input && input.value.trim();
-    if(!text || socket.readyState !== WebSocket.OPEN) return;
-    const payload = {message: text, username: username};
-    socket.send(JSON.stringify(payload));
-    appendMessage(username, text, true);
-    input.value = '';
+    if(!text) return;
+
+    // If WS is open, send over socket
+    if(socket && socket.readyState === WebSocket.OPEN){
+      const payload = {message: text, username: username};
+      socket.send(JSON.stringify(payload));
+      appendMessage(username, text, true);
+      input.value = '';
+      return;
+    }
+
+    // Fallback: send via HTTP POST to persist the message
+    try{
+      const csrftoken = (function(){
+        const match = document.cookie.match(/(^|;)\s*csrftoken=([^;]+)/);
+        return match ? decodeURIComponent(match[2]) : '';
+      })();
+
+      fetch('/chat/send/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({message: text, room: roomName, username: username})
+      }).then(resp=>resp.json()).then(data=>{
+        if(data && !data.error){
+          appendMessage(data.user||username, data.message||text, true);
+        } else {
+          console.error('Chat send error', data);
+        }
+      }).catch(err=>{ console.error('Chat POST error', err); });
+
+      input.value = '';
+    }catch(err){
+      console.error(err);
+    }
   }
 
   // UI wiring
