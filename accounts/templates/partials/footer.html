@@ -15,13 +15,13 @@
 <div id="ai-widget" style="position:fixed;right:18px;bottom:18px;z-index:1200">
 	<!-- AI avatar button: shows user's profile image if authenticated, else site logo -->
 	<button id="ai-open" title="Ask the assistant" aria-label="Open AI assistant" class="ai-open-btn">
-		<img class="ai-avatar" src="{% if user.is_authenticated and user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'image/screenshot.png' %}{% endif %}" alt="Assistant">
+		<img class="ai-avatar" src="{% if user.is_authenticated and user.profile.avatar %}{% static 'image/screenshot.png' %}{% else %}{% static 'image/screenshot.png' %}{% endif %}" alt="Assistant">
 		<span class="ai-badge" id="ai-badge" aria-hidden="true" style="display:none">•</span>
 	</button>
 	<!-- Chat widget (user-to-user / admin-to-user) -->
 	<div id="chat-widget" data-user="{% if user.is_authenticated %}{{ user.id }}{% endif %}" data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}">
 		<button id="chat-open" title="Open chat" aria-label="Open chat" class="ai-open-btn" style="margin-left:10px">
-			<img class="ai-avatar" src="{% static 'image/screenshot.png' %}" alt="Chat">
+			<img class="ai-avatar" src="{% static 'image/icon.png' %}" alt="Chat">
 			<span class="ai-badge" id="chat-badge" aria-hidden="true" style="display:none">•</span>
 		</button>
 
