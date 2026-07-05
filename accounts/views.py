@@ -179,7 +179,7 @@ def verify_otp(request):
 
         messages.success(
             request,
-            "✅OTP verified successfully"
+            "✅OTP verified successfully",'check your email inbox or spam folder for the OTP'
         )
 
         return redirect("reset_password")
