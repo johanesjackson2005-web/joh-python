@@ -30,6 +30,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 else:
                     allowed = (user.id == uid)
 
+        # Private (peer-to-peer) rooms: format 'pm_<id1>_<id2>' where either participant may join
+        elif self.room_name.startswith('pm_'):
+            try:
+                parts = self.room_name.split('_', 2)
+                a = int(parts[1])
+                b = int(parts[2])
+            except Exception:
+                a = b = None
+
+            user = self.scope.get('user', None)
+            if not user or not user.is_authenticated:
+                allowed = False
+            else:
+                if user.is_staff:
+                    allowed = True
+                else:
+                    allowed = (user.id == a or user.id == b)
+
         if not allowed:
             await self.close()
             return
