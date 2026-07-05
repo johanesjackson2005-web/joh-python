@@ -24,6 +24,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.http import HttpResponse
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 @csrf_exempt
@@ -57,6 +59,21 @@ def chat_send(request):
         ChatMessage.objects.create(sender=user, room=room, message=message)
     except Exception:
         # ignore persistence errors but continue
+        pass
+
+    # Broadcast to the channel layer so connected WebSocket clients in the room see the message
+    try:
+        channel_layer = get_channel_layer()
+        payload = {'message': message, 'user': username}
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{room}',
+            {
+                'type': 'chat.message',
+                'text': json.dumps(payload)
+            }
+        )
+    except Exception:
+        # do not fail the request if broadcasting fails
         pass
 
     return JsonResponse({'message': message, 'user': username})
