@@ -84,18 +84,16 @@ function toggleMenu(){
 
             min-height:100vh;
 
-            display:flex;
-            justify-content:center;
-            align-items:center;
-
             font-family:Arial, sans-serif;
 
-            padding:20px;
+            padding:20px 20px 60px; /* leave space for footer */
         }
 
+        /* ensure content starts below the fixed navbar */
         .container{
             width:100%;
-            max-width:500px;
+            max-width:700px;
+            margin:100px auto 40px; /* push down from top so navbar doesn't overlap */
 
             background:rgba(0,0,0,0.82);
 
@@ -202,10 +200,10 @@ function toggleMenu(){
         /* Tablet */
 
         @media(max-width:768px){
-
             .container{
-                max-width:90%;
-                padding:30px;
+                max-width:94%;
+                padding:28px;
+                margin:110px auto 30px;
             }
 
             h2{
@@ -216,22 +214,22 @@ function toggleMenu(){
         /* Phone */
 
         @media(max-width:480px){
-
             body{
-                padding:15px;
+                padding:12px 12px 80px;
             }
 
             .container{
-                padding:22px;
+                padding:18px;
+                margin:120px 8px 20px;
             }
 
             h2{
-                font-size:24px;
+                font-size:22px;
             }
 
             input,
             textarea{
-                padding:12px;
+                padding:10px;
                 font-size:14px;
             }
 

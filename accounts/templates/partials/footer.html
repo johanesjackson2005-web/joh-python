@@ -21,7 +21,7 @@
 	</button>
 	<!-- Chat widget (user-to-user / admin-to-user) -->
 	<div id="chat-widget" data-user="{% if user.is_authenticated %}{{ user.id }}{% endif %}" data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}">
-		<button id="chat-open" title="Open chat" aria-label="Open chat" class="ai-open-btn" style="margin-left:10px">
+		<button id="chat-open" title="Open chat" aria-label="Open chat" class="ai-open-btn">
 			<img class="ai-avatar" src="{% static 'image/icon.png' %}" alt="Chat">
 			<span class="ai-badge" id="chat-badge" aria-hidden="true" style="display:none">•</span>
 			<span class="ai-label" id="chat-label">Site Chat</span>

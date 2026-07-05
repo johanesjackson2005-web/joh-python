@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Verify OTP</title>
@@ -79,20 +80,18 @@ function toggleMenu(){
 body{
     background: #0f172a;
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 20px 20px 80px;
 }
 
 .box{
     width: 100%;
-    max-width: 420px;
+    max-width: 460px;
+    margin: 100px auto 24px;
     background: white;
-    padding: 35px;
+    padding: 28px;
     border-radius: 12px;
-    border: 10px solid #a0c4c2;
+    border: 8px solid #a0c4c2;
 }
 
 h2{
@@ -132,18 +131,18 @@ p{
 }
 
 @media(max-width: 480px){
-
     .box{
-        padding: 22px;
+        padding: 18px;
         border-width: 6px;
+        margin:120px 12px 20px;
     }
 
     h2{
-        font-size: 24px;
+        font-size: 22px;
     }
 
     input{
-        padding: 12px;
+        padding: 10px;
         font-size: 14px;
     }
 

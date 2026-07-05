@@ -1,12 +1,29 @@
-{%if validlink%}
-<h1> set new password</h1>
-<form method='post'>
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type='submit'> send </button>
-</form>
-{%else%}
-<p>The validation link is not valid </p>
-{% endif %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Set New Password</title>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;vertical-align:middle;border-radius:6px"> <span style="margin-left:8px;color:white;font-weight:600">JMJ SOFTWARES</span></a></div>
+</nav>
+
+<div class="box" style="max-width:520px;margin:110px auto 30px;padding:22px;background:#fff;border-radius:10px;border:8px solid #a0c4c2">
+    {% if validlink %}
+        <h2>Set New Password</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Send</button>
+        </form>
+    {% else %}
+        <p>The validation link is not valid.</p>
+    {% endif %}
+</div>
+
 {% include 'partials/contact.html' %}
 {% include 'partials/footer.html' %}
+</body>
+</html>

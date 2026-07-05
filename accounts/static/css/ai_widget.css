@@ -1,5 +1,7 @@
 /* Styles for AI widget */
-#ai-widget{position:fixed;right:18px;bottom:18px;z-index:1200}
+.ai-widget-wrap{position:fixed;right:18px;bottom:18px;z-index:1200;display:flex;flex-direction:row;align-items:center;gap:18px}
+/* keep backward compatibility: make #ai-widget a flex row as well */
+#ai-widget{position:relative;display:flex;flex-direction:row;align-items:center;gap:18px}
 .ai-open-btn{background:transparent;border:0;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
 .ai-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.06);box-shadow:0 8px 22px rgba(2,6,23,0.6);display:block}
 @media (max-width:480px){.ai-avatar{width:60px;height:60px}}
