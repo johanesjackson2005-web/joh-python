@@ -112,3 +112,16 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class ChatMessage(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    room = models.CharField(max_length=150, db_index=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.sender.username if self.sender else 'Anonymous'} @ {self.room} : {self.message[:40]}"

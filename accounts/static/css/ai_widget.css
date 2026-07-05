@@ -1,0 +1,18 @@
+/* Styles for AI widget */
+#ai-widget{position:fixed;right:18px;bottom:18px;z-index:1200}
+.ai-open-btn{background:transparent;border:0;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.ai-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.06);box-shadow:0 6px 18px rgba(2,6,23,0.6);display:block}
+@media (max-width:480px){.ai-avatar{width:48px;height:48px}}
+
+/* unread badge */
+.ai-badge{position:absolute;top:-4px;right:-4px;min-width:14px;height:14px;border-radius:50%;background:#ef4444;color:white;font-size:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(2,6,23,0.4);transform-origin:center;animation:none}
+.ai-badge.pulse{animation:aiPulse 1.6s infinite}
+@keyframes aiPulse{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:0.8}100%{transform:scale(1);opacity:1}}
+
+/* modal tweaks */
+#ai-modal{display:none;position:fixed;right:18px;bottom:72px;width:380px;height:520px;border-radius:12px;overflow:hidden;background:#071428;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(2,6,23,0.6)}
+#ai-modal .ai-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:linear-gradient(90deg,rgba(6,8,23,0.9),rgba(8,18,34,0.85));color:white}
+#ai-frame{width:100%;height:calc(100% - 44px);border:0;background:transparent}
+
+/* small screen */
+@media (max-width:420px){#ai-modal{right:12px;left:12px;width:auto;height:60vh;bottom:80px}}

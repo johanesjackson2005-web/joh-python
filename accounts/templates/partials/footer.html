@@ -1,0 +1,74 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/ai_widget.css' %}">
+<!-- FOOTER (shared) -->
+<footer class="footer text-center">
+
+<h4>JMJ Softwares</h4>
+
+<p>Developed by JOHANES MWESIGWA JACKSON</p>
+
+<p>© 2026 All Rights Reserved.</p>
+
+</footer>
+
+<!-- AI Assistant widget trigger (appears on pages with this footer) -->
+<div id="ai-widget" style="position:fixed;right:18px;bottom:18px;z-index:1200">
+	<!-- AI avatar button: shows user's profile image if authenticated, else site logo -->
+	<button id="ai-open" title="Ask the assistant" aria-label="Open AI assistant" class="ai-open-btn">
+		<img class="ai-avatar" src="{% if user.is_authenticated and user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'image/screenshot.png' %}{% endif %}" alt="Assistant">
+		<span class="ai-badge" id="ai-badge" aria-hidden="true" style="display:none">•</span>
+	</button>
+	<!-- Chat widget (user-to-user / admin-to-user) -->
+	<div id="chat-widget" data-user="{% if user.is_authenticated %}{{ user.id }}{% endif %}" data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}">
+		<button id="chat-open" title="Open chat" aria-label="Open chat" class="ai-open-btn" style="margin-left:10px">
+			<img class="ai-avatar" src="{% static 'image/screenshot.png' %}" alt="Chat">
+			<span class="ai-badge" id="chat-badge" aria-hidden="true" style="display:none">•</span>
+		</button>
+
+		<div id="chat-modal" style="display:none;position:fixed;right:18px;bottom:72px;width:320px;height:440px;border-radius:12px;overflow:hidden;background:#071428;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(2,6,23,0.6);z-index:1300">
+			<div class="ai-header">
+				<div style="font-weight:700">Site Chat</div>
+				<div>
+					<button id="chat-close" style="background:transparent;border:none;color:white;cursor:pointer">✕</button>
+				</div>
+			</div>
+			<div id="chat-messages" style="padding:12px;height:calc(100% - 94px);overflow:auto;color:#dbeafe"></div>
+			<div style="display:flex;gap:8px;padding:10px;background:rgba(255,255,255,0.02)">
+				<input id="chat-input" placeholder="Say hello..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit">
+				<button id="chat-send" style="background:#06b6d4;border:none;color:#021018;padding:8px 12px;border-radius:8px">Send</button>
+			</div>
+		</div>
+	</div>
+	<div id="ai-modal">
+		<div class="ai-header">
+			<div style="font-weight:700">JMJ Assistant</div>
+			<div>
+				<button id="ai-popout" style="margin-right:8px;background:transparent;border:none;color:white;cursor:pointer">⤢</button>
+				<button id="ai-close" style="background:transparent;border:none;color:white;cursor:pointer">✕</button>
+			</div>
+		</div>
+		<iframe id="ai-frame" src="/ai-assistant/"></iframe>
+	</div>
+	</div>
+
+	<script src="{% static 'js/chat_widget.js' %}"></script>
+
+<script>
+	(function(){
+		var openBtn = document.getElementById('ai-open');
+		var modal = document.getElementById('ai-modal');
+		var closeBtn = document.getElementById('ai-close');
+		var popout = document.getElementById('ai-popout');
+		var badge = document.getElementById('ai-badge');
+
+		function showModal(){ modal.style.display = 'block'; badge && (badge.style.display = 'none'); badge && badge.classList.remove('pulse'); }
+		function hideModal(){ modal.style.display = 'none'; }
+
+		openBtn && openBtn.addEventListener('click', function(){ if(modal.style.display === 'none' || modal.style.display === ''){ showModal(); } else { hideModal(); } });
+		closeBtn && closeBtn.addEventListener('click', function(){ hideModal(); });
+		popout && popout.addEventListener('click', function(){ window.open('/ai-assistant/','_blank'); });
+
+		// Listen for messages from iframe to toggle unread badge
+		window.addEventListener('message', function(e){ try{ var d = e.data; if(d && d.type === 'ai-response'){ if(modal.style.display === 'none' || modal.style.display === ''){ if(badge){ badge.style.display = 'flex'; badge.classList.add('pulse'); } } else { if(badge){ badge.style.display = 'none'; badge.classList.remove('pulse'); } } } }catch(err){} }, false);
+	})();
+</script>

@@ -8,6 +8,7 @@
 <title>About | JMJ Softwares</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 
@@ -64,11 +65,62 @@ a{
     text-decoration:none;
 }
 
+/* NAVBAR */
+.navbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 24px;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:linear-gradient(90deg, rgba(2,6,23,0.8), rgba(8,17,34,0.8));
+  backdrop-filter: blur(6px);
+}
+.navbar .logo{ display:flex; align-items:center; gap:8px; }
+.navbar .logo img{ height:48px; object-fit:contain; border-radius:6px; }
+.navbar .nav-links{ display:flex; gap:14px; list-style:none; margin:0; padding:0; align-items:center; }
+.navbar .nav-links a{ color:white; text-decoration:none; padding:8px 10px; border-radius:6px; }
+.navbar .nav-links a:hover{ background: rgba(255,255,255,0.05); }
+.search-form{ display:flex; gap:6px; align-items:center; }
+.search-form input{ padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:white; }
+.menu-toggle{ display:none; cursor:pointer; color:white; font-size:20px; }
+
+@media (max-width:800px){
+  .nav-links{ display:none; flex-direction:column; background:#071428; position:absolute; right:16px; top:64px; padding:12px; border-radius:8px; }
+  .nav-links.active{ display:flex; }
+  .menu-toggle{ display:block; }
+  .search-form{ display:none; }
+}
+
 </style>
 
 </head>
 
 <body>
+
+<nav class="navbar">
+  <div class="logo"><a href="/"><img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES"><span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
+  <form method="GET" action="/search/" class="search-form">
+    <input type="text" name="q" placeholder="Search tools, tutorials..." />
+    <button type="submit"><i class="fas fa-search"></i></button>
+  </form>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/contactus/">Contact</a></li>
+    <li><a href="/tutorials/">Tutorials</a></li>
+    <li><a href="/livestreams/">Live</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="/logout/">Logout</a></li>
+    {% else %}
+      <li><a href="/login/">Login</a></li>
+      <li><a href="/register/">Register</a></li>
+      <li><a href="/forgot-password/">Forgot Password</a></li>
+    {% endif %}
+  </ul>
+</nav>
 
 <!-- HERO -->
 
@@ -86,7 +138,7 @@ a{
 
 <div class="col-lg-8">
 
-<img src="{% static 'image/logo.png' %}" class="logo mb-4">
+<img src="{% static 'image/logo2.png' %}" class="logo mb-4">
 
 <h1 class="fw-bold">
 
@@ -115,6 +167,12 @@ I am a software developer from Mbeya, Tanzania, dedicated to providing high-qual
 </div>
 
 </section>
+
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
 
 <!-- ABOUT -->
 
@@ -318,27 +376,8 @@ JMJ Softwares
 
 </section>
 
-<footer class="footer text-center">
-
-<h4>
-
-JMJ Softwares
-
-</h4>
-
-<p>
-
-Developed by JOHANES MWESIGWA JACKSON
-
-</p>
-
-<p>
-
-© 2026 All Rights Reserved.
-
-</p>
-
-</footer>
+{% include 'partials/contact.html' %}
+{% include 'partials/footer.html' %}
 
 </body>
 

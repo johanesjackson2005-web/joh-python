@@ -17,7 +17,7 @@ function toggleMenu(){
 
 <!-- NAV -->
 <nav class="navbar">
-    <div class="logo"><a href="/">JMJ SOFTWARES</a></div>
+    <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
     <form method="GET" action="/search/" class="search-form">
     <input type="text" name="q" placeholder="Search tools, tutorials..." />
     <button type="submit">
@@ -31,40 +31,16 @@ function toggleMenu(){
         <li><a href="/">Home</a></li>
         <li><a href="/about/">About</a></li>
         <li><a href="/contactus/">Contact</a></li>
-        <li><a href="/logout/">Logout</a></li>
-        <li><a href="/login/">Login</a></li>
-        <li><a href="/register/">Register</a></li>
-        <li><a href="/forgot-password/">Forgot Password</a></li>
         <li><a href="/tutorials/">Tutorials</a></li>
         <li><a href="/livestreams/">Live</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="/logout/">Logout</a></li>
+        {% else %}
+            <li><a href="/login/">Login</a></li>
+            <li><a href="/register/">Register</a></li>
+            <li><a href="/forgot-password/">Forgot Password</a></li>
+        {% endif %}
     </ul>
-</nav>
-
-<h1>Latest Tutorials</h1>
-
-<div class="tools-grid">
-
-{% for tutorial in tutorials %}
-
-<div class="tool-card">
-
-    {% if tutorial.thumbnail %}
-        <img src="{{ tutorial.thumbnail.url }}" width="100%">
-    {% endif %}
-
-    <h3>{{ tutorial.title }}</h3>
-
-    <p>{{ tutorial.instructor }}</p>
-
-    <p>{{ tutorial.duration }}</p>
-
-    <a class="btn"
-   href="{% url 'tutorial_detail' tutorial.id %}">
-    ▶ Watch Tutorial
-</a>
-
-</div>
-
 {% empty %}
 
 <h2>No tutorials available.</h2>
@@ -72,31 +48,9 @@ function toggleMenu(){
 {% endfor %}
 
 </div>
+{% include 'partials/contact.html' %}
 
-</div>
-</div>
-</body>
-<!-- FOOTER -->
-<footer class="footer">
-    <div class="footer-content">
-        <h3>JOHBOY COMPANY LIMITED</h3>
-        <p>Verified Software Distribution System</p>
-
-        <div class="footer-contact">
-            <i class="fa-solid fa-envelope"></i>
-            <span>johanesjackson2005@gmail.com</span>
-        </div>
-
-        <div class="footer-contact">
-            <i class="fa-brands fa-github"></i>
-            <span>Johanes2005-web</span>
-        </div>
-
-        <p class="copyright">
-            © 2026 JOHBOY COMPANY LIMITED. All Rights Reserved.
-        </p>
-    </div>
-</footer>
+{% include 'partials/footer.html' %}
 <style>
 :root {
     --primary-color: #3b82f6;    /* Bright Electric Blue */

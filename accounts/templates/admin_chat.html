@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div style="max-width:980px;margin:24px auto;padding:12px">
+  <h2>Admin Chat</h2>
+  <p>Select a user to open a private room:</p>
+  <select id="user-select" style="padding:8px;border-radius:6px">
+    <option value="">-- select user --</option>
+    {% for u in users %}
+      <option value="{{ u.id }}">{{ u.username }} ({{ u.email }})</option>
+    {% endfor %}
+  </select>
+
+  <div id="admin-chat-box" style="display:none;margin-top:12px;border:1px solid #2b3948;background:#071428;padding:12px;border-radius:8px;color:#dbeafe">
+    <div id="admin-chat-messages" style="height:320px;overflow:auto;padding:8px;border-radius:6px;background:rgba(255,255,255,0.01)"></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="admin-chat-input" placeholder="Type a message" style="flex:1;padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit">
+      <button id="admin-chat-send" style="background:#06b6d4;border:none;color:#021018;padding:8px 12px;border-radius:6px">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const sel = document.getElementById('user-select');
+  const box = document.getElementById('admin-chat-box');
+  const messages = document.getElementById('admin-chat-messages');
+  const input = document.getElementById('admin-chat-input');
+  const send = document.getElementById('admin-chat-send');
+  let socket;
+
+  function connect(room){
+    const protocol = (location.protocol === 'https:') ? 'wss' : 'ws';
+    const url = protocol + '://' + location.host + '/ws/chat/' + room + '/';
+    socket = new WebSocket(url);
+    socket.onopen = function(){ messages.innerHTML += '<div style="color:#a7f3d0">Connected to '+room+'</div>'; };
+    socket.onmessage = function(e){ try{ const d = JSON.parse(e.data); messages.innerHTML += '<div><strong>'+escapeHtml(d.user)+':</strong> '+escapeHtml(d.message)+'</div>'; messages.scrollTop = messages.scrollHeight; }catch(err){} };
+    socket.onclose = function(){ messages.innerHTML += '<div style="color:#fca5a5">Disconnected</div>'; };
+  }
+
+  function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  sel.addEventListener('change', function(){ const val = sel.value; if(!val){ box.style.display='none'; if(socket) socket.close(); return; } box.style.display='block'; messages.innerHTML=''; const room='user_'+val; connect(room); });
+  send.addEventListener('click', function(){ if(!socket || socket.readyState !== WebSocket.OPEN) return; const txt = input.value.trim(); if(!txt) return; const payload = {message: txt, username: 'admin'}; socket.send(JSON.stringify(payload)); messages.innerHTML += '<div style="text-align:right"><strong>You:</strong> '+escapeHtml(txt)+'</div>'; input.value=''; messages.scrollTop = messages.scrollHeight; });
+  document.addEventListener('keydown', function(e){ if(e.key==='Enter' && document.activeElement === input){ e.preventDefault(); send.click(); } });
+})();
+</script>
+{% endblock %}

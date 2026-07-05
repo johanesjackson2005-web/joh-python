@@ -48,6 +48,14 @@ INSTALLED_APPS = [
     'accounts',
 ]
 
+# Channels for real-time WebSocket support (optional)
+try:
+    import channels  # noqa: F401
+    INSTALLED_APPS.append('channels')
+except Exception:
+    # channels not installed; WebSocket features will be disabled until installed
+    pass
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -144,3 +152,14 @@ STORAGES = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Channels layer config (uses REDIS). Set REDIS_URL in env or default to localhost.
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [REDIS_URL],
+        },
+    },
+}
