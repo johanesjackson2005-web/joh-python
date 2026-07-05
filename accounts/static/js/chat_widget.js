@@ -27,6 +27,27 @@
   const protocol = (location.protocol === 'https:') ? 'wss' : 'ws';
   let wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
   let socket;
+  let unreadCount = 0;
+  const badgeEl = qs('#chat-badge');
+
+  // Notification helpers
+  function ensureNotificationPermission(){
+    if(!('Notification' in window)) return;
+    if(Notification.permission === 'default') Notification.requestPermission().catch(()=>{});
+  }
+
+  function playBeep(){
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = 880;
+      g.gain.value = 0.02;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      setTimeout(function(){ o.stop(); ctx.close(); }, 120);
+    }catch(e){}
+  }
 
   function connect(){
     if(socket){
@@ -51,6 +72,21 @@
     el.innerHTML = '<strong>'+escapeHtml(user)+':</strong> '+escapeHtml(text);
     list.appendChild(el);
     list.scrollTop = list.scrollHeight;
+
+    // If the chat modal is hidden and this is an incoming message, increment badge and notify
+    const modal = qs('#chat-modal');
+    if(!outgoing && modal && (modal.style.display === 'none' || modal.style.display === '')){
+      unreadCount += 1;
+      if(badgeEl){ badgeEl.style.display = 'flex'; badgeEl.classList.add('pulse'); badgeEl.innerText = unreadCount; }
+      // show desktop notification
+      try{
+        if(window.Notification && Notification.permission === 'granted'){
+          new Notification(user || 'Chat', { body: String(text).slice(0, 120) });
+        }
+      }catch(e){}
+      // play small sound
+      playBeep();
+    }
   }
 
   function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -98,7 +134,9 @@
   }
 
   // UI wiring
-  qs('#chat-open') && qs('#chat-open').addEventListener('click', function(){ const modal = qs('#chat-modal'); modal.style.display = modal.style.display === 'block' ? 'none' : 'block'; qs('#chat-input') && qs('#chat-input').focus(); });
+  qs('#chat-open') && qs('#chat-open').addEventListener('click', function(){ const modal = qs('#chat-modal'); var willOpen = modal.style.display !== 'block'; modal.style.display = willOpen ? 'block' : 'none'; qs('#chat-input') && qs('#chat-input').focus(); if(willOpen){ // clear unread count when opening
+    unreadCount = 0; if(badgeEl){ badgeEl.style.display='none'; badgeEl.classList.remove('pulse'); badgeEl.innerText = ''; } }
+  });
   qs('#chat-close') && qs('#chat-close').addEventListener('click', function(){ qs('#chat-modal').style.display='none'; });
   qs('#chat-send') && qs('#chat-send').addEventListener('click', sendMessage);
   // If UI controls exist to choose public/private, react to changes and reconnect
@@ -111,6 +149,9 @@
     targetEl.addEventListener('blur', function(){ connect(); });
   }
   document.addEventListener('keydown', function(e){ if(e.key === 'Enter' && document.activeElement.id === 'chat-input'){ e.preventDefault(); sendMessage(); } });
+
+  // Request notifications permission proactively
+  ensureNotificationPermission();
 
   connect();
 })();
