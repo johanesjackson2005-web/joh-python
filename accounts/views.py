@@ -196,8 +196,13 @@ def about(request):
 
 def slideshow(request):
     return render(request, 'slideshow.html')
-def web_page(request):
+def webb_page(request):
     return render(request, 'webb.html')
+def os_page(request):
+    return render(request, 'os.html')
+def security_page(request):
+    return render(request, 'security.html')
+
 
 
 # =========================
