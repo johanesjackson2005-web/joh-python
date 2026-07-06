@@ -95,7 +95,7 @@ User question:
 # 🚀 AI ASSISTANT API
 # =========================
 
-def ai_assistant_api(request):
+def ai_assistant(request):
 
     if request.method != "POST":
         return JsonResponse({"error": "POST required"}, status=400)
@@ -202,6 +202,27 @@ def os_page(request):
     return render(request, 'os.html')
 def security_page(request):
     return render(request, 'security.html')
+def utilities(request):
+    softwares = Software.objects.filter(category__name__iexact="Utilities")
+    return render(request, 'utilities.html', {'softwares': softwares})
+def design(request):
+    softwares = Software.objects.filter(category__name__iexact="Design")
+    return render(request, 'design.html', {'softwares': softwares})
+def development(request):
+    softwares = Software.objects.filter(category__name__iexact="Development")
+    return render(request, 'development.html', {'softwares': softwares})
+def simulation_page(request):
+    softwares = Software.objects.filter(category__name__iexact="Simulation")
+    return render(request, 'simulation.html', {'softwares': softwares})
+def category_softwares(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    softwares = Software.objects.filter(category=category)
+    return render(request, 'category_softwares.html', {
+        'category': category,
+        'softwares': softwares
+    })
+
+
 
 
 
