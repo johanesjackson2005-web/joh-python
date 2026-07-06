@@ -196,6 +196,8 @@ def about(request):
 
 def slideshow(request):
     return render(request, 'slideshow.html')
+def web_page(request):
+    return render(request, 'webb.html')
 
 
 # =========================

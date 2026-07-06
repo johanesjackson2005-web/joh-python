@@ -125,3 +125,12 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.sender.username if self.sender else 'Anonymous'} @ {self.room} : {self.message[:40]}"
+    
+class ChatMemory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10)  # "user" or "ai"
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.role}"
