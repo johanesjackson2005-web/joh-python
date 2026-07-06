@@ -446,101 +446,114 @@ def header_inspector(request):
     headers = {k: resp.get(k) for k in keys}
     return JsonResponse({'headers': headers})
 
-
 def ai_assistant_api(request):
-    """Simple AI assistant API endpoint.
+    """Smart AI Assistant API"""
 
-    If `settings.OPENAI_API_KEY` is set, it will attempt to call OpenAI's Chat Completion API.
-    Otherwise it returns helpful canned answers and links to site pages.
-    """
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=400)
 
     try:
         payload = json.loads(request.body.decode('utf-8'))
         message = payload.get('message', '').strip()
-    except Exception:
+    except:
         return JsonResponse({'error': 'invalid request'}, status=400)
 
     if not message:
-        return JsonResponse({'answer': "Please ask a question about the site or features."})
-    # If OpenAI API key provided in Django settings, forward the request
+        return JsonResponse({'error': 'empty message'}, status=400)
+
     api_key = getattr(settings, 'OPENAI_API_KEY', None)
 
-    if api_key:
-        # Build retrieval context from site content (tutorials & softwares)
-        try:
-            tutorial_hits = Tutorial.objects.filter(
-                Q(title__icontains=message) | Q(description__icontains=message)
-            ).order_by('-created_at')[:3]
+    # 🔴 If no API key → fallback
+    if not api_key:
+        return JsonResponse({
+            'answer': "AI is not configured. Please set OPENAI_API_KEY."
+        })
 
-            software_hits = Software.objects.filter(
-                Q(name__icontains=message) | Q(description__icontains=message)
-            )[:3]
+    # 🧠 OPTIONAL: your site knowledge (RAG)
+    try:
+        tutorial_hits = Tutorial.objects.filter(
+            Q(title__icontains=message) | Q(description__icontains=message)
+        )[:3]
 
-            context_parts = []
-            if tutorial_hits.exists():
-                context_parts.append('Relevant tutorials:')
-                for t in tutorial_hits:
-                    context_parts.append(f"- {t.title}: { (t.description[:240] + '...') if t.description else '' }")
+        software_hits = Software.objects.filter(
+            Q(name__icontains=message) | Q(description__icontains=message)
+        )[:3]
 
-            if software_hits.exists():
-                context_parts.append('Relevant softwares:')
-                for s in software_hits:
-                    context_parts.append(f"- {s.name}: { (s.description[:240] + '...') if s.description else '' }")
+        context = ""
 
-            retrieval_context = '\n'.join(context_parts)
+        if tutorial_hits:
+            context += "Tutorials:\n"
+            for t in tutorial_hits:
+                context += f"- {t.title}\n"
 
-        except Exception:
-            retrieval_context = ''
+        if software_hits:
+            context += "\nSoftware:\n"
+            for s in software_hits:
+                context += f"- {s.name}\n"
 
-        try:
-            headers = {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-            # Include retrieval context in system prompt when available
-            system_prompt = 'You are a helpful assistant for the JMJ Softwares website.'
-            if retrieval_context:
-                system_prompt += '\nUse the following site content to help answer the user when relevant:\n' + retrieval_context
+    except:
+        context = ""
 
-            data = {
-                'model': 'gpt-4o-mini',
-                'messages': [
-                    {'role': 'system', 'content': system_prompt},
-                    {'role': 'user', 'content': message}
-                ],
-                'max_tokens': 400,
-                'temperature': 0.2
-            }
-            resp = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data, timeout=15)
-            if resp.status_code == 200:
-                j = resp.json()
-                # Extract assistant reply conservatively
-                reply = j.get('choices', [{}])[0].get('message', {}).get('content') or j.get('choices', [{}])[0].get('text') or ''
-                return JsonResponse({'answer': reply})
-            else:
-                # fall through to canned response
-                print('OpenAI error', resp.status_code, resp.text)
-        except Exception as e:
-            print('OpenAI request failed', str(e))
+    # 🧠 SMART SYSTEM PROMPT
+    system_prompt = f"""
+You are a smart AI assistant for JMJ Softwares website.
 
-    # Fallback: simple keyword-based helper
-    lm = message.lower()
-    if 'tutorial' in lm or 'learn' in lm:
-        answer = "You can find tutorials at /tutorials/. Try searching for a topic using the search box."
-    elif 'download' in lm or 'software' in lm:
-        answer = "Software downloads live under the Software sections (Design, Development, Utilities). Try /software or the category pages."
-    elif 'live' in lm or 'livestream' in lm:
-        answer = "Live streams are at /livestreams/. Check there for active streams."
-    elif 'contact' in lm or 'support' in lm:
-        answer = "You can contact us via the contact form on /contactus/ or email johanesjackson2005@gmail.com."
-    elif 'login' in lm or 'register' in lm or 'account' in lm:
-        answer = "Use /login/ to sign in or /register/ to create an account. Once signed in you can choose an avatar and access personalized features."
-    else:
-        answer = "I can help with site navigation (tutorials, downloads, livestreams, contact). Try asking 'Where are tutorials?' or 'How to download software?'."
+Rules:
+- Be helpful, short and clear
+- Guide users to correct pages when needed
+- Use simple English or Swahili if user uses Swahili
+- Do NOT repeat same answers
 
-    return JsonResponse({'answer': answer})
+Website sections:
+- Tutorials: /tutorials/
+- Software: /software/
+- Livestreams: /livestreams/
+- Contact: /contactus/
+
+Context from website:
+{context}
+"""
+
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message}
+            ],
+            "temperature": 0.7,
+            "max_tokens": 500
+        }
+
+        resp = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers=headers,
+            json=data,
+            timeout=15
+        )
+
+        if resp.status_code == 200:
+            result = resp.json()
+            reply = result["choices"][0]["message"]["content"]
+
+            return JsonResponse({
+                "answer": reply
+            })
+
+        else:
+            return JsonResponse({
+                "answer": f"OpenAI error: {resp.status_code}"
+            })
+
+    except Exception as e:
+        return JsonResponse({
+            "answer": f"AI request failed: {str(e)}"
+        })
 
 
 def user_search(request):
