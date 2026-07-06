@@ -1,7 +1,7 @@
 import json
 import random
 import requests
-
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
@@ -18,7 +18,7 @@ from channels.layers import get_channel_layer
 
 from .models import (
     Software, Tutorial, Category, LiveStream,
-    PasswordResetOTP, Profile, ChatMessage
+    PasswordResetOTP, Profile, ChatMessage, ChatMemory
 )
 
 from .forms import RegisterForm, ContactForm
@@ -28,7 +28,18 @@ from .email_service import send_otp_email
 # =========================
 # 🧠 GEMINI AI FUNCTIONS
 # =========================
+def get_memory(user, limit=10):
+    if not user or not user.is_authenticated:
+        return ""
 
+    msgs = ChatMemory.objects.filter(user=user).order_by("-created_at")[:5]
+    msgs = reversed(msgs)
+
+    memory_text = ""
+    for m in msgs:
+        memory_text += f"{m.role.upper()}: {m.message}\n"
+
+    return memory_text
 def build_context(message):
 
     tutorials = Tutorial.objects.filter(
@@ -41,82 +52,141 @@ def build_context(message):
         Q(description__icontains=message)
     )[:5]
 
-    context = ""
+    categories = Category.objects.all()[:10]
 
-    if tutorials.exists():
-        context += "TUTORIALS:\n"
-        for t in tutorials:
-            context += f"- {t.title} (/tutorials/{t.id})\n"
+    context = "\n=== WEBSITE INFORMATION ===\n"
 
-    if software.exists():
-        context += "\nSOFTWARE:\n"
-        for s in software:
-            context += f"- {s.name} (/software/{s.id})\n"
+    context += "\n📌 PAGES AVAILABLE:\n"
+    context += "- Home page /\n"
+    context += "- Tutorials /tutorials/\n"
+    context += "- Software /software/\n"
+    context += "- Livestreams /livestreams/\n"
+    context += "- Contact /contactus/\n"
+    context += "- About /about/\n"
+
+    context += "\n📂 CATEGORIES:\n"
+    for c in categories:
+        context += f"- {c.name}: /category/{c.id}/\n"
+
+    context += "\n📚 TUTORIALS:\n"
+    for t in tutorials:
+        context += f"- {t.title} → /tutorial/{t.id}/\n"
+
+    context += "\n💾 SOFTWARE:\n"
+    for s in software:
+        context += f"- {s.name} → /software/{s.id}/\n"
 
     return context
-
-
-def gemini_ai(message, context=""):
-
+def gemini_ai(message, context="", memory=""):
     api_key = settings.GEMINI_API_KEY
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={api_key}"
 
     prompt = f"""
-You are a smart AI assistant for JMJ Softwares website.
+SYSTEM INSTRUCTIONS:
+You are JMJ Softwares AI Assistant.
 
-Rules:
-- Be helpful and short
-- Use Swahili or English
-- Guide users to correct pages
-- Use context if available
+COMMAND RULES:
+- If user asks "what is this website" → explain full website clearly
+- If user asks "where is tutorials" → give /tutorials/
+- If user asks "software/downloads" → guide to /software/
+- If user asks "contact" → give /contactus/
+-if user asks  "about" → give /about/
+-if user asks  'how to use this website' → explain clearly
+-if user aks   'how to register ' explain the instuction on register
+- Always respond in Swahili or English depending on user
+- Be short, clear, helpful
+- NEVER invent fake pages
+-if user want to solve some math issue solve it
+-show empathy and be friendly
+-provide the good advaice
+-show reference
+-provide the good advices and solutions to the user
+-provide image,diagram if needed
 
-Website context:
+
+WEBSITE KNOWLEDGE:
 {context}
 
-User question:
+CHAT MEMORY:
+{memory}
+
+USER MESSAGE:
 {message}
 """
 
     payload = {
         "contents": [
-            {"parts": [{"text": prompt}]}
+            {
+                "parts": [
+                    {"text": prompt}
+                ]
+            }
         ]
     }
 
     try:
         r = requests.post(url, json=payload, timeout=15)
-        return r.json()['candidates'][0]['content']['parts'][0]['text']
+
+        # DEBUG
+        print("GEMINI STATUS:", r.status_code)
+        print("GEMINI RAW:", r.text)
+
+        data = r.json()
+
+        if "candidates" not in data:
+            return f"Gemini error: {data}"
+
+        return data["candidates"][0]["content"]["parts"][0]["text"]
+
     except Exception as e:
-        return "AI error: " + str(e)
+        return f"Gemini request failed: {str(e)}"
 
 
 # =========================
 # 🚀 AI ASSISTANT API
 # =========================
-
-def ai_assistant(request):
+def ai_assistant_api(request):
 
     if request.method != "POST":
         return JsonResponse({"error": "POST required"}, status=400)
 
     try:
         data = json.loads(request.body.decode("utf-8"))
-        message = data.get("message", "").strip()
     except:
-        return JsonResponse({"error": "invalid request"}, status=400)
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    message = data.get("message", "").strip()
 
     if not message:
         return JsonResponse({"error": "empty message"}, status=400)
 
     context = build_context(message)
-    answer = gemini_ai(message, context)
+    memory = get_memory(request.user)
+
+    # SAVE USER MESSAGE
+    if request.user.is_authenticated:
+        ChatMemory.objects.create(
+            user=request.user,
+            role="user",
+            message=message
+        )
+
+    # GET AI RESPONSE
+    answer = gemini_ai(message, context, memory)
+
+    # SAVE AI RESPONSE
+    if request.user.is_authenticated:
+        ChatMemory.objects.create(
+            user=request.user,
+            role="ai",
+            message=answer
+        )
 
     return JsonResponse({"answer": answer})
-
-
-# =========================
-# 💬 CHAT (WebSocket fallback)
+@csrf_exempt
+def ai_assistant(request):
+    return render(request, "ai_assistant.html")
 # =========================
 
 @csrf_exempt

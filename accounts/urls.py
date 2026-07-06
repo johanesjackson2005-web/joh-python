@@ -44,7 +44,9 @@ urlpatterns = [
 ),
     path("search/", views.search_view, name="search"),
     path("choose-avatar/", views.choose_avatar, name="choose_avatar"),
-    path('ai-assistant/', views.ai_assistant, name='ai_assistant'),
+    path("ai-assistant/", views.ai_assistant),        # HTML
+    path("ai-assistant/api/", views.ai_assistant_api),
     path('admin-chat/', views.admin_chat, name='admin_chat'),
     path('chat/send/', views.chat_send, name='chat_send'),
+    
 ]

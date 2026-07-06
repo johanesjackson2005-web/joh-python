@@ -10,97 +10,91 @@ document.addEventListener('DOMContentLoaded', function () {
         div.innerText = text;
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
+        return div; // 🔥 important (we use it later)
     }
 
-    // Get CSRF token from cookie
+    // CSRF helper
     function getCookie(name) {
         let cookieValue = null;
 
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
+        if (document.cookie) {
+            const cookies = document.cookie.split(';');
 
             for (let cookie of cookies) {
                 cookie = cookie.trim();
 
-                if (cookie.startsWith(name + "=")) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
                     break;
                 }
             }
         }
-
         return cookieValue;
     }
 
     async function sendMessage() {
 
         const text = input.value.trim();
-
         if (!text) return;
 
+        // show user message
         appendMessage(text, "user");
         input.value = "";
 
-        appendMessage("Thinking...", "bot");
-
-        const placeholder = chat.querySelector(".msg.bot:last-child");
+        // show loading message
+        const placeholder = appendMessage("Thinking...", "bot");
 
         try {
 
             const response = await fetch("/ai-assistant/api/", {
-
                 method: "POST",
-
                 credentials: "same-origin",
-
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": getCookie("csrftoken")
                 },
-
-                body: JSON.stringify({
-                    message: text
-                })
-
+                body: JSON.stringify({ message: text })
             });
 
-            let data = {};
+            let data;
 
             try {
                 data = await response.json();
-            } catch (e) {
-                throw new Error("Server returned invalid JSON.");
+            } catch {
+                throw new Error("Server did not return valid JSON");
             }
 
             if (!response.ok) {
                 throw new Error(data.error || `HTTP ${response.status}`);
             }
 
-            placeholder.innerText = data.answer || "No response.";
+            // replace loading message
+            placeholder.innerText = data.answer || "No response";
 
-            try {
-                window.parent.postMessage({
-                    type: "ai-response",
-                    unread: true
-                }, "*");
-            } catch (e) {}
+            // 🔊 OPTIONAL: voice AI (uncomment if needed)
+            // speak(data.answer);
+
+            // notify parent iframe
+            window.parent.postMessage({
+                type: "ai-response",
+                unread: true
+            }, "*");
+
+        } catch (err) {
+
+            console.error("AI Error:", err);
+
+            placeholder.innerText = "❌ " + err.message;
 
         }
-        catch (err) {
-
-            console.error("AI Assistant Error:", err);
-
-            placeholder.innerText =
-                "❌ " + (err.message || "Request failed");
-
-        }
-
     }
 
+    // click send
     if (send) {
         send.addEventListener("click", sendMessage);
     }
 
+    // enter key
     if (input) {
         input.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
@@ -108,6 +102,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 sendMessage();
             }
         });
+    }
+
+    // 🔊 TEXT TO SPEECH (VOICE AI)
+    function speak(text) {
+        if (!text) return;
+
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "en-US"; // unaweza badilisha "sw-TZ"
+        msg.rate = 1;
+
+        window.speechSynthesis.speak(msg);
     }
 
 });
