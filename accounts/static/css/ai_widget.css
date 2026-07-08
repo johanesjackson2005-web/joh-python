@@ -16,7 +16,7 @@
 @keyframes aiPulse{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:0.8}100%{transform:scale(1);opacity:1}}
 
 /* modal tweaks */
-#ai-modal{display:none;position:fixed;right:18px;bottom:72px;width:380px;height:520px;border-radius:12px;overflow:hidden;background:#071428;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(2,6,23,0.6)}
+#ai-modal{display:none;position:fixed;right:18px;bottom:18px;width:380px;height:520px;border-radius:12px;overflow:hidden;background:#071428;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(2,6,23,0.6)}
 #ai-modal .ai-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:linear-gradient(90deg,rgba(6,8,23,0.9),rgba(8,18,34,0.85));color:white}
 #ai-frame{width:100%;height:calc(100% - 44px);border:0;background:transparent}
 
@@ -104,68 +104,89 @@
 
     height:100vh;
 
-    display:flex;
-
     border-radius:0;
 
-}
-
-
-.chat-window{
-
-    display:none;
-
-    position:fixed;
-
-    right:18px;
-    bottom:72px;
-
-    width:450px;
-    height:650px;
-
-    border-radius:15px;
-
-    overflow:hidden;;
-
-    border:1px solid rgba(255,255,255,.04);
-
-    box-shadow:0 20px 60px rgba(2,6,23,.6);
-
-    z-index:1300;
-
-    transition:.3s ease;
-
-}
-
-.chat-background{
-    position:absolute;
-    inset:0;
-
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-
-    filter:blur(8px);
-    transform:scale(1.08);
-
-    z-index:1;
-}
-
-.chat-overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.45);
-    z-index:2;
-}
-.chat-content{
-    position:relative;
-    z-index:3;
-
     display:flex;
-    flex-direction:column;
+
+}
+html, body{
+
+    overflow-x:hidden;
+
+}
+
+
+#chat-modal.chat-fullscreen .chat-content{
 
     width:100%;
     height:100%;
+
+}
+.chat-window{
+
+    display:none;
+    position:fixed;
+
+    width:420px;
+    max-width:calc(100vw - 20px);
+
+    height:70vh;
+    max-height:calc(100vh - 40px);
+
+    overflow:hidden;
+
+    border-radius:15px;
+
+}
+.chat-background{
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background-size:cover;
+    background-position:center;
+
+    background-repeat:no-repeat;
+
+    filter:blur(2px);
+
+    transform:scale(1.1);
+
+    opacity:1;
+
+    z-index:0;
+
+}
+.chat-overlay{
+
+    position:absolute;
+    inset:0;
+
+    background:rgba(0,0,0,0.45);
+
+    z-index:1;
+
+}
+.chat-content{
+
+    position:relative;
+
+    z-index:3;
+
+    display:flex;
+
+    flex-direction:column;
+
+    width:100%;
+
+    height:100%;
+    background: transparent;
+
 }
 /* kuhakikisha text ndefu haivunji screen */
 
@@ -175,17 +196,15 @@
 
 
 #chat-messages{
-
     flex:1;
-
     overflow-y:auto;
+    min-height:0;
 
     padding:20px;
 
     display:flex;
     flex-direction:column;
     gap:12px;
-
 }
 
 /* simu */
@@ -285,14 +304,14 @@
 }
 .chat-input-area{
 
-    flex:0 0 75px;
+    flex:0 0 90px;
 
     display:flex;
     align-items:center;
 
     gap:10px;
 
-    padding:12px;
+    padding:15px;
 
     background:rgba(0,0,0,.65);
 
@@ -301,15 +320,25 @@
 
     flex:1;
 
-    height:48px;
+    min-height:60px;
+
+    max-height:150px;
+
+    resize:none;
+
+    overflow-y:auto;
+
+    font-size:17px;
+
+    line-height:24px;
+
+    padding:16px 20px;
 
     border:none;
 
     outline:none;
 
-    border-radius:25px;
-
-    padding:0 18px;
+    border-radius:30px;
 
     background:rgba(255,255,255,.12);
 
@@ -400,9 +429,6 @@ color:black;
     width:95%;
     height:90vh;
 
-    right:2.5%;
-    bottom:10px;
-
 }
 
 }
@@ -410,31 +436,20 @@ color:black;
 
 .chat-window{
 
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
+    width:calc(100vw - 20px);
+    height:85vh;
 
-    width:100%;
-    height:100%;
-
-    border-radius:0;
-
-}
-
-#chat-modal.chat-fullscreen{
-
-    width:100%;
-    height:100%;
-
+ }
 }
 
 #chat-input{
 
-    height:50px;
+    min-height:50px;
+    max-height:120px;
     font-size:16px;
 
 }
+
 
 .chat-line{
 
@@ -448,4 +463,8 @@ color:black;
 
 }
 
+.chat-content{
+    display:flex;
+    flex-direction:column;
+    height:100%;
 }

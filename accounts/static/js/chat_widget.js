@@ -131,7 +131,7 @@ margin-right:8px;
 <strong>${escapeHtml(user)}:</strong> 
 ${escapeHtml(text)}
 
-<button type="button" class="delete-btn">🗑</button>
+${outgoing ? '<button type="button" class="delete-btn">🗑</button>' : ''}
 `;
 
   list.appendChild(el);
@@ -209,11 +209,29 @@ if(!outgoing && modalHidden){
       }).catch(err=>{ console.error('Chat POST error', err); });
 
       input.value = '';
+
+input.style.height = "50px";
     }catch(err){
       console.error(err);
     }
   }
+// Auto resize message textarea like WhatsApp
+const chatInput = qs('#chat-input');
 
+if(chatInput){
+
+    chatInput.addEventListener("input", function(){
+
+        this.style.height = "auto";
+
+        this.style.height = Math.min(
+            this.scrollHeight,
+            120
+        ) + "px";
+
+    });
+
+}
   // UI wiring
   // Emoji UI
   const emojiBtn = qs('#emoji-btn');
@@ -275,18 +293,35 @@ if(!outgoing && modalHidden){
 const expandBtn = document.getElementById("chat-expand");
 const modal = document.getElementById("chat-modal");
 
+let oldChatPosition = {};
+
 if(expandBtn && modal){
 
     expandBtn.addEventListener("click", function(){
 
-        modal.classList.toggle("chat-fullscreen");
+        if(!modal.classList.contains("chat-fullscreen")){
 
+            oldChatPosition = {
+                left: modal.style.left,
+                top: modal.style.top,
+                width: modal.style.width,
+                height: modal.style.height
+            };
 
-        if(modal.classList.contains("chat-fullscreen")){
+          
+modal.classList.add("chat-fullscreen");
 
             expandBtn.innerHTML="🗗";
 
         }else{
+
+            modal.classList.remove("chat-fullscreen");
+            modal.removeAttribute("style");
+
+            modal.style.left = oldChatPosition.left;
+            modal.style.top = oldChatPosition.top;
+            modal.style.width = oldChatPosition.width;
+            modal.style.height = oldChatPosition.height;
 
             expandBtn.innerHTML="⛶";
 
@@ -304,45 +339,81 @@ if(expandBtn && modal){
 
 
     if(willOpen){
+      modal.classList.remove("chat-fullscreen");
 
-        const btnPosition = this.getBoundingClientRect();
+        const widget = document.getElementById("chat-widget");
 
+const btnPosition = widget.getBoundingClientRect();
+console.log(btnPosition.top, btnPosition.left);
 
-        // kwanza ionyeshe ili tupate size yake
-        modal.style.display = "block";
+modal.style.display = "block";
 
-        modal.style.position = "fixed";
-        modal.style.right = "auto";
-        modal.style.bottom = "auto";
+modal.style.position = "fixed";
+modal.style.right = "auto";
+modal.style.bottom = "auto";
 
-
-        const modalWidth = modal.offsetWidth;
-        const modalHeight = modal.offsetHeight;
-
-
-        let left = btnPosition.left;
-
-        let top = btnPosition.top - modalHeight - 10;
+const modalWidth = modal.offsetWidth;
+const modalHeight = modal.offsetHeight;
 
 
-        // kama itatoka nje juu
-        if(top < 10){
-
-            top = btnPosition.bottom + 10;
-
-        }
+// nafasi juu na chini
+const spaceTop = btnPosition.top;
+const spaceBottom = window.innerHeight - btnPosition.bottom;
 
 
-        // kama itatoka nje kulia
-        if(left + modalWidth > window.innerWidth){
-
-            left = window.innerWidth - modalWidth - 10;
-
-        }
+let top;
 
 
-        modal.style.left = left + "px";
-        modal.style.top = top + "px";
+// Fungua juu kama kuna nafasi
+if(spaceTop >= modalHeight + 15){
+
+    top = btnPosition.top - modalHeight - 15;
+
+}
+
+
+// Kama hakuna nafasi juu fungua chini
+else if(spaceBottom >= modalHeight + 15){
+
+    top = btnPosition.bottom + 15;
+
+}
+
+
+// Kama hakuna nafasi ya kutosha upande wowote
+
+else{
+
+    top = 10;
+
+    modal.style.height = "85vh";
+
+}
+
+
+// horizontal position
+let left = btnPosition.left;
+
+
+// Zuia kutoka kulia
+if(left + modalWidth > window.innerWidth){
+
+    left = window.innerWidth - modalWidth - 10;
+
+}
+
+
+// Zuia kutoka kushoto
+if(left < 10){
+
+    left = 10;
+
+}
+
+console.log("POPUP POSITION:", left, top);
+
+modal.style.setProperty("left", left + "px", "important");
+modal.style.setProperty("top", top + "px", "important");
 
 
     }else{
@@ -430,8 +501,19 @@ if(expandBtn && modal){
           }, 220);
         });
   }
-  document.addEventListener('keydown', function(e){ if(e.key === 'Enter' && document.activeElement.id === 'chat-input'){ e.preventDefault(); sendMessage(); } });
+  document.addEventListener('keydown', function(e){
 
+    if(
+        e.key === "Enter" &&
+        document.activeElement.id === "chat-input" &&
+        e.ctrlKey
+    ){
+
+        sendMessage();
+
+    }
+
+});
   // Request notifications permission proactively
   ensureNotificationPermission();
 

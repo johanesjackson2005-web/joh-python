@@ -191,7 +191,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # =================================
         
         if event_type == "delete":
-
+        
             message_id = data.get("message_id")
 
             user = self.scope.get("user")
@@ -199,11 +199,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             
             if not user.is_authenticated:
-               return
-
-            await database_sync_to_async(
-                msg.deleted_by.add
-                  )(user)     
+               return   
 
 
             try:
@@ -213,27 +209,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
                   )(id=message_id)
                 
                 if msg.sender != user and not user.is_staff:
-                    return
+                    
                 
-                await database_sync_to_async(
-                 msg.deleted_by
-                 )(user)
+                   await database_sync_to_async(
+                    msg.deleted_by
+                    )()
 
 
-                await self.send(
-                    text_data=json.dumps({
-                    "type": "delete",
+                   await self.channel_layer.group_send(
+                    self.group_name, 
+                    {
+                    "type": "chat.delete",
                     "message_id": message_id
-                }))
-                   
-                return
+                   })
+                else: 
+                     
+                   await database_sync_to_async(
+                    msg.deleted_by.add
+                   )(user)
 
+
+                   await self.send(
+                     text_data=json.dumps({
+                      "type":"delete",
+                       "message_id":message_id
+                    })
+                      )
+                return       
             except Exception as e:
 
-                  print("DELETE ERROR:", e)
-
-
-                  return
+                print("DELETE ERROR:", e)
+                return
 
                    
 

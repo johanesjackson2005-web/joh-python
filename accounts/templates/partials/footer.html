@@ -12,15 +12,17 @@
 </footer>
 
 <!-- AI Assistant widget trigger (appears on pages with this footer) -->
-<div id="ai-widget" style="position:fixed;left:18px;top:18px;z-index:1200">
+<div id="ai-widget"
+style="position:fixed;left:18px;bottom:18px;z-index:1200">
 <!-- AI avatar button: shows user's profile image if authenticated, else site logo -->
 	<button id="ai-open" title="Ask the assistant" aria-label="Open AI assistant" class="ai-open-btn">
 		<img class="ai-avatar" src="{% if user.is_authenticated and user.profile.avatar %}{% static 'image/screenshot.png' %}{% else %}{% static 'image/screenshot.png' %}{% endif %}" alt="Assistant">
 		<span class="ai-badge" id="ai-badge" aria-hidden="true" style="display:none">•</span>
 		<span class="ai-label" id="ai-label">JMJ Assistant</span>
 	</button>
+</div>
 	<!-- Chat widget (user-to-user / admin-to-user) -->
-    <div id="chat-widget" 
+    <div id="chat-widget" style="position:fixed;right:18px;bottom:18px;z-index:1200"
 data-user="{% if user.is_authenticated %}{{ user.id }}{% endif %}" 
 data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}">
 		<button id="chat-open" title="Open chat" aria-label="Open chat" class="ai-open-btn">
@@ -28,12 +30,21 @@ data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{
 			<span class="ai-badge" id="chat-badge" aria-hidden="true" style="display:none">•</span>
 			<span class="ai-label" id="chat-label"> Chat</span>
 		</button>
+    </div>
 <div id="chat-modal" class="chat-window">
 
-    <!-- Background -->
-<div class="chat-background"
-style="background-image:url('{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'image/logo1.png' %}{% endif %}');">
+    <div class="chat-background"
+style="
+background-image:url(
+'{% if user.is_authenticated and user.profile.avatar %}
+{% static 'profile/' %}{{ user.profile.avatar }}
+{% else %}
+{% static 'image/logo1.png' %}
+{% endif %}'
+  );
+''>
 </div>
+   
     <div class="chat-overlay"></div>
 
     <div class="chat-content">
@@ -42,25 +53,17 @@ style="background-image:url('{% if user.profile.avatar %}{{ user.profile.avatar.
 
         <div class="ai-header">
 
-            <div class="chat-user">
-
-                    <img id="chat-avatar"
-src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'image/logo2.png' %}{% endif %}">
-
-                <div>
-
-                    <div id="chat-name">
-                        {{ user.username }}
-                    </div>
+         <img id="chat-avatar"
+src="{% if user.profile.avatar %}
+{% static 'profile/' %}{{ user.profile.avatar }}
+{% else %}
+{% static 'image/logo2.png' %}
+{% endif %}">
 
                     <small style="color:#00ff66">
                         ● Online
                     </small>
-
-                </div>
-
-            </div>
-
+            
            <div class="chat-controls">
 
     <select id="chat-scope">
@@ -100,11 +103,11 @@ src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% stati
             </button>
 
             <div style="position:relative;flex:1">
-
-                <input
-                    id="chat-input"
-                    placeholder="Type your message...">
-
+            <textarea
+              id="chat-input"
+           placeholder="Type your message..."
+             rows="1"></textarea>
+                
                 <div id="emoji-picker">
 
                     <!-- emoji zako zote ziweke hapa -->
@@ -143,13 +146,13 @@ src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% stati
                 </div>
 
             </div>
-
+        
             <button id="chat-send">
 
                 ➤
 
             </button>
-
+     
         </div>
 
     </div>
@@ -220,10 +223,22 @@ src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% stati
     document.addEventListener("mousemove", function(e){
 
         if(!dragging) return;
+let x = e.clientX - offsetX;
+let y = e.clientY - offsetY;
 
-        button.style.left = (e.clientX - offsetX) + "px";
-        button.style.top = (e.clientY - offsetY) + "px";
+x = Math.max(
+    0,
+    Math.min(x, window.innerWidth - button.offsetWidth)
+);
 
+y = Math.max(
+    0,
+    Math.min(y, window.innerHeight - button.offsetHeight)
+);
+
+button.style.left = x + "px";
+button.style.top = y + "px";
+        
     });
 
     document.addEventListener("mouseup", function(){
@@ -233,9 +248,8 @@ src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% stati
     });
 
 }
-const chatButton = document.getElementById("chat-open");
-const aiButton = document.getElementById("ai-open");
-
+const chatButton = document.getElementById("chat-widget");
+const aiButton = document.getElementById("ai-widget");
 if(chatButton){
     makeFloatingButtonDraggable(chatButton);
 }
