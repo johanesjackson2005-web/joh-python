@@ -23,6 +23,7 @@ from .models import (
 
 from .forms import RegisterForm, ContactForm
 from .email_service import send_otp_email
+from django.contrib.auth.models import User
 
 
 # =========================
@@ -505,3 +506,45 @@ def choose_avatar(request):
         return redirect("home")
 
     return render(request, "choose_avatar.html", {"avatars": avatars})
+
+@login_required
+def chat_home(request):
+
+    users = User.objects.exclude(id=request.user.id)
+
+    selected_user = None
+
+    messages = []
+
+    username = request.GET.get("user")
+
+    if username:
+
+        try:
+
+            selected_user = User.objects.get(username=username)
+
+            room = "_".join(
+                sorted([
+                    request.user.username,
+                    selected_user.username
+                ])
+            )
+
+            messages = ChatMessage.objects.filter(
+                room=room
+            ).order_by("created_at")
+
+        except User.DoesNotExist:
+
+            pass
+
+    return render(request,"chat/chat.html",{
+
+        "users":users,
+
+        "selected_user":selected_user,
+
+        "messages":messages
+
+    })

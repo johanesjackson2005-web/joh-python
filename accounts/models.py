@@ -113,19 +113,81 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class ChatMessage(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    room = models.CharField(max_length=150, db_index=True)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ['created_at']
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="sent_messages"
+    )
+
+    receiver = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="received_messages"
+    )
+
+    room = models.CharField(
+        max_length=150,
+        db_index=True,
+        blank=True,
+        null=True
+    )
+    guest_name = models.CharField(
+    max_length=100,
+    blank=True,
+    null=True
+)
+    message = models.TextField()
+
+    deleted_by = models.ManyToManyField(
+        User,
+        blank=True,
+        related_name="hidden_messages"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+class Conversation(models.Model):
+
+    user1 = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="conversation_user1"
+    )
+
+    user2 = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="conversation_user2"
+    )
+
+    last_message = models.ForeignKey(
+        ChatMessage,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
 
     def __str__(self):
-        return f"{self.sender.username if self.sender else 'Anonymous'} @ {self.room} : {self.message[:40]}"
-    
+        return f"{self.user1} - {self.user2}"
+
+
+    class Meta:
+      ordering = ['-updated_at']
+
+
+    def __str__(self):
+        return f"{self.sender} -> {self.receiver}: {self.message[:30]}"
 class ChatMemory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10)  # "user" or "ai"

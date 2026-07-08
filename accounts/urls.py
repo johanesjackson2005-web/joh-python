@@ -48,5 +48,6 @@ urlpatterns = [
     path("ai-assistant/api/", views.ai_assistant_api),
     path('admin-chat/', views.admin_chat, name='admin_chat'),
     path('chat/send/', views.chat_send, name='chat_send'),
+     path("chat/", views.chat_home, name="chat"),
     
 ]

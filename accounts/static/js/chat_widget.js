@@ -51,44 +51,117 @@
     }catch(e){}
   }
 
-  function connect(){
-    if(socket){
-      try{ socket.close(); }catch(e){}
-      socket = null;
-    }
-    roomName = computeRoomName();
-    wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
-    console.log('Connecting to chat room', roomName);
-    socket = new WebSocket(wsUrl);
+ function connect(){
+
+ if(socket){
+  try{ socket.close(); }catch(e){}
+  socket = null;
+}
+
+// safisha messages za zamani kabla ya kupokea history mpya
+const list = qs('#chat-messages');
+ if(list){
+    list.innerHTML = '';
+}
+
+roomName = computeRoomName();
+
+wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
+
+console.log('Connecting to chat room', roomName);
+
+socket = new WebSocket(wsUrl);
     socket.onopen = function(){ console.log('Chat connected to', wsUrl); qs('#chat-status') && (qs('#chat-status').innerText='online'); };
     socket.onclose = function(){ console.log('Chat disconnected'); qs('#chat-status') && (qs('#chat-status').innerText='offline'); setTimeout(connect, 3000); };
     socket.onerror = function(e){ console.error('Chat socket error', e); };
-    socket.onmessage = function(e){ try{ const data = JSON.parse(e.data); appendMessage(data.user, data.message, false); }catch(err){ console.error(err); } };
+   socket.onmessage = function(e){
+
+const data = JSON.parse(e.data);
+if (data.type === "delete") {
+
+    let messageBox = document.querySelector(
+        `[data-message-id="${data.message_id}"]`
+    );
+
+    if (messageBox) {
+        messageBox.remove();
+    }
+
+    return;
+}
+
+// Expand / Restore chat window
+if(data.type === "message"){
+
+appendMessage(
+    data.user,
+    data.message,
+    data.user === username,
+    data.id,
+    data.avatar
+);
+
+}
+
+// message ya kawaida + history ya database
+
+};
+ }
+
+  function appendMessage(user, text, outgoing, id, avatar){
+  const list = qs('#chat-messages');
+  if(!list) return;
+
+  const el = document.createElement('div');
+  el.className = 'chat-line' + (outgoing ? ' outgoing' : ' incoming');
+
+  // 🔥 muhimu sana kwa delete feature
+  if(id) el.setAttribute('data-message-id', id);
+
+  el.innerHTML = `
+ <img src="${avatar || '/static/image/logo 1.png'}" alt="Avatar"
+style="
+width:35px;
+height:35px;
+border-radius:50%;
+object-fit:cover;
+margin-right:8px;
+">
+
+<strong>${escapeHtml(user)}:</strong> 
+${escapeHtml(text)}
+
+<button type="button" class="delete-btn">🗑</button>
+`;
+
+  list.appendChild(el);
+  list.scrollTop = list.scrollHeight;
+
+  // unread + notification logic (unchanged)
+  const modal = qs('#chat-modal');
+
+const modalHidden = !modal || window.getComputedStyle(modal).display === 'none';
+
+if(!outgoing && modalHidden){
+
+  unreadCount += 1;
+
+  if(badgeEl){
+    badgeEl.style.display = 'flex';
+    badgeEl.classList.add('pulse');
+    badgeEl.innerText = unreadCount;
   }
 
-  function appendMessage(user, text, outgoing){
-    const list = qs('#chat-messages');
-    if(!list) return;
-    const el = document.createElement('div');
-    el.className = 'chat-line' + (outgoing? ' outgoing':' incoming');
-    el.innerHTML = '<strong>'+escapeHtml(user)+':</strong> '+escapeHtml(text);
-    list.appendChild(el);
-    list.scrollTop = list.scrollHeight;
-
-    // If the chat modal is hidden and this is an incoming message, increment badge and notify
-    const modal = qs('#chat-modal');
-    if(!outgoing && modal && (modal.style.display === 'none' || modal.style.display === '')){
-      unreadCount += 1;
-      if(badgeEl){ badgeEl.style.display = 'flex'; badgeEl.classList.add('pulse'); badgeEl.innerText = unreadCount; }
-      // show desktop notification
-      try{
-        if(window.Notification && Notification.permission === 'granted'){
-          new Notification(user || 'Chat', { body: String(text).slice(0, 120) });
-        }
-      }catch(e){}
-      // play small sound
-      playBeep();
+  try{
+    if(window.Notification && Notification.permission === 'granted'){
+      new Notification(user || 'Chat', {
+        body: String(text).slice(0,120)
+      });
     }
+  }catch(e){}
+
+  playBeep();
+}
   }
 
   function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -100,12 +173,18 @@
 
     // If WS is open, send over socket
     if(socket && socket.readyState === WebSocket.OPEN){
-      const payload = {message: text, username: username};
-      socket.send(JSON.stringify(payload));
-      appendMessage(username, text, true);
-      input.value = '';
-      return;
-    }
+  const payload = {
+    type: "message",
+    id: crypto.randomUUID(),
+    message: text,
+    username: username,
+    room: roomName
+  };
+
+  socket.send(JSON.stringify(payload));
+  input.value = '';
+  return;
+}
 
     // Fallback: send via HTTP POST to persist the message
     try{
@@ -193,12 +272,115 @@
     // hide picker when clicking outside
     document.addEventListener('click', function(e){ if(emojiPicker && e.target !== emojiBtn && !emojiPicker.contains(e.target)){ emojiPicker.style.display='none'; } });
   }
-  qs('#chat-open') && qs('#chat-open').addEventListener('click', function(){ const modal = qs('#chat-modal'); var willOpen = modal.style.display !== 'block'; modal.style.display = willOpen ? 'block' : 'none'; qs('#chat-input') && qs('#chat-input').focus(); if(willOpen){ // clear unread count when opening
+const expandBtn = document.getElementById("chat-expand");
+const modal = document.getElementById("chat-modal");
+
+if(expandBtn && modal){
+
+    expandBtn.addEventListener("click", function(){
+
+        modal.classList.toggle("chat-fullscreen");
+
+
+        if(modal.classList.contains("chat-fullscreen")){
+
+            expandBtn.innerHTML="🗗";
+
+        }else{
+
+            expandBtn.innerHTML="⛶";
+
+        }
+
+    });
+
+}
+  
+     qs('#chat-open') && qs('#chat-open').addEventListener('click', function(){ 
+
+    const modal = qs('#chat-modal');
+
+    let willOpen = modal.style.display !== 'block';
+
+
+    if(willOpen){
+
+        const btnPosition = this.getBoundingClientRect();
+
+
+        // kwanza ionyeshe ili tupate size yake
+        modal.style.display = "block";
+
+        modal.style.position = "fixed";
+        modal.style.right = "auto";
+        modal.style.bottom = "auto";
+
+
+        const modalWidth = modal.offsetWidth;
+        const modalHeight = modal.offsetHeight;
+
+
+        let left = btnPosition.left;
+
+        let top = btnPosition.top - modalHeight - 10;
+
+
+        // kama itatoka nje juu
+        if(top < 10){
+
+            top = btnPosition.bottom + 10;
+
+        }
+
+
+        // kama itatoka nje kulia
+        if(left + modalWidth > window.innerWidth){
+
+            left = window.innerWidth - modalWidth - 10;
+
+        }
+
+
+        modal.style.left = left + "px";
+        modal.style.top = top + "px";
+
+
+    }else{
+
+        modal.style.display = "none";
+
+    }
+
+
+    qs('#chat-input') && qs('#chat-input').focus();
+
+
+ if(willOpen){ // clear unread count when opening
     unreadCount = 0; if(badgeEl){ badgeEl.style.display='none'; badgeEl.classList.remove('pulse'); badgeEl.innerText = ''; } }
   });
   qs('#chat-close') && qs('#chat-close').addEventListener('click', function(){ qs('#chat-modal').style.display='none'; });
   qs('#chat-send') && qs('#chat-send').addEventListener('click', sendMessage);
   // If UI controls exist to choose public/private, react to changes and reconnect
+  document.addEventListener('click', function(e){
+
+  if(!e.target.classList.contains('delete-btn')) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const msgEl = e.target.closest('.chat-line');
+  const messageId = msgEl.getAttribute('data-message-id');
+
+  if(socket && socket.readyState === WebSocket.OPEN){
+    socket.send(JSON.stringify({
+      type: "delete",
+      message_id: messageId,
+      room: roomName,
+      username: username
+    }));
+  }
+
+});
   const scopeEl = qs('#chat-scope');
   const targetEl = qs('#chat-target');
   if(scopeEl){
@@ -209,7 +391,7 @@
         // autocomplete dropdown
         const dropdown = document.createElement('div');
         dropdown.style.position = 'absolute';
-        dropdown.style.background = '#fff';
+        dropdown.style.background = '#1ff10c';
         dropdown.style.color = '#000';
         dropdown.style.border = '1px solid rgba(0,0,0,0.08)';
         dropdown.style.zIndex = 9999;
@@ -255,3 +437,65 @@
 
   connect();
 })();
+
+
+     //for movable widgget
+function makeButtonDraggable(button){
+
+    let moving = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+
+    button.addEventListener("mousedown", function(e){
+
+        moving = true;
+
+        let rect = button.getBoundingClientRect();
+
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+
+       button.style.position = "fixed";
+       button.style.left = rect.left + "px";
+       button.style.top = rect.top + "px";
+
+        button.style.right = "auto";
+        button.style.bottom = "auto";
+
+    });
+
+
+    document.addEventListener("mousemove", function(e){
+
+        if(!moving) return;
+
+
+        button.style.left =
+            (e.clientX - offsetX) + "px";
+
+
+        button.style.top =
+            (e.clientY - offsetY) + "px";
+
+    });
+
+
+    document.addEventListener("mouseup", function(){
+
+        moving = false;
+
+    });
+
+}
+
+
+const chatButton = document.getElementById("chat-open");
+
+
+if(chatButton){
+
+    makeButtonDraggable(chatButton);
+
+}

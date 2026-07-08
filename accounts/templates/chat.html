@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JMJ Chat</title>
+
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+
+</head>
+
+<body>
+  {% csrf_token %}
+<div class="chat-container">
+
+    <!-- LEFT SIDE -->
+    <div class="sidebar">
+
+        <h2 style="padding:20px">Chats</h2>
+
+        {% for u in users %}
+<a href="{% url 'chat_home' %}?user={{ u.username }}"
+   class="user"
+   data-username="{{ u.username }}">
+
+    <img src="{% static 'profile/' %}{{ u.profile.avatar }}" alt="">
+
+    <div>
+        <b>{{ u.username }}</b><br>
+        <small>Click to chat</small>
+    </div>
+
+</a>
+{% endfor %}
+<img src="{% static 'profile/' %}{{ u.profile.avatar }}" alt="">
+<div>
+
+<b>{{ u.username }}</b><br>
+
+<small>Click to chat</small>
+
+
+</div>
+
+
+</div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+<div class="chat-area">
+
+{% if selected_user %}
+
+<div class="chat-header">
+
+<img src="{% static 'profile/' %}{{ selected_user.profile.avatar }}">
+
+<div>
+
+<h2>{{ selected_user.username }}</h2>
+
+<small>Online</small>
+
+</div>
+
+</div>
+
+<div class="messages" id="messages">
+{% for msg in messages %}
+
+<div class="{% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
+
+{{ msg.message }}
+
+</div>
+
+{% empty %}
+
+<p>No messages.</p>
+
+{% endfor %}
+
+</div>
+<div class="chat-input">
+
+<form id="chat-form">
+
+<input
+
+type="text"
+
+id="message"
+
+placeholder="Type message...">
+
+<button>
+
+Send
+
+</button>
+
+</form>
+
+</div>
+
+{% else %}
+
+<h2>Select a user</h2>
+
+{% endif %}
+
+</div> 
+</div>
+<input
+type="hidden"
+id="current-user"
+value="{{ request.user.username }}">
+
+</body>
+<script src="{% static 'js/chat.js' %}"></script>
+
+</html>
