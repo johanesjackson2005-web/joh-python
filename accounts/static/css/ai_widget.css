@@ -114,7 +114,12 @@ html, body{
     overflow-x:hidden;
 
 }
+#chat-target:disabled {
 
+    opacity: 0.5;
+    cursor: not-allowed;
+
+}
 
 #chat-modal.chat-fullscreen .chat-content{
 
@@ -432,7 +437,21 @@ color:black;
 }
 
 }
-@media (max-width:768px){
+@media (max-width: 768px){
+
+    .ai-open-btn {
+        width: auto;
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .ai-label {
+        display: inline-block;
+        font-size: 14px;
+    }
+
 
 .chat-window{
 

@@ -85,7 +85,11 @@ def gemini_ai(message, context="", memory=""):
 
     prompt = f"""
 SYSTEM INSTRUCTIONS:
-You are JMJ Softwares AI Assistant.
+-You are JMJ Softwares AI Assistant.
+-Wewe ni JMJ Assistant.
+-Jibu maswali kwa Kiswahili ikiwa mtumiaji ameuliza kwa Kiswahili.
+-Unaweza kutumia Kiingereza ikiwa mtumiaji ametumia Kiingereza.
+-Jibu kwa lugha rahisi na sahihi.
 
 COMMAND RULES:
 - If user asks "what is this website" → explain full website clearly
@@ -242,22 +246,37 @@ def admin_chat(request):
 # 🏠 MAIN PAGES
 # =========================
 
+from django.contrib.auth.models import User
+
 def home(request):
 
     categories = Category.objects.all()
     tutorials = Tutorial.objects.order_by("-created_at")[:6]
     livestreams = LiveStream.objects.order_by("-created_at")[:4]
 
+    users = User.objects.filter(is_active=True)
+
     if request.user.is_authenticated:
+
         profile, _ = Profile.objects.get_or_create(user=request.user)
 
         if profile.avatar == "default.jpg":
             return redirect("choose_avatar")
 
+        # usijionyeshe mwenyewe kwenye list
+        users = users.exclude(id=request.user.id)
+
+    else:
+
+        users = User.objects.none()
+
     return render(request, "home.html", {
+
         "categories": categories,
         "tutorials": tutorials,
-        "livestreams": livestreams
+        "livestreams": livestreams,
+        "users": users,
+
     })
 
 
@@ -547,4 +566,17 @@ def chat_home(request):
 
         "messages":messages
 
+    })
+@login_required 
+def users_search(request):
+
+    q = request.GET.get("q", "").strip()
+
+    users = User.objects.filter(
+        username__icontains=q,
+        is_active=True
+    ).exclude(id=request.user.id)[:10]
+
+    return JsonResponse({
+        "results": [u.username for u in users]
     })

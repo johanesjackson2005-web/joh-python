@@ -33,16 +33,10 @@ data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{
     </div>
 <div id="chat-modal" class="chat-window">
 
-    <div class="chat-background"
+   <div class="chat-background"
 style="
-background-image:url(
-'{% if user.is_authenticated and user.profile.avatar %}
-{% static 'profile/' %}{{ user.profile.avatar }}
-{% else %}
-{% static 'image/logo1.png' %}
-{% endif %}'
-  );
-''>
+background-image:url('{% static 'image/logo1.png' %}');
+">
 </div>
    
     <div class="chat-overlay"></div>
@@ -74,7 +68,7 @@ src="{% if user.profile.avatar %}
    <select id="chat-target">
 
   <option value="">
-    Select receiver
+    DM FRIEND😎😎
     </option>
 
     {% for u in users %}
@@ -98,15 +92,47 @@ src="{% if user.profile.avatar %}
 
         <div class="chat-input-area">
 
-            <button id="emoji-btn">
-                😊
-            </button>
+<button id="emoji-btn">
 
-            <div style="position:relative;flex:1">
-            <textarea
-              id="chat-input"
-           placeholder="Type your message..."
-             rows="1"></textarea>
+                😊
+
+            </button>
+<label class="upload-btn">
+📷
+<input 
+type="file"
+id="image-upload"
+accept="image/*"
+hidden>
+</label>
+
+
+<label class="upload-btn">
+📁
+<input 
+type="file"
+id="file-upload"
+hidden>
+</label>
+
+
+<button id="voice-record">
+🎤
+</button>
+
+
+<textarea
+   id="chat-input"
+      placeholder="Type message..."
+rows="1">
+</textarea>
+
+
+   <button id="chat-send">
+     ➤
+       </button>
+
+
                 
                 <div id="emoji-picker">
 

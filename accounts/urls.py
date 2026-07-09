@@ -49,5 +49,10 @@ urlpatterns = [
     path('admin-chat/', views.admin_chat, name='admin_chat'),
     path('chat/send/', views.chat_send, name='chat_send'),
      path("chat/", views.chat_home, name="chat"),
+     path(
+    "accounts/users/search/",
+    views.users_search,
+    name="users_search"
+),
     
 ]

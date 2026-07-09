@@ -7,24 +7,49 @@
   const username = widget.dataset.username || 'Anonymous';
   // choose a room name: allow 'public' for site-wide chat or 'pm_<id1>_<id2>' for private
   function computeRoomName(){
-    const scope = qs('#chat-scope') ? qs('#chat-scope').value : null;
-    const targetRaw = qs('#chat-target') ? qs('#chat-target').value.trim() : '';
-    // normalize function for usernames to make safe room tokens
-    function normalizeName(s){ return String(s||'').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '_'); }
-    const target = normalizeName(targetRaw);
-    const meName = normalizeName(username);
-    if(scope === 'public' || (!scope && !userId)) return 'public';
-    if(scope === 'private'){
-      if(meName && target && meName !== target){
-        const parts = [meName, target].sort();
-        return 'pm_' + parts[0] + '_' + parts[1];
-      }
-      // invalid private target -> fallback to public
-      return 'public';
+
+    const scope = qs('#chat-scope') 
+        ? qs('#chat-scope').value 
+        : 'public';
+
+    const targetRaw = qs('#chat-target') 
+        ? qs('#chat-target').value 
+        : '';
+
+    function normalizeName(s){
+        return String(s || '')
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9_-]+/g, '_');
     }
-    // default per-user room for backwards compatibility
-    return userId ? ('user_' + userId) : 'public';
-  }
+
+
+    const me = normalizeName(username);
+    const target = normalizeName(targetRaw);
+
+    console.log("ROOM DATA:", {
+        scope: scope,
+        me: me,
+        target: target
+    });
+
+
+    if(scope === "private"){
+
+        if(me && target && me !== target){
+
+            const users = [me, target].sort();
+
+            return "pm_" + users[0] + "_" + users[1];
+
+        }
+
+        return "public";
+    }
+
+
+    return "public";
+}
   let roomName = computeRoomName();
   const protocol = (location.protocol === 'https:') ? 'wss' : 'ws';
   let wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
@@ -72,8 +97,10 @@ console.log('Connecting to chat room', roomName);
 
 socket = new WebSocket(wsUrl);
     socket.onopen = function(){ console.log('Chat connected to', wsUrl); qs('#chat-status') && (qs('#chat-status').innerText='online'); };
-    socket.onclose = function(){ console.log('Chat disconnected'); qs('#chat-status') && (qs('#chat-status').innerText='offline'); setTimeout(connect, 3000); };
-    socket.onerror = function(e){ console.error('Chat socket error', e); };
+    socket.onclose = function(){
+    console.log('Chat disconnected');
+    qs('#chat-status') && (qs('#chat-status').innerText='offline');
+}; socket.onerror = function(e){ console.error('Chat socket error', e); };
    socket.onmessage = function(e){
 
 const data = JSON.parse(e.data);
@@ -98,7 +125,12 @@ appendMessage(
     data.message,
     data.user === username,
     data.id,
-    data.avatar
+    data.avatar,
+    "FILE",
+   data.name,
+    false,
+null,
+data.url
 );
 
 }
@@ -131,7 +163,7 @@ margin-right:8px;
 <strong>${escapeHtml(user)}:</strong> 
 ${escapeHtml(text)}
 
-${outgoing ? '<button type="button" class="delete-btn">🗑</button>' : ''}
+${'<button type="button" class="delete-btn">🗑delete</button>'}
 `;
 
   list.appendChild(el);
@@ -170,6 +202,15 @@ if(!outgoing && modalHidden){
     const input = qs('#chat-input');
     const text = input && input.value.trim();
     if(!text) return;
+    if(
+    scopeEl &&
+    scopeEl.value === "private" &&
+    targetEl &&
+    !targetEl.value
+){
+    alert("Please select a user for DM");
+    return;
+}
 
     // If WS is open, send over socket
     if(socket && socket.readyState === WebSocket.OPEN){
@@ -452,72 +493,84 @@ modal.style.setProperty("top", top + "px", "important");
   }
 
 });
-  const scopeEl = qs('#chat-scope');
-  const targetEl = qs('#chat-target');
-  if(scopeEl){
-    scopeEl.addEventListener('change', function(){ connect(); });
-  }
-  if(targetEl){
-      targetEl.addEventListener('blur', function(){ setTimeout(()=> dropdown.style.display='none', 150); connect(); });
-        // autocomplete dropdown
-        const dropdown = document.createElement('div');
-        dropdown.style.position = 'absolute';
-        dropdown.style.background = '#1ff10c';
-        dropdown.style.color = '#000';
-        dropdown.style.border = '1px solid rgba(0,0,0,0.08)';
-        dropdown.style.zIndex = 9999;
-        dropdown.style.display = 'none';
-        dropdown.style.maxHeight = '180px';
-        dropdown.style.overflow = 'auto';
-        dropdown.style.minWidth = '160px';
-        targetEl.parentElement.style.position = 'relative';
-        targetEl.parentElement.appendChild(dropdown);
+ const scopeEl = qs('#chat-scope');
+const targetEl = qs('#chat-target');
 
-        let acTimer = null;
-        targetEl.addEventListener('input', function(){
-          const q = targetEl.value.trim();
-          if(acTimer) clearTimeout(acTimer);
-          if(!q){ dropdown.style.display='none'; return; }
-          acTimer = setTimeout(()=>{
-            fetch('/accounts/users/search/?q=' + encodeURIComponent(q))
-              .then(r=>r.json())
-              .then(data=>{
-                dropdown.innerHTML='';
-                (data.results||[]).forEach(name=>{
-                  const item = document.createElement('div');
-                  item.textContent = name;
-                  item.style.padding = '6px 8px';
-                  item.style.cursor = 'pointer';
-                  item.addEventListener('click', ()=>{
-                    targetEl.value = name;
-                    dropdown.style.display='none';
-                    connect();
-                  });
-                  dropdown.appendChild(item);
-                });
-                dropdown.style.display = dropdown.children.length ? 'block' : 'none';
-              })
-              .catch(()=>{ dropdown.style.display='none'; });
-          }, 220);
-        });
-  }
-  document.addEventListener('keydown', function(e){
+
+function updateDMState(){
+
+    if(!scopeEl || !targetEl) return;
+
+    if(scopeEl.value === "private"){
+
+        targetEl.disabled = false;
+
+    }else{
+
+        targetEl.disabled = true;
+        targetEl.value = "";
+
+    }
+
+}
+
+
+// hali ya mwanzo
+updateDMState();
+
+
+
+if(scopeEl){
+
+    scopeEl.addEventListener('change', function(){
+
+        updateDMState();
+
+        connect();
+
+    });
+
+}
+
+
+
+if(targetEl){
+
+    targetEl.addEventListener('change', function(){
+
+        if(scopeEl.value === "private"){
+
+            connect();
+
+        }
+
+    });
+
+}
+
+
+
+
+if(targetEl){
+    targetEl.addEventListener('change', reconnectChat);
+}
+document.addEventListener('keydown', function(e){
 
     if(
         e.key === "Enter" &&
         document.activeElement.id === "chat-input" &&
         e.ctrlKey
     ){
-
         sendMessage();
-
     }
 
 });
-  // Request notifications permission proactively
-  ensureNotificationPermission();
 
-  connect();
+// Request notifications permission proactively
+ensureNotificationPermission();
+
+connect();
+
 })();
 
 
@@ -581,3 +634,135 @@ if(chatButton){
     makeButtonDraggable(chatButton);
 
 }
+const imageUpload =
+document.getElementById("image-upload");
+
+
+const fileUpload =
+document.getElementById("file-upload");
+
+
+imageUpload.onchange=function(){
+
+sendFile(this.files[0]);
+
+}
+
+
+fileUpload.onchange=function(){
+
+sendFile(this.files[0]);
+
+}
+
+
+
+function sendFile(file){
+
+let formData=new FormData();
+
+formData.append(
+"file",
+file
+);
+
+formData.append(
+"room",
+roomName
+);
+
+
+fetch("/chat/upload/",{
+
+method:"POST",
+
+body:formData,
+
+headers:{
+"X-CSRFToken":getCookie("csrftoken")
+}
+
+})
+.then(res=>res.json())
+.then(data=>{
+
+socket.send(JSON.stringify({
+
+type:"file",
+
+url:data.url,
+
+name:data.name
+
+}));
+
+});
+
+}
+const recordBtn =
+document.getElementById(
+"voice-record"
+);
+
+
+let recorder;
+let audioChunks=[];
+
+
+recordBtn.onclick=async()=>{
+
+
+let stream =
+await navigator.mediaDevices.getUserMedia({
+audio:true
+});
+
+
+recorder =
+new MediaRecorder(stream);
+
+
+audioChunks=[];
+
+
+recorder.ondataavailable=e=>{
+audioChunks.push(e.data);
+};
+
+
+
+recorder.onstop=()=>{
+
+
+let audioBlob =
+new Blob(
+audioChunks,
+{
+type:"audio/webm"
+}
+);
+
+
+sendFile(
+new File(
+[audioBlob],
+"voice.webm"
+)
+);
+
+
+};
+
+
+
+recorder.start();
+
+
+setTimeout(()=>{
+
+recorder.stop();
+
+},10000);
+
+
+};

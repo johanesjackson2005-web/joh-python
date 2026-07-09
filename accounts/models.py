@@ -121,6 +121,23 @@ class ChatMessage(models.Model):
         null=True,
         related_name="sent_messages"
     )
+    image = models.ImageField(
+        upload_to="chat/images/",
+        null=True,
+        blank=True
+    )
+
+    file = models.FileField(
+        upload_to="chat/files/",
+        null=True,
+        blank=True
+    )
+
+    voice = models.FileField(
+        upload_to="chat/voice/",
+        null=True,
+        blank=True
+    )
 
     receiver = models.ForeignKey(
         User,

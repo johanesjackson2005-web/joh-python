@@ -12,6 +12,37 @@ document.addEventListener('DOMContentLoaded', function () {
         chat.scrollTop = chat.scrollHeight;
         return div; // 🔥 important (we use it later)
     }
+    const messageBox = document.getElementById("message");
+
+
+if(messageBox){
+
+    messageBox.addEventListener("input", function(){
+
+        this.style.height = "auto";
+
+        this.style.height =
+        Math.min(this.scrollHeight,150) + "px";
+
+    });
+
+
+    messageBox.addEventListener("keydown", function(e){
+
+        // Enter = new line
+        // Ctrl + Enter = send
+
+        if(e.key === "Enter" && e.ctrlKey){
+
+            e.preventDefault();
+
+            document.getElementById("send").click();
+
+        }
+
+    });
+
+}
 
     // CSRF helper
     function getCookie(name) {
@@ -109,10 +140,73 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!text) return;
 
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "en-US"; // unaweza badilisha "sw-TZ"
+        msg.lang = "sw-TZ"; // unaweza badilisha "sw-TZ"
         msg.rate = 1;
 
         window.speechSynthesis.speak(msg);
     }
+const voiceBtn = document.getElementById("voice");
+const message = document.getElementById("message");
+
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+
+if(SpeechRecognition){
+
+const recognition = new SpeechRecognition();
+
+
+recognition.lang = "sw-TZ";
+
+recognition.continuous = false;
+
+recognition.interimResults = false;
+
+
+if(voiceBtn && SpeechRecognition){
+
+const recognition = new SpeechRecognition();
+
+recognition.lang = "sw-TZ";
+recognition.continuous = false;
+recognition.interimResults = false;
+
+
+voiceBtn.onclick = function(){
+
+    recognition.start();
+
+};
+
+
+recognition.onresult = function(event){
+
+    const text =
+    event.results[0][0].transcript;
+
+
+    message.value = text;
+
+    message.dispatchEvent(
+        new Event("input")
+    );
+
+};
+
+
+recognition.onerror=function(e){
+
+console.log("Voice error:",e.error);
+
+};
+
+}
+};
+
+
+
 
 });

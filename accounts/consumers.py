@@ -103,10 +103,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(
         self.group_name,
          self.channel_name
-)
-
+) 
         await self.accept()
 
+        print(
+    "CHAT CONNECTED:",
+    self.room_name,
+    self.scope.get("user")
+)
 
 # Tuma messages 50 za mwisho wakati user anaingia
         if self.scope['user'].is_authenticated:
@@ -126,7 +130,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     else msg.guest_name
 ),
     "message": msg.message,
-     "avatar": ("/static/profile/" + msg.sender.profile.avatar
+     "avatr" : "/static/profile/" + str(msg.sender.profile.avatar
     if msg.sender and hasattr(msg.sender, "profile") and msg.sender.profile.avatar
     else "/static/image/logo1.png"),
      }))
@@ -134,10 +138,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
 
+      if hasattr(self, "group_name"):
+
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
-         )
+        )
     @database_sync_to_async
     def get_last_messages(self, user_id):
 
@@ -168,6 +174,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data=None,
         bytes_data=None
     ):
+        
 
 
         if text_data is None:
@@ -183,12 +190,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type",
             "message"
         )
+         
+        if event_type=="file":
 
+           await self.channel_layer.group_send(
+        self.group_name,
+        {
+            "type":"chat.file",
+            "url":data["url"],
+            "name":data["name"]
+        }
+    )
 
+           return
 
         # =================================
         # DELETE MESSAGE EVENT
         # =================================
+        
         
         if event_type == "delete":
         
@@ -240,8 +259,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 print("DELETE ERROR:", e)
                 return
-
-                   
 
 
          
@@ -312,7 +329,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         avatar = "/static/image/logo1.png"
 
         if sender_obj and hasattr(sender_obj, "profile"):
-            avatar = "/static/profile/" + sender_obj.profile.avatar
+          avatar = "/static/profile/" + str(sender_obj.profile.avatar)
 
 
 
@@ -352,4 +369,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message_id": event["message_id"]
         })
  )   
-        
+    async def chat_file(self,event):
+
+      await self.send(
+        text_data=json.dumps({
+
+            "type":"file",
+
+            "url":event["url"],
+
+            "name":event["name"]
+
+        })
+    )     
