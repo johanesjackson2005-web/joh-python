@@ -46,10 +46,30 @@
     }
 
     .input-row{
-      display:flex;
-      gap:8px;
-      margin-top:12px;
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+    align-items:flex-end;
+}
+
+#file-preview{
+    margin-top:8px;
+    color:#0ea5a2;
+    font-size:14px;
+}
+
+@media(max-width:600px){
+
+    .input-row{
+        flex-wrap:wrap;
     }
+
+    textarea.chat-input{
+        width:100%;
+        order:10;
+    }
+
+}
 
     textarea.chat-input{
 
@@ -71,7 +91,7 @@
 
       background:transparent;
 
-      color:white;
+      color: white;
 
       font-family:Segoe UI,Arial;
 
@@ -134,20 +154,46 @@
   </div>
 
   <div id="chat" class="chat-box"></div>
-
+  <div id="chat" class="chat-box"></div>
   <div class="input-row">
-    <textarea 
-id="message" 
-class="chat-input" 
-rows="1"
-placeholder="Ask me anything..."></textarea>
-<button id="voice" class="send-btn">
-🎤
-</button>
 
-<button id="send" class="send-btn">
-Send
-</button>
+    <button id="image-btn" class="send-btn">
+        <i class="fa-solid fa-image"></i>
+    </button>
+
+    <input
+        type="file"
+        id="image-upload"
+        accept="image/*"
+        hidden
+    >
+
+    <button id="file-btn" class="send-btn">
+        <i class="fa-solid fa-paperclip"></i>
+    </button>
+
+    <input
+    type="file"
+    id="file-upload"
+    accept=".pdf,.txt,.doc,.docx,.py,.js,.html,.css"
+    hidden
+>
+
+    <textarea
+        id="message"
+        class="chat-input"
+        rows="1"
+        placeholder="Ask me anything...">
+    </textarea>
+
+    <button id="voice" class="send-btn">
+        <i class="fa-solid fa-microphone"></i>
+    </button>
+
+    <button id="send" class="send-btn">
+        <i class="fa-solid fa-paper-plane"></i>
+    </button>
+
 </div>
 
 </div>

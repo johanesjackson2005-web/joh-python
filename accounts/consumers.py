@@ -130,7 +130,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     else msg.guest_name
 ),
     "message": msg.message,
-     "avatr" : "/static/profile/" + str(msg.sender.profile.avatar
+     "avatar" : "/static/profile/" + str(msg.sender.profile.avatar
     if msg.sender and hasattr(msg.sender, "profile") and msg.sender.profile.avatar
     else "/static/image/logo1.png"),
      }))
@@ -191,18 +191,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message"
         )
          
-        if event_type=="file":
+        if event_type == "file":
+
+           user = self.scope.get("user")
+
+    # SAVE FILE MESSAGE IN DATABASE
+           saved_file = await database_sync_to_async(
+           ChatMessage.objects.create
+         )(
+          sender=user if user.is_authenticated else None,
+          guest_name=None if user.is_authenticated else "Guest",
+           room=self.room_name,
+          message=data["url"]
+          )
+
 
            await self.channel_layer.group_send(
-        self.group_name,
-        {
-            "type":"chat.file",
-            "url":data["url"],
-            "name":data["name"]
-        }
-    )
+             self.group_name,
+           {
+            "type": "chat.file",
+            "id": saved_file.id,
+            "url": data["url"],
+            "name": data["name"]
+          }
+      )
 
            return
+
+             
 
         # =================================
         # DELETE MESSAGE EVENT
@@ -328,10 +344,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 # PROFILE IMAGE
         avatar = "/static/image/logo1.png"
 
-        if sender_obj and hasattr(sender_obj, "profile"):
+        if (
+          sender_obj
+            and hasattr(sender_obj, "profile")
+            and sender_obj.profile.avatar
+            ):
           avatar = "/static/profile/" + str(sender_obj.profile.avatar)
-
-
 
         payload = {
 
@@ -375,6 +393,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data=json.dumps({
 
             "type":"file",
+            "id":event["id"],
 
             "url":event["url"],
 

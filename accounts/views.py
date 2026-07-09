@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.conf import settings
 from django.db.models import Q
-
+from django.core.files.storage import default_storage
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
@@ -24,7 +24,8 @@ from .models import (
 from .forms import RegisterForm, ContactForm
 from .email_service import send_otp_email
 from django.contrib.auth.models import User
-
+import os
+import mimetypes
 
 # =========================
 # 🧠 GEMINI AI FUNCTIONS
@@ -78,37 +79,29 @@ def build_context(message):
         context += f"- {s.name} → /software/{s.id}/\n"
 
     return context
-def gemini_ai(message, context="", memory=""):
+
+import os
+import mimetypes
+import base64
+import requests
+from django.conf import settings
+
+
+def gemini_ai(message, context="", memory="", file_path=None):
+
     api_key = settings.GEMINI_API_KEY
 
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={api_key}"
+    url = (
+        "https://generativelanguage.googleapis.com/v1/models/"
+        f"gemini-2.5-flash:generateContent?key={api_key}"
+    )
 
     prompt = f"""
 SYSTEM INSTRUCTIONS:
--You are JMJ Softwares AI Assistant.
--Wewe ni JMJ Assistant.
--Jibu maswali kwa Kiswahili ikiwa mtumiaji ameuliza kwa Kiswahili.
--Unaweza kutumia Kiingereza ikiwa mtumiaji ametumia Kiingereza.
--Jibu kwa lugha rahisi na sahihi.
-
-COMMAND RULES:
-- If user asks "what is this website" → explain full website clearly
-- If user asks "where is tutorials" → give /tutorials/
-- If user asks "software/downloads" → guide to /software/
-- If user asks "contact" → give /contactus/
--if user asks  "about" → give /about/
--if user asks  'how to use this website' → explain clearly
--if user aks   'how to register ' explain the instuction on register
-- Always respond in Swahili or English depending on user
-- Be short, clear, helpful
-- NEVER invent fake pages
--if user want to solve some math issue solve it
--show empathy and be friendly
--provide the good advaice
--show reference
--provide the good advices and solutions to the user
--provide image,diagram if needed
-
+- You are JMJ Softwares AI Assistant.
+- Reply in Kiswahili if the user speaks Kiswahili.
+- Reply in English if the user speaks English.
+- Answer clearly and accurately.
 
 WEBSITE KNOWLEDGE:
 {context}
@@ -120,75 +113,193 @@ USER MESSAGE:
 {message}
 """
 
+    # Text part
+    parts = [
+        {
+            "text": prompt
+        }
+    ]
+
+    # Optional image
+    if file_path:
+
+        full_path = os.path.join(
+            settings.MEDIA_ROOT,
+            file_path
+        )
+
+        if os.path.exists(full_path):
+
+            mime_type = mimetypes.guess_type(full_path)[0]
+
+            if mime_type and mime_type.startswith("image"):
+
+                with open(full_path, "rb") as f:
+
+                    image_data = base64.b64encode(
+                        f.read()
+                    ).decode()
+
+                parts.append(
+                    {
+                        "inline_data": {
+                            "mime_type": mime_type,
+                            "data": image_data
+                        }
+                    }
+                )
+
     payload = {
         "contents": [
             {
-                "parts": [
-                    {"text": prompt}
-                ]
+                "parts": parts
             }
         ]
     }
 
     try:
-        r = requests.post(url, json=payload, timeout=15)
 
-        # DEBUG
-        print("GEMINI STATUS:", r.status_code)
-        print("GEMINI RAW:", r.text)
+        r = requests.post(
+            url,
+            json=payload,
+            timeout=30
+        )
+
+        print("STATUS:", r.status_code)
+        print("RAW:", r.text)
 
         data = r.json()
 
         if "candidates" not in data:
-            return f"Gemini error: {data}"
+            return str(data)
 
         return data["candidates"][0]["content"]["parts"][0]["text"]
 
     except Exception as e:
-        return f"Gemini request failed: {str(e)}"
-
-
+        return str(e)
 # =========================
 # 🚀 AI ASSISTANT API
 # =========================
+@csrf_exempt
 def ai_assistant_api(request):
 
     if request.method != "POST":
-        return JsonResponse({"error": "POST required"}, status=400)
+        return JsonResponse(
+            {"error": "POST required"},
+            status=400
+        )
 
-    try:
-        data = json.loads(request.body.decode("utf-8"))
-    except:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    uploaded_file = None
 
-    message = data.get("message", "").strip()
+    # multipart/form-data (text + file)
+    if request.content_type and request.content_type.startswith("multipart"):
 
-    if not message:
-        return JsonResponse({"error": "empty message"}, status=400)
+        message = request.POST.get(
+            "message",
+            ""
+        ).strip()
+
+        uploaded_file = request.FILES.get("file")
+
+    # application/json (text only)
+    else:
+
+        try:
+            data = json.loads(
+                request.body.decode("utf-8")
+            )
+
+        except Exception:
+
+            return JsonResponse(
+                {"error":"Invalid JSON"},
+                status=400
+            )
+
+        message = data.get(
+            "message",
+            ""
+        ).strip()
+
+    if not message and not uploaded_file:
+
+        return JsonResponse(
+            {
+                "error":"Message or file required"
+            },
+            status=400
+        )
+
+    file_path = None
+
+    if uploaded_file:
+
+        MAX_SIZE = 2 * 1024 * 1024
+
+        if uploaded_file.size > MAX_SIZE:
+
+            return JsonResponse(
+                {
+                    "error":"Maximum file size is 2 MB"
+                },
+                status=400
+            )
+
+        file_path = default_storage.save(
+
+            "ai_uploads/" + uploaded_file.name,
+
+            uploaded_file
+
+        )
 
     context = build_context(message)
+
     memory = get_memory(request.user)
 
-    # SAVE USER MESSAGE
     if request.user.is_authenticated:
+
         ChatMemory.objects.create(
+
             user=request.user,
+
             role="user",
-            message=message
+
+            message=message if message else "[Uploaded File]"
+
         )
 
-    # GET AI RESPONSE
-    answer = gemini_ai(message, context, memory)
+    answer = gemini_ai(
 
-    # SAVE AI RESPONSE
+        message,
+
+        context,
+
+        memory,
+
+        file_path
+
+    )
+
     if request.user.is_authenticated:
+
         ChatMemory.objects.create(
+
             user=request.user,
+
             role="ai",
+
             message=answer
+
         )
 
-    return JsonResponse({"answer": answer})
+    return JsonResponse({
+
+        "answer":answer,
+
+        "file":file_path
+
+    })
 @csrf_exempt
 def ai_assistant(request):
     return render(request, "ai_assistant.html")
@@ -579,4 +690,144 @@ def users_search(request):
 
     return JsonResponse({
         "results": [u.username for u in users]
+    })
+    
+@csrf_exempt
+def chat_upload(request):
+
+    print("UPLOAD VIEW CALLED")
+
+    if request.method != "POST":
+        return JsonResponse({
+            "error": "POST required"
+        }, status=400)
+
+
+    try:
+        
+         uploaded_file = request.FILES.get("file")
+         if not uploaded_file:
+
+            return JsonResponse({
+                "error": "No file selected"
+            }, status=400)
+
+
+        
+        
+         MAX_SIZE = 2 * 1024 * 1024   # 2 MB
+
+         if uploaded_file.size > MAX_SIZE:
+           return JsonResponse(
+        {
+            "error": "Maximum file size is 2 MB."
+        },
+        status=400
+       )
+         print("FILE:", uploaded_file)
+
+
+       
+
+        # save file kwenye MEDIA
+         file_path = default_storage.save(
+            f"chat/uploads/{uploaded_file.name}",
+            uploaded_file
+        )
+
+
+         file_url = default_storage.url(file_path)
+
+
+         print("SAVED:", file_path)
+         print("URL:", file_url)
+
+
+        # ===============================
+        # SAVE FILE AS CHAT MESSAGE
+        # ===============================
+
+         user = request.user if request.user.is_authenticated else None
+
+         room = request.POST.get(
+            "room",
+            "public"
+        )
+
+
+         chat_message = ChatMessage.objects.create(
+
+            sender=user,
+
+            guest_name=None if user else "Guest",
+
+            room=room,
+
+            message="",
+
+            file=file_path
+
+        )
+
+
+         print(
+            "CHAT MESSAGE SAVED:",
+            chat_message.id
+        )
+
+
+         return JsonResponse({
+
+            "id": chat_message.id,
+
+            "url": file_url,
+
+            "name": uploaded_file.name
+
+        })
+
+
+    except Exception as e:
+
+        print("UPLOAD ERROR:", str(e))
+
+        return JsonResponse({
+
+            "error": str(e)
+
+        }, status=500)
+@csrf_exempt
+def ai_upload(request):
+
+    if request.method != "POST":
+        return JsonResponse({"error":"POST required"}, status=400)
+
+    uploaded_file = request.FILES.get("file")
+
+    if not uploaded_file:
+        return JsonResponse({"error":"No file"}, status=400)
+
+    MAX_SIZE = 2 * 1024 * 1024
+
+    if uploaded_file.size > MAX_SIZE:
+        return JsonResponse(
+            {"error":"Maximum file size is 2 MB"},
+            status=400
+        )
+
+    path = default_storage.save(
+        f"ai_uploads/{uploaded_file.name}",
+        uploaded_file
+    )
+
+    return JsonResponse({
+
+        "url": default_storage.url(path),
+
+        "path": path,
+
+        "name": uploaded_file.name,
+
+        "type": uploaded_file.content_type
+
     })

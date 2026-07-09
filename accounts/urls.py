@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-
 urlpatterns = [
     path('', views.home, name='home'),
     path('register/', views.register, name='register'),
@@ -54,5 +53,6 @@ urlpatterns = [
     views.users_search,
     name="users_search"
 ),
-    
+     path("chat/upload/", views.chat_upload, name="chat_upload"),
+    path("ai/upload/", views.ai_upload, name="ai_upload"),
 ]

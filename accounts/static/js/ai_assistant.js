@@ -210,3 +210,58 @@ console.log("Voice error:",e.error);
 
 
 });
+document.getElementById("image-btn").onclick=function(){
+
+    document.getElementById("image-upload").click();
+
+}
+
+document.getElementById("file-btn").onclick=function(){
+
+    document.getElementById("file-upload").click();
+
+}
+document.getElementById("image-upload").onchange=function(){
+
+    uploadAIFile(this.files[0]);
+
+}
+
+document.getElementById("file-upload").onchange=function(){
+
+    uploadAIFile(this.files[0]);
+
+}
+async function uploadAIFile(file){
+
+    if(!file) return;
+
+    if(file.size > 2*1024*1024){
+
+        alert("Maximum file size is 2 MB");
+
+        return;
+
+    }
+
+    let form=new FormData();
+
+    form.append("file",file);
+
+    let res=await fetch("/ai/upload/",{
+
+        method:"POST",
+
+        headers:{
+            "X-CSRFToken":document.querySelector("[name=csrfmiddlewaretoken]").value
+        },
+
+        body:form
+
+    });
+
+    let data=await res.json();
+
+    console.log(data);
+
+}

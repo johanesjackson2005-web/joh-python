@@ -1,5 +1,32 @@
 // Simple WebSocket-based chat widget client
+
+
+
+
 (function(){
+    function getCookie(name){
+
+    let cookieValue = null;
+
+    const cookies = document.cookie.split(';');
+
+    for(let cookie of cookies){
+
+        cookie = cookie.trim();
+
+        if(cookie.startsWith(name + '=')){
+
+            cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+            );
+
+            break;
+        }
+    }
+
+    return cookieValue;
+}
+ 
   function qs(sel, ctx){ return (ctx||document).querySelector(sel); }
   const widget = qs('#chat-widget');
   if(!widget) return;
@@ -125,12 +152,19 @@ appendMessage(
     data.message,
     data.user === username,
     data.id,
-    data.avatar,
-    "FILE",
-   data.name,
-    false,
-null,
-data.url
+    data.avatar
+);
+
+}
+
+
+if(data.type==="file"){
+    console.log("file received",data);
+
+appendFile(
+    data.id,
+    data.name,
+    data.url
 );
 
 }
@@ -195,10 +229,176 @@ if(!outgoing && modalHidden){
   playBeep();
 }
   }
+  function appendFile(id, name, url){
+
+    const list = qs('#chat-messages');
+
+    if(!list) return;
+
+
+    const el = document.createElement("div");
+
+    el.className = "chat-line incoming";
+
+
+    // muhimu kwa delete
+    el.setAttribute(
+        "data-message-id",
+        id
+    );
+console.log("file created", id)
+
+    let content = "";
+
+
+    if(
+        url.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+    ){
+
+        content = `
+
+        <img src="${url}"
+        style="
+        max-width:220px;
+        border-radius:10px;
+        display:block;
+        ">
+
+        `;
+
+    }
+
+
+    else if(
+        url.match(/\.(webm|mp3|wav)$/i)
+    ){
+
+        content = `
+
+        <audio controls>
+            <source src="${url}">
+        </audio>
+
+        `;
+
+    }
+
+
+    else{
+
+        content = `
+
+        📎 ${name}
+
+        `;
+
+    }
+
+
+    // download + delete button kwa kila file
+    content += `
+
+    <br>
+
+    <a href="${url}" download>
+        ⬇ Download ${name}
+    </a>
+
+
+    <button 
+    type="button"
+    class="delete-btn">
+        🗑 Delete
+    </button>
+
+    `;
+
+
+    el.innerHTML = content;
+
+
+    list.appendChild(el);
+
+    list.scrollTop = list.scrollHeight;
+
+}
 
   function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
   function sendMessage(){
+
+function uploadFile(file){
+
+    if(!file) return;
+
+
+    let formData = new FormData();
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    fetch("/chat/upload/",{
+
+        method:"POST",
+
+        headers:{
+            "X-CSRFToken":getCookie("csrftoken")
+        },
+
+        body:formData
+
+    })
+
+   .then(async res=>{
+
+    const text = await res.text();
+
+    console.log("SERVER RESPONSE:", text);
+
+    let data;
+
+    try{
+        data = JSON.parse(text);
+    }
+    catch(error){
+        console.error("NOT JSON RESPONSE");
+        return;
+    }
+
+    console.log("UPLOAD RESULT:", data);
+
+
+    if(data.url && socket && socket.readyState === WebSocket.OPEN){
+
+        socket.send(JSON.stringify({
+
+    type:"file",
+
+    id:data.id,
+
+    url:data.url,
+
+    name:data.name
+
+}));
+    }
+
+})
+
+    .catch(error=>{
+
+        console.error(
+            "UPLOAD ERROR",
+            error
+        );
+
+    });
+
+
+}
     const input = qs('#chat-input');
     const text = input && input.value.trim();
     if(!text) return;
@@ -551,9 +751,7 @@ if(targetEl){
 
 
 
-if(targetEl){
-    targetEl.addEventListener('change', reconnectChat);
-}
+
 document.addEventListener('keydown', function(e){
 
     if(
@@ -565,6 +763,149 @@ document.addEventListener('keydown', function(e){
     }
 
 });
+const imageUpload =
+document.getElementById("image-upload");
+
+
+const fileUpload =
+document.getElementById("file-upload");
+
+const recordBtn = document.getElementById("voice-record");
+
+if(recordBtn){
+
+recordBtn.onclick = async()=>{
+
+let stream = await navigator.mediaDevices.getUserMedia({
+    audio:true
+});
+
+let recorder = new MediaRecorder(stream);
+
+let audioChunks=[];
+
+recorder.ondataavailable=e=>{
+    audioChunks.push(e.data);
+};
+
+recorder.onstop=()=>{
+
+let audioBlob = new Blob(audioChunks,{
+    type:"audio/webm"
+});
+
+sendFile(
+    new File(
+        [audioBlob],
+        "voice.webm"
+    )
+);
+
+};
+
+recorder.start();
+
+setTimeout(()=>{
+    recorder.stop();
+},10000);
+
+};
+
+}
+function sendFile(file){
+
+if(!file) return;
+if(file.size > 2 * 1024 * 1024){
+
+    alert("Maximum file size is 2 MB.");
+
+    return;
+}
+
+let formData=new FormData();
+
+formData.append(
+"file",
+file
+);
+
+
+formData.append(
+"room",
+"public" || roomName
+);
+
+
+fetch("/chat/upload/",{
+
+method:"POST",
+
+headers:{
+"X-CSRFToken":getCookie("csrftoken")
+},
+
+body:formData
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+
+console.log("UPLOAD RESULT",data);
+
+
+if(socket && socket.readyState===WebSocket.OPEN){
+
+
+socket.send(JSON.stringify({
+
+type:"file",
+
+url:data.url,
+
+name:data.name
+
+}));
+
+}
+
+
+});
+
+
+}
+
+
+
+if(imageUpload){
+
+    imageUpload.addEventListener("change", function(){
+
+        sendFile(this.files[0]);
+
+        // reset input ili file ile ile iweze kuchaguliwa tena
+        this.value = "";
+
+    });
+
+}
+
+
+if(fileUpload){
+
+    fileUpload.addEventListener("change", function(){
+
+        sendFile(this.files[0]);
+
+        this.value = "";
+
+    });
+
+}
+
+
 
 // Request notifications permission proactively
 ensureNotificationPermission();
@@ -634,135 +975,6 @@ if(chatButton){
     makeButtonDraggable(chatButton);
 
 }
-const imageUpload =
-document.getElementById("image-upload");
-
-
-const fileUpload =
-document.getElementById("file-upload");
-
-
-imageUpload.onchange=function(){
-
-sendFile(this.files[0]);
-
-}
-
-
-fileUpload.onchange=function(){
-
-sendFile(this.files[0]);
-
-}
 
 
 
-function sendFile(file){
-
-let formData=new FormData();
-
-formData.append(
-"file",
-file
-);
-
-formData.append(
-"room",
-roomName
-);
-
-
-fetch("/chat/upload/",{
-
-method:"POST",
-
-body:formData,
-
-headers:{
-"X-CSRFToken":getCookie("csrftoken")
-}
-
-})
-.then(res=>res.json())
-.then(data=>{
-
-socket.send(JSON.stringify({
-
-type:"file",
-
-url:data.url,
-
-name:data.name
-
-}));
-
-});
-
-}
-const recordBtn =
-document.getElementById(
-"voice-record"
-);
-
-
-let recorder;
-let audioChunks=[];
-
-
-recordBtn.onclick=async()=>{
-
-
-let stream =
-await navigator.mediaDevices.getUserMedia({
-audio:true
-});
-
-
-recorder =
-new MediaRecorder(stream);
-
-
-audioChunks=[];
-
-
-recorder.ondataavailable=e=>{
-audioChunks.push(e.data);
-};
-
-
-
-recorder.onstop=()=>{
-
-
-let audioBlob =
-new Blob(
-audioChunks,
-{
-type:"audio/webm"
-}
-);
-
-
-sendFile(
-new File(
-[audioBlob],
-"voice.webm"
-)
-);
-
-
-};
-
-
-
-recorder.start();
-
-
-setTimeout(()=>{
-
-recorder.stop();
-
-},10000);
-
-
-};

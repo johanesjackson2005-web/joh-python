@@ -117,57 +117,36 @@ class ChatMessage(models.Model):
 
     sender = models.ForeignKey(
         User,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="sent_messages"
-    )
-    image = models.ImageField(
-        upload_to="chat/images/",
+        on_delete=models.CASCADE,
         null=True,
         blank=True
     )
 
-    file = models.FileField(
-        upload_to="chat/files/",
+    guest_name = models.CharField(
+        max_length=100,
         null=True,
         blank=True
     )
 
-    voice = models.FileField(
-        upload_to="chat/voice/",
-        null=True,
-        blank=True
-    )
+    room = models.CharField(max_length=100)
 
-    receiver = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="received_messages"
-    )
-
-    room = models.CharField(
-        max_length=150,
-        db_index=True,
+    message = models.TextField(
         blank=True,
         null=True
     )
-    guest_name = models.CharField(
-    max_length=100,
-    blank=True,
-    null=True
-)
-    message = models.TextField()
+
+    file = models.FileField(
+        upload_to="chat/uploads/",
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     deleted_by = models.ManyToManyField(
         User,
-        blank=True,
-        related_name="hidden_messages"
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
+        related_name="deleted_messages",
+        blank=True
     )
 class Conversation(models.Model):
 
