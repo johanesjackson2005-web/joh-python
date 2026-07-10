@@ -224,57 +224,61 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # DELETE MESSAGE EVENT
         # =================================
         
-        
         if event_type == "delete":
-        
-            message_id = data.get("message_id")
 
+            message_id = data.get("message_id")
             user = self.scope.get("user")
 
-
-            
-            if not user.is_authenticated:
-               return   
-
+            if not user or not user.is_authenticated:
+                return
 
             try:
 
                 msg = await database_sync_to_async(
-                   ChatMessage.objects.select_related("sender").get
+                 ChatMessage.objects.select_related("sender").get
                   )(id=message_id)
-                
-                if msg.sender != user and not user.is_staff:
-                    
-                
-                   await database_sync_to_async(
-                    msg.deleted_by
-                    )()
 
+        # ==========================================
+        # SENDER (au Admin) => Delete for everyone
+        # ==========================================
+                if msg.sender == user or user.is_staff:
+
+                   await database_sync_to_async(msg.delete)()
 
                    await self.channel_layer.group_send(
-                    self.group_name, 
-                    {
+                        self.group_name,
+                {
                     "type": "chat.delete",
                     "message_id": message_id
-                   })
-                else: 
-                     
-                   await database_sync_to_async(
-                    msg.deleted_by.add
-                   )(user)
+                }
+            )
 
+        # ==========================================
+        # RECEIVER => Delete for me only
+        # ==========================================
+                else:
 
-                   await self.send(
-                     text_data=json.dumps({
-                      "type":"delete",
-                       "message_id":message_id
-                    })
-                      )
-                return       
+                 await database_sync_to_async(
+                  msg.deleted_by.add
+                  )(user)
+
+                 await self.send(
+                text_data=json.dumps({
+                    "type": "delete",
+                    "message_id": message_id
+                })
+            )
+
+            except ChatMessage.DoesNotExist:
+
+             print("Message not found")
+
             except Exception as e:
 
-                print("DELETE ERROR:", e)
-                return
+             print("DELETE ERROR:", e)
+
+            return
+       
 
 
          
@@ -344,13 +348,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 # PROFILE IMAGE
         avatar = "/static/image/logo1.png"
 
-        if (
-          sender_obj
-            and hasattr(sender_obj, "profile")
-            and sender_obj.profile.avatar
-            ):
-          avatar = "/static/profile/" + str(sender_obj.profile.avatar)
-
+        if sender_obj:
+         try:
+              if sender_obj.profile.avatar:
+                 avatar = "/static/profile/" + str(sender_obj.profile.avatar)
+         except Exception:
+             pass
         payload = {
 
     "type": "message",

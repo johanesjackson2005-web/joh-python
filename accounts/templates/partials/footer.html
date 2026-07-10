@@ -87,18 +87,20 @@ src="{% if user.profile.avatar %}
         <!-- MESSAGES -->
 
         <div id="chat-messages"></div>
+<div class="chat-input-area">
 
-        <!-- INPUT -->
 
-        <div class="chat-input-area">
+<div class="plus-container">
 
-<button id="emoji-btn">
+<button id="plus-btn">
++
+</button>
 
-                😊
 
-            </button>
-<label class="upload-btn">
-📷
+<div id="upload-menu">
+
+<label>
+📷 Image
 <input 
 type="file"
 id="image-upload"
@@ -107,8 +109,8 @@ hidden>
 </label>
 
 
-<label class="upload-btn">
-📁
+<label>
+📁 File
 <input 
 type="file"
 id="file-upload"
@@ -116,24 +118,41 @@ hidden>
 </label>
 
 
+</div>
+
+</div>
+
+
+
+<button id="emoji-btn">
+😊
+</button>
+
+
+
+<textarea
+id="chat-input"
+placeholder="Type message..."
+rows="1">
+</textarea>
+
+
+
 <button id="voice-record">
 🎤
 </button>
 
 
-<textarea
-   id="chat-input"
-      placeholder="Type message..."
-rows="1">
-</textarea>
+
+<button id="chat-send">
+➤
+</button>
 
 
-   <button id="chat-send">
-     ➤
-       </button>
+</div>
+        <!-- INPUT -->
 
-
-                
+            
                 <div id="emoji-picker">
 
                     <!-- emoji zako zote ziweke hapa -->

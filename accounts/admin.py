@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .models import Profile
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from .models import Contact
@@ -31,6 +32,7 @@ class TutorialAdmin(admin.ModelAdmin):
         "instructor",
         "featured",
         "created_at",
+        
     )
 
     list_filter = (
@@ -47,8 +49,50 @@ class TutorialAdmin(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(Software)
 admin.site.register(LiveStream)
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'user',
+        'avatar'
+    )
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'room', 'created_at')
-    search_fields = ('room', 'message')
-    readonly_fields = ('created_at',)
+
+    list_display = (
+        'id',
+        'sender',
+        'guest_name',
+        'room',
+        'message_preview',
+        'created_at'
+    )
+
+    list_filter = (
+        'room',
+        'created_at',
+    )
+
+    search_fields = (
+        'message',
+        'room',
+        'sender__username',
+        'guest_name',
+    )
+
+    readonly_fields = (
+        'created_at',
+    )
+
+
+    def message_preview(self, obj):
+
+        if obj.message:
+            return obj.message[:50]
+
+        if obj.file:
+            return obj.file.name[:50]
+
+        return "Empty"
+
+    message_preview.short_description = "Message"

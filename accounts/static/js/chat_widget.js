@@ -593,66 +593,96 @@ modal.style.position = "fixed";
 modal.style.right = "auto";
 modal.style.bottom = "auto";
 
-const modalWidth = modal.offsetWidth;
-const modalHeight = modal.offsetHeight;
+// GET REAL SIZE AFTER DISPLAY
+const rect = modal.getBoundingClientRect();
+
+let modalWidth = rect.width;
+let modalHeight = rect.height;
+
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
 
 
-// nafasi juu na chini
-const spaceTop = btnPosition.top;
-const spaceBottom = window.innerHeight - btnPosition.bottom;
+// default position karibu na widget
+let left = btnPosition.left;
+let top = btnPosition.top - modalHeight - 15;
 
 
-let top;
-
-
-// Fungua juu kama kuna nafasi
-if(spaceTop >= modalHeight + 15){
-
-    top = btnPosition.top - modalHeight - 15;
-
-}
-
-
-// Kama hakuna nafasi juu fungua chini
-else if(spaceBottom >= modalHeight + 15){
+// kama hakuna nafasi juu
+if(top < 10){
 
     top = btnPosition.bottom + 15;
 
 }
 
 
-// Kama hakuna nafasi ya kutosha upande wowote
+// kama bado imezidi chini
+if(top + modalHeight > screenHeight){
 
-else{
-
-    top = 10;
-
-    modal.style.height = "85vh";
+    top = screenHeight - modalHeight - 10;
 
 }
 
 
-// horizontal position
-let left = btnPosition.left;
+// zuia kulia kutoka nje
+if(left + modalWidth > screenWidth){
 
-
-// Zuia kutoka kulia
-if(left + modalWidth > window.innerWidth){
-
-    left = window.innerWidth - modalWidth - 10;
+    left = screenWidth - modalWidth - 10;
 
 }
 
 
-// Zuia kutoka kushoto
+// zuia kushoto kutoka nje
 if(left < 10){
 
     left = 10;
 
 }
 
-console.log("POPUP POSITION:", left, top);
 
+// mwisho wa usalama
+if(top < 10){
+
+    top = 10;
+
+}
+
+
+modal.style.left = left + "px";
+modal.style.top = top + "px";
+// final safety check
+
+const finalRect = modal.getBoundingClientRect();
+
+
+if(finalRect.right > window.innerWidth){
+
+    modal.style.left =
+    (window.innerWidth - finalRect.width - 10) + "px";
+
+}
+
+
+if(finalRect.left < 0){
+
+    modal.style.left = "10px";
+
+}
+
+
+if(finalRect.bottom > window.innerHeight){
+
+    modal.style.top =
+    (window.innerHeight - finalRect.height - 10) + "px";
+
+}
+
+
+if(finalRect.top < 0){
+
+    modal.style.top = "10px";
+
+}
 modal.style.setProperty("left", left + "px", "important");
 modal.style.setProperty("top", top + "px", "important");
 
@@ -832,7 +862,7 @@ file
 
 formData.append(
 "room",
-"public" || roomName
+roomName
 );
 
 
@@ -862,6 +892,7 @@ if(socket && socket.readyState===WebSocket.OPEN){
 socket.send(JSON.stringify({
 
 type:"file",
+id:data.id,
 
 url:data.url,
 
@@ -923,49 +954,128 @@ function makeButtonDraggable(button){
     let offsetY = 0;
 
 
-    button.addEventListener("mousedown", function(e){
+    function startDrag(e){
 
         moving = true;
 
+        const point = e.touches ? e.touches[0] : e;
+
         let rect = button.getBoundingClientRect();
 
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
+
+        offsetX = point.clientX - rect.left;
+        offsetY = point.clientY - rect.top;
 
 
-       button.style.position = "fixed";
-       button.style.left = rect.left + "px";
-       button.style.top = rect.top + "px";
+        button.style.position = "fixed";
+
+        button.style.left = rect.left + "px";
+        button.style.top = rect.top + "px";
 
         button.style.right = "auto";
         button.style.bottom = "auto";
 
-    });
+
+        e.preventDefault();
+
+    }
 
 
-    document.addEventListener("mousemove", function(e){
+
+    function moveDrag(e){
 
         if(!moving) return;
 
 
-        button.style.left =
-            (e.clientX - offsetX) + "px";
+        const point = e.touches ? e.touches[0] : e;
 
 
-        button.style.top =
-            (e.clientY - offsetY) + "px";
-
-    });
+        let x = point.clientX - offsetX;
+        let y = point.clientY - offsetY;
 
 
-    document.addEventListener("mouseup", function(){
+
+        // Zuia widget isitoke nje ya screen
+
+        x = Math.max(
+            0,
+            Math.min(
+                x,
+                window.innerWidth - button.offsetWidth
+            )
+        );
+
+
+        y = Math.max(
+            0,
+            Math.min(
+                y,
+                window.innerHeight - button.offsetHeight
+            )
+        );
+
+
+
+        button.style.left = x + "px";
+
+        button.style.top = y + "px";
+
+    }
+
+
+
+    function stopDrag(){
 
         moving = false;
 
-    });
+    }
+
+
+
+    // PC mouse
+
+    button.addEventListener(
+        "mousedown",
+        startDrag
+    );
+
+
+    document.addEventListener(
+        "mousemove",
+        moveDrag
+    );
+
+
+    document.addEventListener(
+        "mouseup",
+        stopDrag
+    );
+
+
+
+    // Mobile touch
+
+    button.addEventListener(
+        "touchstart",
+        startDrag,
+        {passive:false}
+    );
+
+
+    document.addEventListener(
+        "touchmove",
+        moveDrag,
+        {passive:false}
+    );
+
+
+    document.addEventListener(
+        "touchend",
+        stopDrag
+    );
+
 
 }
-
 
 const chatButton = document.getElementById("chat-open");
 
@@ -976,5 +1086,24 @@ if(chatButton){
 
 }
 
+const plusBtn = document.getElementById("plus-btn");
+const uploadMenu = document.getElementById("upload-menu");
 
+
+plusBtn.onclick = function(){
+
+    uploadMenu.classList.toggle("show");
+
+};
+
+
+document.addEventListener("click", function(e){
+
+    if(!e.target.closest(".plus-container")){
+
+        uploadMenu.classList.remove("show");
+
+    }
+
+});
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db import models
+
 class Background(models.Model):
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to='backgrounds/')
@@ -180,10 +180,6 @@ class Conversation(models.Model):
 
     class Meta:
       ordering = ['-updated_at']
-
-
-    def __str__(self):
-        return f"{self.sender} -> {self.receiver}: {self.message[:30]}"
 class ChatMemory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10)  # "user" or "ai"

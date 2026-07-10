@@ -216,3 +216,129 @@ function(e){
 
 
 });
+document.addEventListener("DOMContentLoaded", function(){
+
+
+const plusBtn = document.getElementById("plus-btn");
+const uploadMenu = document.getElementById("upload-menu");
+
+const emojiBtn = document.getElementById("emoji-btn");
+const emojiPicker = document.getElementById("emoji-picker");
+
+const chatInput = document.getElementById("chat-input");
+
+
+
+/* =====================
+   PLUS MENU
+===================== */
+
+
+if(plusBtn){
+
+plusBtn.addEventListener("click", function(e){
+
+    e.stopPropagation();
+
+    uploadMenu.classList.toggle("show");
+
+    emojiPicker.style.display="none";
+
+});
+
+}
+
+
+
+/* =====================
+   EMOJI MENU
+===================== */
+
+
+if(emojiBtn){
+
+emojiBtn.addEventListener("click", function(e){
+
+    e.stopPropagation();
+
+    if(emojiPicker.style.display==="block"){
+
+        emojiPicker.style.display="none";
+
+    }else{
+
+        emojiPicker.style.display="block";
+
+        uploadMenu.classList.remove("show");
+
+    }
+
+
+});
+
+}
+
+
+
+/* =====================
+   SELECT EMOJI
+===================== */
+
+
+document.querySelectorAll(".emoji-swatch")
+.forEach(function(emoji){
+
+
+emoji.addEventListener("click",function(){
+
+
+    chatInput.value += this.textContent;
+
+
+    chatInput.focus();
+
+
+    emojiPicker.style.display="none";
+
+
+});
+
+
+});
+
+
+
+/* =====================
+ CLICK OUTSIDE CLOSE
+===================== */
+
+
+document.addEventListener("click",function(e){
+
+
+if(!e.target.closest("#upload-menu")
+&& !e.target.closest("#plus-btn")){
+
+
+    uploadMenu.classList.remove("show");
+
+
+}
+
+
+
+if(!e.target.closest("#emoji-picker")
+&& !e.target.closest("#emoji-btn")){
+
+
+    emojiPicker.style.display="none";
+
+
+}
+
+
+});
+
+
+
+});

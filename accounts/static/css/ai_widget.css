@@ -1,7 +1,6 @@
 /* Styles for AI widget */
 .ai-widget-wrap{position:fixed;right:18px;bottom:18px;z-index:1200;display:flex;flex-direction:row;align-items:center;gap:18px}
 /* keep backward compatibility: make #ai-widget a flex row as well */
-#ai-widget{position:relative;display:flex;flex-direction:row;align-items:center;gap:18px}
 .ai-open-btn{background:transparent;border:0;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
 .ai-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.06);box-shadow:0 8px 22px rgba(2,6,23,0.6);display:block}
 @media (max-width:480px){.ai-avatar{width:60px;height:60px}}
@@ -26,13 +25,36 @@
 /* Chat message bubbles */
 
 /* Emoji picker */
-#emoji-picker{display:none;position:absolute;bottom:48px;left:0;background:#071428;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;box-shadow:0 10px 30px rgba(2,6,23,0.6);z-index:1400;max-width:260px}
 .emoji-swatch{cursor:pointer;padding:6px;font-size:18px;display:inline-block}
 .emoji-btn{background:transparent;border:none;color:white;cursor:pointer;font-size:18px}
 /* active keyboard focus state */
 .emoji-swatch.emoji-active{outline:2px solid rgba(96,165,250,0.9);border-radius:6px;background:rgba(96,165,250,0.06)}
 .emoji-swatch:focus{outline:2px solid rgba(96,165,250,0.9);border-radius:6px}
- 
+ #emoji-picker{
+
+display:none;
+
+position:absolute;
+
+bottom:60px;
+
+left:45px;
+
+background:#071428;
+
+border-radius:12px;
+
+padding:10px;
+
+width:260px;
+
+max-width:90vw;
+
+z-index:2000;
+
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+}
 #chat-expand{
     background:transparent;
 
@@ -127,22 +149,7 @@ html, body{
     height:100%;
 
 }
-.chat-window{
 
-    display:none;
-    position:fixed;
-
-    width:420px;
-    max-width:calc(100vw - 20px);
-
-    height:70vh;
-    max-height:calc(100vh - 40px);
-
-    overflow:hidden;
-
-    border-radius:15px;
-
-}
 .chat-background{
 
     position:absolute;
@@ -198,19 +205,6 @@ html, body{
 
 
 /* Full screen responsive */
-
-
-#chat-messages{
-    flex:1;
-    overflow-y:auto;
-    min-height:0;
-
-    padding:20px;
-
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
 
 /* simu */
 @media(max-width:600px){
@@ -486,4 +480,473 @@ color:black;
     display:flex;
     flex-direction:column;
     height:100%;
+}
+/* =====================================
+   FINAL RESPONSIVE CHAT WIDGET FIX
+   Desktop / Tablet / Mobile
+===================================== */
+
+
+/* Main chat window */
+/* FINAL POPUP POSITION CONTROL */
+
+.chat-window{
+
+    position:fixed;
+
+    width:420px;
+
+    height:min(700px,75dvh);
+
+    max-width:calc(100vw - 20px);
+
+    max-height:calc(100dvh - 20px);
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-sizing:border-box;
+
+}
+/* Chat structure */
+
+.chat-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+}
+
+
+
+/* Header */
+
+.ai-header{
+
+    flex:0 0 65px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:10px 15px;
+
+    background:rgba(0,0,0,.65);
+
+}
+
+
+
+/* Messages */
+
+#chat-messages{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    min-height:0;
+
+    padding:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+
+
+/* Input area WhatsApp style */
+
+.chat-input-area{
+
+    flex:0 0 auto;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px;
+
+    background:rgba(0,0,0,.75);
+
+}
+
+
+
+/* Text box */
+
+#chat-input{
+
+    flex:1;
+
+    min-height:42px;
+
+    max-height:120px;
+
+    resize:none;
+
+    overflow-y:auto;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:25px;
+
+    padding:10px 15px;
+
+    font-size:16px;
+
+    background:white;
+
+    color:black;
+
+}
+
+
+
+/* Buttons */
+
+#plus-btn,
+#emoji-btn,
+#voice-record,
+#chat-send{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    border:none;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:20px;
+
+    flex-shrink:0;
+
+}
+
+
+#plus-btn,
+#emoji-btn,
+#voice-record{
+
+    background:#0ea5a2;
+
+    color:white;
+
+}
+
+
+#chat-send{
+
+    background:#22c55e;
+
+    color:white;
+
+}
+
+
+
+/* Upload popup */
+
+.plus-container{
+
+    position:relative;
+
+}
+
+
+#upload-menu{
+
+    position:absolute;
+
+    bottom:55px;
+
+    left:0;
+
+    width:150px;
+
+    background:#071428;
+
+    border-radius:12px;
+
+    display:none;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+}
+
+
+#upload-menu.show{
+
+    display:block;
+
+}
+
+
+#upload-menu label{
+
+    display:block;
+
+    padding:12px;
+
+    color:white;
+
+    cursor:pointer;
+
+}
+
+
+/* ===========================
+        TABLET
+=========================== */
+
+
+@media(max-width:992px){
+
+
+.chat-window{
+
+    width:95%;
+
+    height:85dvh;
+
+    right:2.5%;
+
+    bottom:20px;
+
+}
+
+
+}
+
+
+
+/* ===========================
+        MOBILE
+=========================== */
+
+
+@media(max-width:600px){
+
+#emoji-picker{
+
+left:0;
+
+bottom:55px;
+
+width:240px;
+
+}
+
+
+#upload-menu{
+
+bottom:55px;
+
+left:0;
+
+}
+
+}
+
+
+
+/* header isiingie navbar */
+
+.ai-header{
+
+    flex:0 0 58px;
+
+    padding:8px 10px;
+
+}
+
+
+
+#chat-avatar{
+
+    width:40px;
+
+    height:40px;
+
+}
+
+
+
+/* messages */
+
+#chat-messages{
+
+    padding:10px;
+
+}
+
+
+
+/* input */
+
+.chat-input-area{
+
+    padding:8px;
+
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+
+}
+
+
+
+#chat-input{
+
+    font-size:15px;
+
+    min-height:40px;
+
+}
+
+
+
+#plus-btn,
+#emoji-btn,
+#voice-record,
+#chat-send{
+
+    width:38px;
+
+    height:38px;
+
+    font-size:18px;
+
+}
+
+
+
+
+
+
+/* ===========================
+     SMALL MOBILE
+=========================== */
+
+
+@media(max-width:380px){
+
+
+#emoji-btn{
+
+    display:none;
+
+}
+
+
+.chat-input-area{
+
+    gap:5px;
+
+}
+
+
+}
+#chat-open{
+
+    touch-action:none;
+
+}
+
+
+#chat-widget{
+
+    max-width:100vw;
+    max-height:100vh;
+
+}
+/* ===============================
+   RESPONSIVE FINAL OVERRIDE
+================================*/
+
+
+@media(max-width:992px){
+
+    .chat-window{
+
+        width:95vw;
+
+        max-width:95vw;
+
+        height:85dvh;
+
+        left:50% !important;
+
+        transform:translateX(-50%);
+
+        right:auto !important;
+
+    }
+
+}
+
+
+
+@media(max-width:600px){
+
+    .chat-window{
+
+        width:100vw;
+
+        height:calc(100dvh - 60px);
+
+        max-width:100vw;
+
+        left:0 !important;
+
+        right:0 !important;
+
+        bottom:0;
+
+        top:60px !important;
+
+        border-radius:0;
+
+        transform:none;
+
+    }
+
+
+    .ai-header{
+
+        flex:0 0 55px;
+
+    }
+
+
+}
+#ai-widget{
+    position:fixed;
+    left:auto;
+    right:18px;
+    bottom:18px;
+    z-index:1200;
 }

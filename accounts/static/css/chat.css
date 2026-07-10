@@ -10,8 +10,24 @@ body{
 }
 
 .chat-container{
-    display:flex;
-    height:100vh;
+
+display:flex;
+
+width:100%;
+max-width:1400px;
+
+height:calc(100vh - 60px);
+
+margin:60px auto 0;
+
+overflow:hidden;
+
+box-sizing:border-box;
+
+background:#071428;
+
+color:white;
+
 }
 .chat-header{
 
@@ -53,22 +69,32 @@ body{
 
 .sidebar{
 
-    width:350px;
+width:300px;
 
-    background:#fff;
+min-width:260px;
 
-    border-right:1px solid #ddd;
+max-width:320px;
 
-    overflow-y:auto;
+overflow-x:hidden;
+
+overflow-y:auto;
+
+box-sizing:border-box;
 
 }
 
 .chat-area{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    background:#efeae2;
-    height:100vh;
+
+flex:1;
+
+min-width:0;
+
+overflow:hidden;
+
+display:flex;
+
+flex-direction:column;
+
 }
 
 .user{
@@ -119,17 +145,23 @@ body{
     background:#d9fdd3;
 
 }
-.messages{
 
-    flex:1;
 
-    overflow-y:auto;
+   .messages{
 
-    padding:20px;
+flex:1;
 
-    display:flex;
+overflow-y:auto;
 
-    flex-direction:column;
+overflow-x:hidden;
+
+padding:20px;
+
+word-wrap:break-word;
+
+box-sizing:border-box;
+
+
 
     gap:12px;
 
@@ -173,18 +205,30 @@ body{
 
 }
 .chat-input{
-    background:white;
-    padding:15px;
-    border-top:1px solid #ddd;
 
-    flex-shrink:0;
+width:100%;
+
+box-sizing:border-box;
+
 }
+
 
 .chat-input form{
 
-    display:flex;
+width:100%;
+
+display:flex;
 
 }
+
+
+.chat-input input{
+
+min-width:0;
+
+}
+
+
 @media (max-width:992px){
 
 .sidebar{
@@ -257,5 +301,104 @@ body{
     background:#25d366;
 
     color:white;
+
+}
+@media(max-width:900px){
+
+.chat-container{
+
+width:100%;
+
+margin-top:60px;
+
+}
+
+
+.sidebar{
+
+width:35%;
+
+min-width:200px;
+
+}
+
+
+.chat-area{
+
+width:65%;
+
+}
+
+
+}
+@media(max-width:600px){
+
+.chat-container{
+
+height:100vh;
+
+margin-top:0;
+
+}
+
+
+.sidebar{
+
+width:100%;
+
+}
+
+
+.chat-area{
+
+width:100%;
+
+}
+
+
+}
+/* prevent chat popup going outside screen */
+
+.chat-window{
+
+    box-sizing:border-box;
+
+}
+
+
+@media(max-width:768px){
+
+.chat-window{
+
+    width:calc(100vw - 20px) !important;
+    max-width:none;
+
+    height:80vh;
+
+    left:10px !important;
+
+    right:10px !important;
+
+}
+
+
+}
+
+
+@media(max-width:480px){
+
+.chat-window{
+
+    width:100vw !important;
+
+    height:calc(100vh - 70px);
+
+    left:0 !important;
+
+    bottom:0;
+
+    border-radius:0;
+
+}
 
 }
