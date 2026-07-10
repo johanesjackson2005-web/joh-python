@@ -815,9 +815,9 @@ setTimeout(()=>{
 function sendFile(file){
 
 if(!file) return;
-if(file.size > 2 * 1024 * 1024){
+if(file.size > 10 * 1024 * 1024){
 
-    alert("Maximum file size is 2 MB.");
+    alert("Maximum file size is 10 MB.");
 
     return;
 }

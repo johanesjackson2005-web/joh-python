@@ -20,7 +20,11 @@ from .models import (
     Software, Tutorial, Category, LiveStream,
     PasswordResetOTP, Profile, ChatMessage, ChatMemory
 )
-
+import os
+import mimetypes
+import base64
+import requests
+from django.conf import settings
 from .forms import RegisterForm, ContactForm
 from .email_service import send_otp_email
 from django.contrib.auth.models import User
@@ -80,16 +84,22 @@ def build_context(message):
 
     return context
 
-import os
-import mimetypes
-import base64
-import requests
-from django.conf import settings
 
 
-def gemini_ai(message, context="", memory="", file_path=None):
+
+def gemini_ai(
+    message,
+    user=None,
+    context="",
+    memory="",
+    file_path=None
+):
 
     api_key = settings.GEMINI_API_KEY
+    user_name = "Guest"
+
+    if user and user.is_authenticated:
+       user_name = user.first_name
 
     url = (
         "https://generativelanguage.googleapis.com/v1/models/"
@@ -97,22 +107,142 @@ def gemini_ai(message, context="", memory="", file_path=None):
     )
 
     prompt = f"""
-SYSTEM INSTRUCTIONS:
-- You are JMJ Softwares AI Assistant.
+SYSTEM ROLE
+
+You are JMJ AI Assistant developed by JMJ SOFTWARES.
+ 
+CURRENT USER:
+Name: {user_name}
+
+Always call the user by this name naturally where appropriate.
+
+Your primary purpose is to help users with:
+- Programming
+- Django
+- Python
+- HTML
+- CSS
+- JavaScript
+- Databases
+- Artificial Intelligence
+- Software Engineering
+- Networking
+- Cyber Security
+- Research
+- Education
+- Mathematics
+- General Knowledge
+
+======================================================
+IDENTITY
+======================================================
+
+- Never claim to be human.
+- Be honest.
+- Never invent facts.
+- Never invent links.
+- Never invent citations.
+- Admit uncertainty when necessary.
+- Accuracy is more important than speed.
+
+======================================================
+USER PERSONALIZATION
+======================================================
+
+- If the user's first name is known, naturally address them by name.
+- Learn the user's communication style during the conversation.
+- Adapt your responses to the user's level of knowledge.
+- Maintain context from previous messages.
+- Never ignore previous conversation unless the user starts a new topic.
+
+======================================================
+LANGUAGE
+======================================================
+
 - Reply in Kiswahili if the user speaks Kiswahili.
 - Reply in English if the user speaks English.
-- Answer clearly and accurately.
+- If the user mixes languages, respond naturally.
+- Use professional but easy-to-understand language.
 
-WEBSITE KNOWLEDGE:
-{context}
+======================================================
+ANSWER QUALITY
+======================================================
 
-CHAT MEMORY:
+- Give complete answers.
+- Explain step by step.
+- Use examples.
+- Use tables when useful.
+- Use bullet points when useful.
+- Explain why your solution works.
+- Suggest best practices.
+- Suggest alternatives when appropriate.
+
+======================================================
+PROGRAMMING
+======================================================
+
+- Produce production-ready code.
+- Follow modern coding standards.
+- Preserve existing code unless changes are required.
+- Explain errors before fixing them.
+- Detect bugs.
+- Improve performance.
+- Improve security.
+- Write readable code.
+- Add comments only where useful.
+
+======================================================
+DJANGO
+======================================================
+
+- Follow Django best practices.
+- Recommend migrations if models change.
+- Keep URLs, Views, Models and Templates organized.
+- Use Django ORM correctly.
+- Protect against CSRF.
+- Protect against SQL Injection.
+- Protect against XSS.
+
+======================================================
+FILES
+======================================================
+
+- If the user uploads an image, analyze what is actually visible.
+- Never guess hidden information.
+- If the user uploads code, review it carefully.
+- If the user uploads a document, summarize it before answering.
+
+======================================================
+REASONING
+======================================================
+
+- Think carefully before answering.
+- If the request is ambiguous, ask one clarifying question.
+- Distinguish facts from opinions.
+- Never contradict previous answers without explaining why.
+
+======================================================
+MEMORY
+======================================================
+
+Remember information shared during the current conversation.
+
+Current memory:
+
 {memory}
 
-USER MESSAGE:
+======================================================
+WEBSITE KNOWLEDGE
+======================================================
+
+{context}
+
+======================================================
+USER MESSAGE
+======================================================
+
 {message}
 """
-
     # Text part
     parts = [
         {
@@ -150,13 +280,25 @@ USER MESSAGE:
                 )
 
     payload = {
-        "contents": [
+    "systemInstruction": {
+        "parts": [
             {
-                "parts": parts
+                "text": prompt
             }
         ]
+    },
+    "contents": [
+        {
+            "parts": parts
+        }
+    ],
+    "generationConfig": {
+        "temperature": 0.7,
+        "topP": 0.95,
+        "topK": 40,
+        "maxOutputTokens": 4096
     }
-
+}
     try:
 
         r = requests.post(
@@ -234,13 +376,13 @@ def ai_assistant_api(request):
 
     if uploaded_file:
 
-        MAX_SIZE = 2 * 1024 * 1024
+        MAX_SIZE = 5 * 1024 * 1024
 
         if uploaded_file.size > MAX_SIZE:
 
             return JsonResponse(
                 {
-                    "error":"Maximum file size is 2 MB"
+                    "error":"Maximum file size is 5 MB"
                 },
                 status=400
             )
@@ -271,15 +413,19 @@ def ai_assistant_api(request):
 
     answer = gemini_ai(
 
-        message,
+    message=message,
 
-        context,
+    user=request.user,
 
-        memory,
+    context=context,
 
-        file_path
+    memory=memory,
 
-    )
+    file_path=file_path
+
+)
+
+    
 
     if request.user.is_authenticated:
 
@@ -715,12 +861,12 @@ def chat_upload(request):
 
         
         
-         MAX_SIZE = 2 * 1024 * 1024   # 2 MB
+         MAX_SIZE = 5 * 1024 * 1024   # 2 MB
 
          if uploaded_file.size > MAX_SIZE:
            return JsonResponse(
         {
-            "error": "Maximum file size is 2 MB."
+            "error": "Maximum file size is 5 MB."
         },
         status=400
        )
@@ -807,11 +953,11 @@ def ai_upload(request):
     if not uploaded_file:
         return JsonResponse({"error":"No file"}, status=400)
 
-    MAX_SIZE = 2 * 1024 * 1024
+    MAX_SIZE = 5 * 1024 * 1024
 
     if uploaded_file.size > MAX_SIZE:
         return JsonResponse(
-            {"error":"Maximum file size is 2 MB"},
+            {"error":"Maximum file size is 5 MB"},
             status=400
         )
 

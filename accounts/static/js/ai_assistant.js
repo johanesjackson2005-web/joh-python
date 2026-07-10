@@ -92,7 +92,7 @@ if(messageBox){
             try {
                 data = await response.json();
             } catch {
-                throw new Error("Server did not return valid JSON");
+                throw new Error("check your network connection");
             }
 
             if (!response.ok) {
@@ -265,3 +265,23 @@ async function uploadAIFile(file){
     console.log(data);
 
 }
+const plusBtn = document.getElementById("plus-btn");
+const menu = document.getElementById("upload-menu");
+
+plusBtn.addEventListener("click", () => {
+    menu.classList.toggle("show");
+});
+
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".plus-wrapper")) {
+        menu.classList.remove("show");
+    }
+});
+
+document.getElementById("image-btn").onclick = () => {
+    document.getElementById("image-upload").click();
+};
+
+document.getElementById("file-btn").onclick = () => {
+    document.getElementById("file-upload").click();
+};
