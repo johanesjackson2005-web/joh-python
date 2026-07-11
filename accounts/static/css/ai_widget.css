@@ -149,7 +149,13 @@ html, body{
     height:100%;
 
 }
+#chat-modal{
+    z-index:99999;
+}
 
+#chat-open{
+    z-index:99998;
+}
 .chat-background{
 
     position:absolute;

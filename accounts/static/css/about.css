@@ -22,3 +22,37 @@ img {
   max-width: 100%;
   height: auto;
 }
+.menu-toggle{
+    display:none;
+    cursor:pointer;
+    font-size:28px;
+    color:white;
+}
+
+@media(max-width:768px){
+
+.menu-toggle{
+    display:block;
+}
+
+.nav-links{
+    display:none;
+    position:absolute;
+    top:60px;
+    left:0;
+    width:100%;
+    background:#071428;
+    flex-direction:column;
+    z-index:999;
+}
+
+.nav-links.active{
+    display:flex;
+}
+
+.nav-links li{
+    text-align:center;
+    padding:15px;
+}
+
+}

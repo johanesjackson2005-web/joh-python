@@ -3,7 +3,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-
+from django.utils import timezone
 from .models import ChatMessage
 
 
@@ -11,7 +11,32 @@ User = get_user_model()
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    @database_sync_to_async
+    def set_user_online(self):
 
+     user = self.scope["user"]
+
+     if user.is_authenticated:
+
+        profile = user.profile
+
+        profile.is_online = True
+        profile.save()
+
+
+
+    @database_sync_to_async
+    def set_user_offline(self):
+
+     user = self.scope["user"]
+
+     if user.is_authenticated:
+
+        profile = user.profile
+
+        profile.is_online = False
+        profile.last_seen = timezone.now()
+        profile.save()
     async def connect(self):
 
         # Room name from URL
@@ -106,6 +131,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 ) 
         await self.accept()
 
+# SET USER ONLINE
+        await self.set_user_online()
+
         print(
     "CHAT CONNECTED:",
     self.room_name,
@@ -122,13 +150,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for msg in messages:
          await self.send(text_data=json.dumps({
-    "type": "message",
-    "id": msg.id,
-    "user": (
-    msg.sender.username
-    if msg.sender
-    else msg.guest_name
-),
+           "type": "message",
+           "id": msg.id,
+           "user": (
+          msg.sender.username
+        if msg.sender
+        else msg.guest_name
+      ),
     "message": msg.message,
      "avatar" : "/static/profile/" + str(msg.sender.profile.avatar
     if msg.sender and hasattr(msg.sender, "profile") and msg.sender.profile.avatar
@@ -138,12 +166,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
 
-      if hasattr(self, "group_name"):
+       await self.set_user_offline()
+
+       if hasattr(self, "group_name"):
 
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
         )
+        
     @database_sync_to_async
     def get_last_messages(self, user_id):
 

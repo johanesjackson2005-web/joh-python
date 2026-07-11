@@ -47,7 +47,7 @@ urlpatterns = [
     path("ai-assistant/api/", views.ai_assistant_api),
     path('admin-chat/', views.admin_chat, name='admin_chat'),
     path('chat/send/', views.chat_send, name='chat_send'),
-     path("chat/", views.chat_home, name="chat"),
+     path("chat/", views.chat_home, name="chat_home"),
      path(
     "accounts/users/search/",
     views.users_search,
@@ -55,4 +55,9 @@ urlpatterns = [
 ),
      path("chat/upload/", views.chat_upload, name="chat_upload"),
     path("ai/upload/", views.ai_upload, name="ai_upload"),
+    path(
+    'users-search/',
+    views.users_search,
+    name='users_search'
+),
 ]

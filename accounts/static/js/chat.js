@@ -342,3 +342,48 @@ if(!e.target.closest("#emoji-picker")
 
 
 });
+const popupBtn = document.getElementById("popup-mode");
+
+if(popupBtn){
+
+    popupBtn.onclick = function(){
+
+        window.close();
+
+        if(window.opener){
+
+            window.opener.postMessage({
+
+                action:"open_popup"
+
+            },"*");
+
+        }
+
+    };
+
+}
+const plusBtn = document.getElementById("plus-btn");
+const uploadMenu = document.getElementById("upload-menu");
+
+if(plusBtn){
+
+    plusBtn.onclick = function(e){
+
+        e.stopPropagation();
+
+        uploadMenu.classList.toggle("show");
+
+    };
+
+}
+
+document.addEventListener("click",function(e){
+
+    if(!e.target.closest(".plus-container")){
+
+        uploadMenu.classList.remove("show");
+
+    }
+
+});

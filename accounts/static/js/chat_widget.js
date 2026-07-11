@@ -1,7 +1,7 @@
 // Simple WebSocket-based chat widget client
 
 
-
+const isChatPage = document.querySelector(".chat-container") !== null;
 
 (function(){
     function getCookie(name){
@@ -28,59 +28,102 @@
 }
  
   function qs(sel, ctx){ return (ctx||document).querySelector(sel); }
+  
+  const scopeEl = isChatPage
+    ? qs('#page-chat-scope')
+    : qs('#chat-scope');
+
+const targetEl = isChatPage
+    ? qs('#page-chat-target')
+    : qs('#chat-target');
   const widget = qs('#chat-widget');
-  if(!widget) return;
-  const userId = widget.dataset.user || '';
-  const username = widget.dataset.username || 'Anonymous';
-  // choose a room name: allow 'public' for site-wide chat or 'pm_<id1>_<id2>' for private
-  function computeRoomName(){
 
-    const scope = qs('#chat-scope') 
-        ? qs('#chat-scope').value 
-        : 'public';
 
-    const targetRaw = qs('#chat-target') 
-        ? qs('#chat-target').value 
-        : '';
+if(!widget && !isChatPage){
+    return;
+}
 
-    function normalizeName(s){
-        return String(s || '')
-            .trim()
-            .toLowerCase()
-            .replace(/[^a-z0-9_-]+/g, '_');
+
+let username = "Anonymous";
+
+
+if(widget){
+
+    username = widget.dataset.username || "Anonymous";
+
+}
+else{
+
+    const currentUser = qs('#current-user');
+
+    if(currentUser){
+
+        username = currentUser.value;
+
     }
 
+}
+  // choose a room name: allow 'public' for site-wide chat or 'pm_<id1>_<id2>' for private
+ 
 
-    const me = normalizeName(username);
-    const target = normalizeName(targetRaw);
+    // fallback kwa widget popup
+    function computeRoomName(){
 
-    console.log("ROOM DATA:", {
-        scope: scope,
-        me: me,
-        target: target
-    });
+    const pageRoom = qs('#chat-room');
 
+    if(pageRoom && pageRoom.value){
 
-    if(scope === "private"){
+        if(pageRoom.value.startsWith("pm_")){
 
-        if(me && target && me !== target){
-
-            const users = [me, target].sort();
-
-            return "pm_" + users[0] + "_" + users[1];
+            return pageRoom.value;
 
         }
 
-        return "public";
+        if(pageRoom.value === "public"){
+
+            return "public";
+
+        }
+
     }
 
 
-    return "public";
+    const scope = scopeEl ? scopeEl.value : "public";
+
+
+    if(scope === "public"){
+
+        return "public";
+
+    }
+
+
+    if(!targetEl || !targetEl.value){
+
+        return "public";
+
+    }
+
+
+    let names=[
+        username.toLowerCase(),
+        targetEl.value.toLowerCase()
+    ].sort();
+
+
+    return "pm_"+names[0]+"_"+names[1];
+
 }
-  let roomName = computeRoomName();
-  const protocol = (location.protocol === 'https:') ? 'wss' : 'ws';
-  let wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
-  let socket;
+let roomName = computeRoomName();
+
+console.log("FIRST ROOM:", roomName);
+
+
+const protocol = (location.protocol === 'https:') ? 'wss' : 'ws';
+
+
+let wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
+   let socket;
   let unreadCount = 0;
   const badgeEl = qs('#chat-badge');
 
@@ -109,18 +152,25 @@
   try{ socket.close(); }catch(e){}
   socket = null;
 }
-
+const messagesEl = isChatPage
+    ? qs('#page-chat-messages')
+    : qs('#chat-messages');
 // safisha messages za zamani kabla ya kupokea history mpya
-const list = qs('#chat-messages');
+const list = messagesEl;
  if(list){
     list.innerHTML = '';
 }
 
 roomName = computeRoomName();
 
+
+console.log("CONNECTING ROOM:", roomName);
+
+
 wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
 
-console.log('Connecting to chat room', roomName);
+
+console.log("WEBSOCKET URL:", wsUrl);
 
 socket = new WebSocket(wsUrl);
     socket.onopen = function(){ console.log('Chat connected to', wsUrl); qs('#chat-status') && (qs('#chat-status').innerText='online'); };
@@ -175,7 +225,7 @@ appendFile(
  }
 
   function appendMessage(user, text, outgoing, id, avatar){
-  const list = qs('#chat-messages');
+  const list = isChatPage
   if(!list) return;
 
   const el = document.createElement('div');
@@ -185,7 +235,7 @@ appendFile(
   if(id) el.setAttribute('data-message-id', id);
 
   el.innerHTML = `
- <img src="${avatar || '/static/image/logo 1.png'}" alt="Avatar"
+ <img src="${avatar || '/static/image/logo1.png'}" alt="Avatar"
 style="
 width:35px;
 height:35px;
@@ -231,8 +281,7 @@ if(!outgoing && modalHidden){
   }
   function appendFile(id, name, url){
 
-    const list = qs('#chat-messages');
-
+    const list = isChatPage
     if(!list) return;
 
 
@@ -399,7 +448,9 @@ function uploadFile(file){
 
 
 }
-    const input = qs('#chat-input');
+    const input = isChatPage
+    ? qs('#page-chat-input')
+    : qs('#chat-input');
     const text = input && input.value.trim();
     if(!text) return;
     if(
@@ -457,7 +508,9 @@ input.style.height = "50px";
     }
   }
 // Auto resize message textarea like WhatsApp
-const chatInput = qs('#chat-input');
+const chatInput = isChatPage
+    ? qs('#page-chat-input')
+    : qs('#chat-input');
 
 if(chatInput){
 
@@ -477,7 +530,9 @@ if(chatInput){
   // Emoji UI
   const emojiBtn = qs('#emoji-btn');
   const emojiPicker = qs('#emoji-picker');
-  function insertEmoji(ch){ const input = qs('#chat-input'); if(!input) return; try{ const start = input.selectionStart || 0; const end = input.selectionEnd || 0; const v = input.value; input.value = v.slice(0,start) + ch + v.slice(end); input.selectionStart = input.selectionEnd = start + ch.length; input.focus(); }catch(e){ input.value = input.value + ch; } }
+  function insertEmoji(ch){const input = isChatPage
+    ? qs('#page-chat-input')
+    : qs('#chat-input'); ; if(!input) return; try{ const start = input.selectionStart || 0; const end = input.selectionEnd || 0; const v = input.value; input.value = v.slice(0,start) + ch + v.slice(end); input.selectionStart = input.selectionEnd = start + ch.length; input.focus(); }catch(e){ input.value = input.value + ch; } }
   if(emojiPicker){
     emojiPicker.addEventListener('click', function(e){ if(e.target && e.target.classList && e.target.classList.contains('emoji-swatch')){ insertEmoji(e.target.textContent); emojiPicker.style.display='none'; } });
     // keyboard navigation for emoji picker
@@ -532,41 +587,12 @@ if(chatInput){
     document.addEventListener('click', function(e){ if(emojiPicker && e.target !== emojiBtn && !emojiPicker.contains(e.target)){ emojiPicker.style.display='none'; } });
   }
 const expandBtn = document.getElementById("chat-expand");
-const modal = document.getElementById("chat-modal");
 
-let oldChatPosition = {};
-
-if(expandBtn && modal){
+if(expandBtn){
 
     expandBtn.addEventListener("click", function(){
 
-        if(!modal.classList.contains("chat-fullscreen")){
-
-            oldChatPosition = {
-                left: modal.style.left,
-                top: modal.style.top,
-                width: modal.style.width,
-                height: modal.style.height
-            };
-
-          
-modal.classList.add("chat-fullscreen");
-
-            expandBtn.innerHTML="🗗";
-
-        }else{
-
-            modal.classList.remove("chat-fullscreen");
-            modal.removeAttribute("style");
-
-            modal.style.left = oldChatPosition.left;
-            modal.style.top = oldChatPosition.top;
-            modal.style.width = oldChatPosition.width;
-            modal.style.height = oldChatPosition.height;
-
-            expandBtn.innerHTML="⛶";
-
-        }
+        window.location.href = "/chat/?room=" + roomName;
 
     });
 
@@ -581,9 +607,6 @@ modal.classList.add("chat-fullscreen");
 
     if(willOpen){
       modal.classList.remove("chat-fullscreen");
-
-        const widget = document.getElementById("chat-widget");
-
 const btnPosition = widget.getBoundingClientRect();
 console.log(btnPosition.top, btnPosition.left);
 
@@ -700,8 +723,59 @@ modal.style.setProperty("top", top + "px", "important");
  if(willOpen){ // clear unread count when opening
     unreadCount = 0; if(badgeEl){ badgeEl.style.display='none'; badgeEl.classList.remove('pulse'); badgeEl.innerText = ''; } }
   });
-  qs('#chat-close') && qs('#chat-close').addEventListener('click', function(){ qs('#chat-modal').style.display='none'; });
-  qs('#chat-send') && qs('#chat-send').addEventListener('click', sendMessage);
+  const chatClose = qs('#chat-close');
+
+if(chatClose){
+
+    chatClose.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const modal = qs('#chat-modal');
+
+        if(modal){
+            modal.style.display = "none";
+        }
+
+    });
+
+
+    chatClose.addEventListener('touchend', function(e){
+
+        e.preventDefault();
+
+        const modal = qs('#chat-modal');
+
+        if(modal){
+            modal.style.display = "none";
+        }
+
+    });
+
+}
+  const sendBtn = isChatPage
+    ? qs('#page-chat-send')
+    : qs('#chat-send');
+
+if(sendBtn){
+    sendBtn.addEventListener("click", sendMessage);
+}
+const chatForm = isChatPage
+    ? qs('#page-chat-form')
+    : qs('#chat-form');
+if(chatForm){
+
+chatForm.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+sendMessage();
+
+});
+
+}
   // If UI controls exist to choose public/private, react to changes and reconnect
   document.addEventListener('click', function(e){
 
@@ -723,8 +797,6 @@ modal.style.setProperty("top", top + "px", "important");
   }
 
 });
- const scopeEl = qs('#chat-scope');
-const targetEl = qs('#chat-target');
 
 
 function updateDMState(){
@@ -738,7 +810,6 @@ function updateDMState(){
     }else{
 
         targetEl.disabled = true;
-        targetEl.value = "";
 
     }
 
@@ -749,30 +820,26 @@ function updateDMState(){
 updateDMState();
 
 
-
 if(scopeEl){
 
-    scopeEl.addEventListener('change', function(){
+    scopeEl.addEventListener("change", function(){
 
         updateDMState();
-
-        connect();
-
-    });
-
-}
-
-
-
-if(targetEl){
-
-    targetEl.addEventListener('change', function(){
-
-        if(scopeEl.value === "private"){
+if(this.value === "public"){
 
             connect();
 
         }
+
+
+    });
+}   
+
+if(targetEl){
+
+    targetEl.addEventListener("change", function(){
+
+        connect();
 
     });
 
@@ -793,53 +860,123 @@ document.addEventListener('keydown', function(e){
     }
 
 });
-const imageUpload =
-document.getElementById("image-upload");
+const imageUpload = isChatPage
+    ? document.getElementById("page-image-upload")
+    : document.getElementById("image-upload");
 
+const fileUpload = isChatPage
+    ? document.getElementById("page-file-upload")
+    : document.getElementById("file-upload");
+const recordBtn = isChatPage
+    ? document.getElementById("page-voice-record")
+    : document.getElementById("voice-record");
 
-const fileUpload =
-document.getElementById("file-upload");
+let mediaRecorder;
+let audioChunks = [];
+let audioStream;
 
-const recordBtn = document.getElementById("voice-record");
 
 if(recordBtn){
 
-recordBtn.onclick = async()=>{
+recordBtn.addEventListener("click", async function(){
 
-let stream = await navigator.mediaDevices.getUserMedia({
-    audio:true
+    // kama tayari recording inaendelea
+    if(mediaRecorder && mediaRecorder.state === "recording"){
+
+        mediaRecorder.stop();
+
+        recordBtn.innerHTML = "🎤";
+
+        return;
+    }
+
+
+    try{
+
+        audioStream = await navigator.mediaDevices.getUserMedia({
+            audio:true
+        });
+
+
+        mediaRecorder = new MediaRecorder(audioStream);
+
+
+        audioChunks = [];
+
+
+        mediaRecorder.ondataavailable = function(e){
+
+            if(e.data.size > 0){
+
+                audioChunks.push(e.data);
+
+            }
+
+        };
+
+
+        mediaRecorder.onstop = function(){
+
+
+            const audioBlob = new Blob(
+                audioChunks,
+                {
+                    type:"audio/webm"
+                }
+            );
+
+
+            const voiceFile = new File(
+                [audioBlob],
+                "voice.webm",
+                {
+                    type:"audio/webm"
+                }
+            );
+
+
+            sendFile(voiceFile);
+
+
+
+            // zima microphone
+            audioStream.getTracks().forEach(
+                track=>track.stop()
+            );
+
+
+        };
+
+
+        mediaRecorder.start();
+
+
+        recordBtn.innerHTML="⏹";
+
+
+        console.log(
+            "Voice recording started"
+        );
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Microphone error:",
+            error
+        );
+
+
+        alert(
+            "Please allow microphone permission"
+        );
+
+    }
+
+
 });
 
-let recorder = new MediaRecorder(stream);
-
-let audioChunks=[];
-
-recorder.ondataavailable=e=>{
-    audioChunks.push(e.data);
-};
-
-recorder.onstop=()=>{
-
-let audioBlob = new Blob(audioChunks,{
-    type:"audio/webm"
-});
-
-sendFile(
-    new File(
-        [audioBlob],
-        "voice.webm"
-    )
-);
-
-};
-
-recorder.start();
-
-setTimeout(()=>{
-    recorder.stop();
-},10000);
-
-};
 
 }
 function sendFile(file){
@@ -896,7 +1033,8 @@ id:data.id,
 
 url:data.url,
 
-name:data.name
+name:data.name,
+room:roomName
 
 }));
 
@@ -945,18 +1083,19 @@ connect();
 
 })();
 
-
+let moved = false;
      //for movable widgget
 function makeButtonDraggable(button){
 
     let moving = false;
     let offsetX = 0;
     let offsetY = 0;
-
+    
 
     function startDrag(e){
 
         moving = true;
+        moved = false;
 
         const point = e.touches ? e.touches[0] : e;
 
@@ -983,10 +1122,10 @@ function makeButtonDraggable(button){
 
 
     function moveDrag(e){
-
+       
         if(!moving) return;
 
-
+         moved = true;
         const point = e.touches ? e.touches[0] : e;
 
 
@@ -1021,15 +1160,20 @@ function makeButtonDraggable(button){
         button.style.top = y + "px";
 
     }
+function stopDrag(){
+
+    moving = false;
+
+    setTimeout(function(){
+
+        moved = false;
+
+    },150);
+
+}
 
 
-
-    function stopDrag(){
-
-        moving = false;
-
-    }
-
+    
 
 
     // PC mouse
@@ -1077,33 +1221,107 @@ function makeButtonDraggable(button){
 
 }
 
-const chatButton = document.getElementById("chat-open");
+const chatOpen = document.getElementById("chat-open");
 
+if(chatOpen){
 
-if(chatButton){
+    chatOpen.addEventListener("click",function(e){
 
-    makeButtonDraggable(chatButton);
+        if(moved){
+
+            e.preventDefault();
+
+            return;
+
+        }
+
+    });
+
+}
+const plusBtn = isChatPage
+    ? document.getElementById("page-plus-btn")
+    : document.getElementById("plus-btn");
+
+const uploadMenu = isChatPage
+    ? document.getElementById("page-upload-menu")
+    : document.getElementById("upload-menu");
+
+if (plusBtn && uploadMenu) {
+
+    plusBtn.addEventListener("click", function(e){
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        uploadMenu.classList.toggle("show");
+
+    });
 
 }
 
-const plusBtn = document.getElementById("plus-btn");
-const uploadMenu = document.getElementById("upload-menu");
 
 
-plusBtn.onclick = function(){
-
-    uploadMenu.classList.toggle("show");
-
-};
+const backPopup = document.getElementById("back-popup");
 
 
-document.addEventListener("click", function(e){
+if(backPopup){
 
-    if(!e.target.closest(".plus-container")){
+    backPopup.addEventListener("click",function(){
 
-        uploadMenu.classList.remove("show");
+        const previous =
+        document.getElementById("previous-page").value;
+
+
+        if(backPopup){
+
+    backPopup.addEventListener("click",function(){
+
+        window.history.back();
+
+    });
+
+}
+
+    });
+
+}
+function toggleMenu(){
+    document.getElementById("navLinks").classList.toggle("active");
+}
+window.addEventListener("resize", function(){
+
+    const modal = qs('#chat-modal');
+
+    if(!modal) return;
+
+    if(modal.style.display === "block"){
+
+        const rect = modal.getBoundingClientRect();
+
+        if(rect.right > window.innerWidth){
+
+            modal.style.left =
+            (window.innerWidth - rect.width - 10)+"px";
+
+        }
+
+        if(rect.bottom > window.innerHeight){
+
+            modal.style.top =
+            (window.innerHeight - rect.height - 10)+"px";
+
+        }
 
     }
 
 });
 
+
+
+const aiWidget = document.getElementById("ai-widget");
+
+if(aiWidget){
+
+    makeButtonDraggable(aiWidget);
+
+}

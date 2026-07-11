@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Background(models.Model):
     title = models.CharField(max_length=100)
@@ -106,10 +107,28 @@ class LiveStream(models.Model):
         return self.title
    
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.CharField(max_length=150, default="default.jpg")  # Default avatar
 
+
+class Profile(models.Model):
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    avatar = models.CharField(
+        max_length=100,
+        default="default.jpg"
+    )
+
+    last_seen = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    is_online = models.BooleanField(
+        default=False
+    )
     def __str__(self):
         return self.user.username
 

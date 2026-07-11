@@ -1,131 +1,376 @@
-{% load static %}
 
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
 
-    <title>JMJ Chat</title>
-
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 
 </head>
 
 <body>
-  {% csrf_token %}
+
+<nav class="navbar">
+  <div class="logo"><a href="/"><img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES"><span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
+  <form method="GET" action="/search/" class="search-form">
+    <input type="text" name="q" placeholder="Search tools, tutorials..." />
+    <button type="submit"><i class="fas fa-search"></i></button>
+  </form>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">🏠Home</a></li>
+    <li><a href="/chat/">💬 ChatCHAT</a></li>
+    <li><a href="/ai-assistant/">🤖AI </a></li>
+    <li><a href="/livestreams/">🔴Live</a></li>
+    <li><a href="/tutorials/">📖Tutorials</a></li>
+    <li><a href="/contactus/">📞Contact</a></li>
+    <li><a href="/about/">ℹ️About</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="/logout/">🚪➡️Logout</a></li>
+    {% else %}
+    <li><a href="/about/">ℹ️About</a></li>
+       <li><a href="/chat/">💬 ChatCHAT</a></li>
+    <li><a href="/ai-assistant/">🤖AI </a></li>
+      <li><a href="/login/">👤🔑Login</a></li>
+      <li><a href="/register/">👥➕Register</a></li>
+      <li><a href="/forgot-password/">🔓Forgot Password</a></li>
+    {% endif %}
+  </ul>
+</nav>
+
+    <br><br>
+
+
+
 <div class="chat-container">
 
-    <!-- LEFT SIDE -->
-    <div class="sidebar">
+    <!-- ================= SIDEBAR ================= -->
 
-        <h2 style="padding:20px">Chats</h2>
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <h2>JMJ Chat</h2><br>
+
+           <form method="GET" action="/search/" class="search ">
+    <input type="text" name="q" placeholder="Search person to  DM" />
+    <button type="submit">
+        <i class="fas fa-search"></i>
+    </button>
+</form>
+
+        </div>
+
+        <div class="user-list">
 
         {% for u in users %}
-<a href="{% url 'chat_home' %}?user={{ u.username }}"
-   class="user"
-   data-username="{{ u.username }}">
+<a href="{% url 'chat_home' %}?room=pm_{{ request.user.username|lower }}_{{ u.username|lower }}"
+class="user {% if selected_user == u %}active{% endif %}">
+        
+            {% if u.profile.avatar %}
 
-    <img src="{% static 'profile/' %}{{ u.profile.avatar }}" alt="">
+            <img src="{% static 'profile/' %}{{ u.profile.avatar }}">
 
-    <div>
-        <b>{{ u.username }}</b><br>
-        <small>Click to chat</small>
-    </div>
+            {% else %}
 
-</a>
-{% endfor %}
-<img src="{% static 'profile/' %}{{ u.profile.avatar }}" alt="">
-<div>
+            <img src="{% static 'image/logo1.png' %}">
 
-<b>{{ u.username }}</b><br>
+            {% endif %}
 
-<small>Click to chat</small>
+            <div class="user-info">
 
+                <div class="user-name">
 
-</div>
+                    {{ u.username }}
 
+                </div>
 
-</div>
+                <div class="last-message">
+
+                    Click to chat
+
+                </div>
+
+            </div>
+
+        </a>
+
+        {% empty %}
+
+        <div class="empty-users">
+
+            No users found
+
+        </div>
 
         {% endfor %}
 
-    </div>
+        </div>
 
-    <!-- RIGHT SIDE -->
-<div class="chat-area">
+    </aside>
 
-{% if selected_user %}
 
-<div class="chat-header">
 
-<img src="{% static 'profile/' %}{{ selected_user.profile.avatar }}">
+    <!-- ================= CHAT ================= -->
 
-<div>
+    <main class="chat-area">
 
-<h2>{{ selected_user.username }}</h2>
+{% if is_public or selected_user %}
+  <div class="chat-header">
 
-<small>Online</small>
-
-</div>
-
-</div>
-
-<div class="messages" id="messages">
-{% for msg in messages %}
-
-<div class="{% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
-
-{{ msg.message }}
-
-</div>
-
-{% empty %}
-
-<p>No messages.</p>
-
-{% endfor %}
-
-</div>
-<div class="chat-input">
-
-<form id="chat-form">
-
-<input
-
-type="text"
-
-id="message"
-
-placeholder="Type message...">
-
-<button>
-
-Send
-
+    <button 
+    id="back-popup"
+    class="popup-btn">
+    🗕 Popup
 </button>
 
-</form>
+<input 
+type="hidden"
+id="previous-page"
+value="{{ request.session.previous_page }}">
+    <div class="chat-toolbar">
 
-</div>
+       <select id="page-chat-scope">
+
+    <option
+        value="public"
+        {% if room_name == "public" %}selected{% endif %}>
+        🌍 Public Room
+    </option>
+
+    <option
+        value="private"
+        {% if room_name != "public" %}selected{% endif %}>
+        🔒 Private Chat
+    </option>
+
+</select>
+<select id="page-chat-target">
+
+    <option value="">
+        Select Friend
+    </option>
+
+    {% for u in users %}
+
+    <option
+        value="{{ u.username }}"
+        {% if selected_user == u %}selected{% endif %}>
+
+        {{ u.username }}
+
+    </option>
+
+    {% endfor %}
+
+</select>
+
+       
+    </div>
+       
+
+{% if is_public %}
+
+    <img src="{% static 'image/logo2.png' %}">
+
+    <div>
+        <h3>Public Chat</h3>
+        <small>🌍 Everyone</small>
+    </div>
+
+{% elif selected_user %}
+
+    {% if selected_user.profile.avatar %}
+        <img src="{% static 'profile/' %}{{ selected_user.profile.avatar }}">
+    {% else %}
+        <img src="{% static 'image/logo1.png' %}">
+    {% endif %}
+
+    <div>
+        <h3>{{ selected_user.username }}</h3>
+        {% if selected_user.profile.is_online %}
+
+<small style="color:green">
+● Online
+</small>
 
 {% else %}
 
-<h2>Select a user</h2>
+<small style="color:red">
+● Offline
+</small>
+
+{% endif %}
+    </div>
 
 {% endif %}
 
-</div> 
+        </div>
+
+     <div class="messages" id="page-chat-messages">
+        {% for msg in messages %}
+
+            <div class="message {% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
+
+                <div class="bubble">
+
+                    {{ msg.message }}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty-chat">
+
+                Start your conversation.
+
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+<div class="chat-input">
+    <div class="plus-container">
+
+        <button
+            type="button"
+            id="page-plus-btn"
+            class="icon-btn">
+            +
+        </button>
+
+        <div id="page-upload-menu">
+
+            <label>
+
+                📷 Image
+
+                <input
+                    type="file"
+                    id="page-image-upload"
+                    accept="image/*"
+                    hidden>
+
+            </label>
+
+            <label>
+
+                📁 File
+
+                <input
+                    type="file"
+                    id="page-file-upload"
+                    hidden>
+
+            </label>
+
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        id="emoji-btn"
+        class="icon-btn">
+        😊
+    </button>
+    <div id="emoji-picker">
+<span class="emoji-swatch">😀</span>
+						<span class="emoji-swatch">😁</span>
+						<span class="emoji-swatch">😂</span>
+						<span class="emoji-swatch">🤣</span>
+						<span class="emoji-swatch">😊</span>
+						<span class="emoji-swatch">🙂</span>
+						<span class="emoji-swatch">😉</span>
+						<span class="emoji-swatch">😍</span>
+						<span class="emoji-swatch">😘</span>
+						<span class="emoji-swatch">😎</span>
+						<span class="emoji-swatch">🤩</span>
+						<span class="emoji-swatch">🤔</span>
+						<span class="emoji-swatch">😅</span>
+						<span class="emoji-swatch">😭</span>
+						<span class="emoji-swatch">😡</span>
+						<span class="emoji-swatch">😴</span>
+						<span class="emoji-swatch">🤝</span>
+						<span class="emoji-swatch">👍</span>
+						<span class="emoji-swatch">👎</span>
+						<span class="emoji-swatch">🎉</span>
+						<span class="emoji-swatch">🔥</span>
+						<span class="emoji-swatch">🚀</span>
+						<span class="emoji-swatch">❤️</span>
+						<span class="emoji-swatch">🙏</span>
+						<span class="emoji-swatch">🥳</span>
+						<span class="emoji-swatch">🤗</span>
+						<span class="emoji-swatch">🤖</span>
+						<span class="emoji-swatch">🫶</span>
+						<span class="emoji-swatch">💯</span>
+						<span class="emoji-swatch">🔔</span>
+    </div>
+
+    <form id="page-chat-form">
+
+        <input
+            type="text"
+            id="chat-input"
+            placeholder="Type a message...">
+
+        <button
+            type="button"
+            id="page-voice-record"
+            class="icon-btn">
+            🎤
+        </button>
+
+        <button
+      type="button"
+    id="page-chat-send">
+➤
+</button>
+    </form>
+
 </div>
+        
+
+{% else %}
+
+<div class="welcome-screen">
+
+<img src="{% static 'image/logo2.png' %}">
+
+<h3>Welcome to JMJ Chat</h3>
+
+<h3>Select a user to start chatting.</h3>
+
+</div>
+
+{% endif %}
+
+    </main>
+
+</div>
+
 <input
 type="hidden"
 id="current-user"
 value="{{ request.user.username }}">
 
+<input
+type="hidden"
+id="chat-room"
+value="{{ room_name }}">
+
+<script src="{% static 'js/chat_widget.js' %}"></script>
+
 </body>
-<script src="{% static 'js/chat.js' %}"></script>
+
 
 </html>
