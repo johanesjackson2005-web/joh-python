@@ -225,9 +225,12 @@ appendFile(
  }
 
   function appendMessage(user, text, outgoing, id, avatar){
-  const list = isChatPage
-  if(!list) return;
 
+    const list = isChatPage
+        ? qs('#page-chat-messages')
+        : qs('#chat-messages');
+
+    if(!list) return;
   const el = document.createElement('div');
   el.className = 'chat-line' + (outgoing ? ' outgoing' : ' incoming');
 
@@ -279,12 +282,14 @@ if(!outgoing && modalHidden){
   playBeep();
 }
   }
-  function appendFile(id, name, url){
+ 
+function appendFile(id, name, url){
 
     const list = isChatPage
+        ? qs('#page-chat-messages')
+        : qs('#chat-messages');
+
     if(!list) return;
-
-
     const el = document.createElement("div");
 
     el.className = "chat-line incoming";

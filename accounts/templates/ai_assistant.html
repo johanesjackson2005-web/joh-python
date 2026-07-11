@@ -7,6 +7,11 @@
   <title>AI Assistant — JMJ Softwares</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+function toggleMenu(){
+    document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
 
   <style>
     body{
@@ -286,25 +291,96 @@ button.send{
 .navbar{
     position:fixed;
     top:0;
-    left:0;
     width:100%;
-    height:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:5px 20px;
+    background:rgba(6, 5, 10, 0.7);
+    backdrop-filter:blur(10px);
     z-index:1000;
 }
+
+.logo a{
+    color:white;
+    text-decoration:none;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    list-style:none;
+    gap:18px;
+}
+
+.nav-links li a{
+    color:white;
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:6px;
+    transition:0.3s;
+}
+
+.nav-links li a:hover{
+    background:#3b82f6;
+}
+
+.menu-toggle{
+    display:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+@media(max-width:768px){
+    .menu-toggle{display:block;}
+    .nav-links{
+        display:none;
+        flex-direction:column;
+        position:absolute;
+        top:70px;
+        left:0;
+        width:100%;
+        background:#111827;
+        padding:20px;
+    }
+    .nav-links.active{display:flex;}
+}
+
   </style>
 </head>
 
 <body>
 {% csrf_token %}
 <nav class="navbar">
-  <div class="logo">
-    <a href="/">
-      <img src="{% static 'image/logo2.png' %}" style="height:36px;border-radius:6px">
-      <span style="color:white;font-weight:600">JMJ SOFTWARES</span>
-    </a>
-  </div>
-</nav>
+    <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
+    <form method="GET" action="/search/" class="search-form">
+    <input type="text" name="q" placeholder="Search tools, tutorials..." />
+    <button type="submit">
+        <i class="fas fa-search"></i>
+    </button>
+</form>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
+    <ul class="nav-links" id="navLinks">
+<li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻Admin</a></li>
+        <li><a href="/">🏠Home</a></li>
+         <li><a href="/chat/">💬 CHAT</a></li>
+        <li><a href="/livestreams/">🔴Live</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="/ai-assistant/">🤖AI </a></li>
+        <li><a href="/livestreams/">🔴Live</a></li>
+        <li><a href="/tutorials/">📖Tutorials</a></li>
+           <li><a href="/logout/">🚪➡️Logout</a></li>
+        {% else %}
+            <li><a href="/about/">ℹ️About</a></li>
+            <li><a href="/contactus/">📞Contact</a></li>
+            <li><a href="/login/">👤🔑Login</a></li>
+            <li><a href="/register/">👥➕Register</a></li>
+            <li><a href="/forgot-password/">Forgot Password</a></li>
+        {% endif %}
+    </ul>
+</nav>
 <div class="chat-wrap">
 
   <div class="assistant-header">
