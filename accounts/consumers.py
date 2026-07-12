@@ -158,9 +158,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else msg.guest_name
       ),
     "message": msg.message,
-     "avatar" : "/static/profile/" + str(msg.sender.profile.avatar
-    if msg.sender and hasattr(msg.sender, "profile") and msg.sender.profile.avatar
-    else "/static/image/logo1.png"),
+     "avatar": (
+    "/static/profile/" + str(msg.sender.profile.avatar)
+    if msg.sender 
+    and hasattr(msg.sender, "profile")
+    and msg.sender.profile.avatar
+    else "/static/image/logo1.png"
+),
+     
+     
      }))
          
 

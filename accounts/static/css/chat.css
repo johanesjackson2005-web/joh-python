@@ -14,9 +14,8 @@
 html,
 body{
     width:100%;
-    height:100%;
+    min-height:100%;
     overflow:hidden;
-    background:#0f172a;
 }
 
 /* =========================================================
@@ -1053,21 +1052,40 @@ body{
 ========================================== */
 
 #emoji-picker{
+
     display:none;
+
     position:absolute;
+
     left:55px;
+
     bottom:70px;
+
     width:270px;
+
     max-width:92vw;
+
     padding:10px;
+
     background:#111b21;
+
     border-radius:12px;
+
     box-shadow:0 15px 35px rgba(0,0,0,.45);
+
     z-index:9999;
 
-    display:grid;
     grid-template-columns:repeat(6,1fr);
+
     gap:8px;
+
+}
+
+
+#emoji-picker.show{
+
+    display:grid;
+
 }
 
 .emoji-swatch{
@@ -2007,7 +2025,7 @@ user-select:none;
 
 /* Nice focus */
 
-.chat-input input:focus{
+.chat-input textarea:focus{
 
 box-shadow:0 0 0 3px rgba(37,211,102,.25);
 
@@ -2137,9 +2155,11 @@ transform:scale(.95);
 
     justify-content:center;
 }
+
 .chat-container{
-    height:calc(100vh - 120px);
+    height:calc(100dvh - 120px);
 }
+
 @media (min-width:992px){
 
     .chat-container{
@@ -2212,4 +2232,273 @@ transform:scale(.95);
 
 #page-voice-record{
     background: #3b82f6;
+}
+/* =================================
+   MOBILE CHAT FINAL FIX
+================================= */
+
+@media(max-width:768px){
+
+html,
+body{
+    overflow:hidden;
+}
+
+
+.navbar{
+    height:60px;
+}
+
+
+.chat-container{
+
+    margin-top:60px;
+
+    height:calc(100dvh - 60px);
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+/* top users bar */
+
+.sidebar{
+
+    width:100%;
+
+    min-width:100%;
+
+    height:90px;
+
+    flex-shrink:0;
+
+}
+
+
+.sidebar-header{
+
+    display:none;
+
+}
+
+
+.user-list{
+
+    display:flex;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    height:90px;
+
+}
+
+
+.user{
+
+    min-width:180px;
+
+    padding:8px;
+
+}
+
+
+.user img{
+
+    width:45px;
+
+    height:45px;
+
+}
+
+
+/* actual chat */
+
+.chat-area{
+
+    flex:1;
+
+    height:auto;
+
+    min-height:0;
+
+}
+
+
+/* header */
+
+.chat-header{
+
+    height:auto;
+
+    min-height:65px;
+
+    padding:8px;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.chat-toolbar{
+
+    width:100%;
+
+    margin-left:0;
+
+}
+
+
+.chat-toolbar select{
+
+    height:35px;
+
+    font-size:12px;
+
+}
+
+
+/* messages */
+
+.messages{
+
+    flex:1;
+
+    min-height:0;
+
+    padding:10px;
+
+}
+
+
+/* input */
+
+.chat-input{
+
+    min-height:60px;
+
+    padding:8px;
+
+}
+
+
+.chat-input textarea{
+
+    height:42px;
+
+    min-height:42px;
+
+    max-height:80px;
+
+    font-size:14px;
+
+}
+
+
+.icon-btn{
+
+    width:38px;
+
+    height:38px;
+
+    min-width:38px;
+
+}
+
+
+#page-chat-send{
+
+    width:40px;
+
+    height:40px;
+
+}
+
+}
+/* ===============================
+   MOBILE CHAT INPUT FIX
+================================ */
+
+@media(max-width:768px){
+
+.chat-area{
+    position:relative;
+    height:100%;
+    min-height:0;
+}
+
+
+.messages{
+    padding-bottom:80px;
+}
+
+
+/* input bar always visible */
+
+.chat-input{
+
+    position:relative;
+
+    width:100%;
+
+    min-height:65px;
+
+    padding:8px;
+
+    flex-shrink:0;
+
+    z-index:100;
+
+}
+
+
+.chat-input form{
+
+    height:45px;
+
+}
+
+
+.chat-input textarea{
+
+    height:42px;
+
+    min-height:42px;
+
+    max-height:42px;
+
+    overflow:hidden;
+
+}
+
+
+.plus-container,
+#emoji-btn,
+#page-voice-record,
+#page-chat-send{
+
+    flex-shrink:0;
+
+}
+
+}
+.status-online{
+
+color:#00ff66;
+font-size:12px;
+
+}
+
+
+.status-offline{
+
+color:red;
+font-size:12px;
+
 }

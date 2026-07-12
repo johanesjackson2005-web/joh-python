@@ -724,7 +724,12 @@ def users_search(request):
 @login_required
 def chat_home(request):
 
-    users = User.objects.exclude(id=request.user.id)
+    search_user = request.GET.get("user", "")
+
+    users = User.objects.exclude(
+    id=request.user.id
+    ).filter(
+    username__icontains=search_user)
 
     room_name = request.GET.get("room", "public")
 
@@ -928,6 +933,7 @@ def ai_upload(request):
         "type": uploaded_file.content_type
 
     })
+
 
 
 def add_tutorial(request):

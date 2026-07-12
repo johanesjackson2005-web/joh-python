@@ -76,14 +76,19 @@
         <div class="sidebar-header">
 
             <h2>JMJ Chat</h2><br>
+<form method="GET" action="{% url 'chat_home' %}" class="search">
 
-           <form method="GET" action="/search/" class="search ">
-    <input type="text" name="q" placeholder="Search person to  DM" />
+    <input 
+    type="text" 
+    name="user"
+    placeholder="Search user to DM">
+
     <button type="submit">
         <i class="fas fa-search"></i>
     </button>
-</form>
 
+</form>
+          
         </div>
 
         <div class="user-list">
@@ -112,9 +117,22 @@ class="user {% if selected_user == u %}active{% endif %}">
 
                 <div class="last-message">
 
-                    Click to chat
+{% if u.profile.is_online %}
 
-                </div>
+<span style="color:#00ff66">
+● Online
+</span>
+
+{% else %}
+
+<span style="color:red">
+● Offline
+</span>
+
+{% endif %}
+
+
+</div>
 
             </div>
 

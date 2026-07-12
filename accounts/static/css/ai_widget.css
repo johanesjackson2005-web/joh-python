@@ -962,3 +962,58 @@ left:0;
     bottom:18px;
     z-index:1200;
 }
+#emoji-picker{
+
+    position:absolute;
+
+    bottom:75px;
+
+    left:50px;
+
+    width:260px;
+
+    max-width:90vw;
+
+    padding:10px;
+
+    background:#111b21;
+
+    border-radius:12px;
+
+    display:none;
+
+    grid-template-columns:repeat(6,1fr);
+
+    gap:8px;
+
+    z-index:99999;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+}
+
+
+#emoji-picker.show{
+
+    display:grid;
+
+}
+
+
+.emoji-swatch{
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    width:35px;
+
+    height:35px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}

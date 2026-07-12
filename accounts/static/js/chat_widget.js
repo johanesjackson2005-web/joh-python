@@ -539,7 +539,7 @@ if(chatInput){
     ? qs('#page-chat-input')
     : qs('#chat-input'); ; if(!input) return; try{ const start = input.selectionStart || 0; const end = input.selectionEnd || 0; const v = input.value; input.value = v.slice(0,start) + ch + v.slice(end); input.selectionStart = input.selectionEnd = start + ch.length; input.focus(); }catch(e){ input.value = input.value + ch; } }
   if(emojiPicker){
-    emojiPicker.addEventListener('click', function(e){ if(e.target && e.target.classList && e.target.classList.contains('emoji-swatch')){ insertEmoji(e.target.textContent); emojiPicker.style.display='none'; } });
+    emojiPicker.addEventListener('click', function(e){ if(e.target && e.target.classList && e.target.classList.contains('emoji-swatch')){ insertEmoji(e.target.textContent); emojiPicker.classList.remove("show"); } });
     // keyboard navigation for emoji picker
     (function(){
       const swatches = Array.from(emojiPicker.querySelectorAll('.emoji-swatch'));
@@ -574,7 +574,7 @@ if(chatInput){
         } else if(e.key === 'Enter' && active >= 0){
           e.preventDefault(); swatches[active].click();
         } else if(e.key === 'Escape'){
-          emojiPicker.style.display = 'none';
+          emojiPicker.classList.remove("show");
         }
       }
 
@@ -586,10 +586,25 @@ if(chatInput){
       }
     })();
   }
-  if(emojiBtn){
-    emojiBtn.addEventListener('click', function(e){ e.stopPropagation(); if(!emojiPicker) return; emojiPicker.style.display = (emojiPicker.style.display === 'block' ? 'none' : 'block'); });
-    // hide picker when clicking outside
-    document.addEventListener('click', function(e){ if(emojiPicker && e.target !== emojiBtn && !emojiPicker.contains(e.target)){ emojiPicker.style.display='none'; } });
+ if(emojiBtn){
+
+    emojiBtn.addEventListener('click', function(e){
+        
+
+        e.stopPropagation();
+        console.log("EMOJI BUTTON CLICKED");
+
+
+        if(!emojiPicker) return;
+
+
+        emojiPicker.classList.toggle("show");
+
+
+    });
+ 
+// hide picker when clicking outside
+    document.addEventListener('click', function(e){ if(emojiPicker && e.target !== emojiBtn && !emojiPicker.contains(e.target)){emojiPicker.classList.remove("show"); } });
   }
 const expandBtn = document.getElementById("chat-expand");
 

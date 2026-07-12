@@ -261,17 +261,17 @@ emojiBtn.addEventListener("click", function(e){
 
     e.stopPropagation();
 
-    if(emojiPicker.style.display==="block"){
+    if(emojiPicker.classList.contains("show")){
 
-        emojiPicker.style.display="none";
+    emojiPicker.classList.remove("show");
 
-    }else{
+}else{
 
-        emojiPicker.style.display="block";
+    emojiPicker.classList.add("show");
 
-        uploadMenu.classList.remove("show");
+    uploadMenu.classList.remove("show");
 
-    }
+}
 
 
 });
