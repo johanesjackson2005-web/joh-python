@@ -20,11 +20,17 @@
 <body>
 <nav class="navbar">
     <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
-    <form method="GET" action="/search/" class="search-form">
-    <input type="text" name="q" placeholder="Search tools, tutorials..." />
+    <form method="GET" action="{% url 'chat_home' %}" class="search">
+
+    <input 
+    type="text" 
+    name="user"
+    placeholder="Search user to DM">
+
     <button type="submit">
         <i class="fas fa-search"></i>
     </button>
+
 </form>
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
@@ -63,7 +69,7 @@
     </ul>
 </nav>
 
-    <br><br>
+    
 
 
 

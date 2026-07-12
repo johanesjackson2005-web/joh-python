@@ -1,72 +1,3 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>About | JMJ Softwares</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/joh.css' %}">
-<script>
-function toggleMenu(){
-    document.getElementById("navLinks").classList.toggle("active");
-}
-</script>
-
-</head>
-
-<body>
-
-<nav class="navbar">
-    <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
-    <form method="GET" action="/search/" class="search-form">
-    <input type="text" name="q" placeholder="Search tools, tutorials..." />
-    <button type="submit">
-        <i class="fas fa-search"></i>
-    </button>
-</form>
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-
-    <ul class="nav-links" id="navLinks">
-        <li><a href="/">🏠  Home</a></li>
-         <li><a href="/chat/">💬  CHAT</a></li>
-        <li><a href="/livestreams/">🔴  Live</a></li>
-        <li><a href="{% url 'notifications' %}">
-
-🔔notification
-
-{% if notification_count > 0 %}
-
-<span class="badge">
-
-{{notification_count}}
-
-</span>
-
-{% endif %}
-
-
-</a></li>
-        {% if user.is_authenticated %}
-        <li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻 Admin</a></li>
-        <li><a href="/ai-assistant/">🤖  AI </a></li>
-        <li><a href="/tutorials/">📖Tutorials</a></li>
-           <li><a href="/logout/">🚪➡️Logout</a></li>
-        {% else %}
-            <li><a href="/about/">ℹ️  About</a></li>
-            <li><a href="/contactus/">📞Contact</a></li>
-            <li><a href="/login/">👤🔑Login</a></li>
-            <li><a href="/register/">👥➕Register</a></li>
-            <li><a href="/forgot-password/">👤🔑Forgot Password</a></li>
-        {% endif %}
-    </ul>
-</nav>
-
-<!-- HERO -->
-
 <!-- =========================
  HERO SECTION
 ========================= -->
@@ -79,7 +10,7 @@ function toggleMenu(){
 
 <div class="col-lg-5 text-center">
 
-<img src="{% static 'image/about.jpeg' %}" class="profile img-fluid">
+<img src="{% static 'image/logo1.png' %}" class="profile img-fluid">
 
 </div>
 
@@ -128,125 +59,6 @@ Download Software
 Explore Tutorials
 
 </a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-<!-- ===========================
-PLATFORM STATISTICS
-=========================== -->
-
-<section class="py-5 bg-dark">
-
-<div class="container">
-
-<div class="row text-center g-4">
-
-<div class="col-lg-3 col-md-6">
-
-<div class="card card-custom p-4">
-
-<h1 class="text-info fw-bold">
-
-100+
-
-</h1>
-
-<h5>
-
-Software Packages
-
-</h5>
-
-<p>
-
-Verified applications ready for download.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-3 col-md-6">
-
-<div class="card card-custom p-4">
-
-<h1 class="text-success fw-bold">
-
-24/7
-
-</h1>
-
-<h5>
-
-AI Assistance
-
-</h5>
-
-<p>
-
-Instant support powered by JMJ AI Assistant.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-3 col-md-6">
-
-<div class="card card-custom p-4">
-
-<h1 class="text-warning fw-bold">
-
-100%
-
-</h1>
-
-<h5>
-
-Secure Platform
-
-</h5>
-
-<p>
-
-Safe downloads with trusted software.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-3 col-md-6">
-
-<div class="card card-custom p-4">
-
-<h1 class="text-danger fw-bold">
-
-LIVE
-
-</h1>
-
-<h5>
-
-Community Chat
-
-</h5>
-
-<p>
-
-Connect with users and administrators in real time.
-
-</p>
 
 </div>
 
@@ -826,7 +638,7 @@ Utilities
 
 <div class="col-lg-5 text-center">
 
-<img src="{% static 'image/about.jpeg' %}" class="founder-img">
+<img src="{% static 'image/about.png' %}" class="founder-img">
 
 </div>
 
@@ -1254,133 +1066,6 @@ Why Thousands Will Choose JMJ Softwares
 </div>
 
 </section>
-<script>
-function toggleMenu(){
-  document.getElementById("navLinks").classList.toggle("active");
-}
-</script>
-
-<!-- ABOUT -->
-
-<section class="section">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>What We Do</h2>
-
-<p class="text-secondary">
-
-JMJ Softwares provides different digital services to simplify technology learning and software access.
-
-</p>
-
-</div>
-
-<div class="row g-4">
-
-<div class="col-md-4">
-
-<div class="card card-custom p-4 h-100">
-
-<h3>💻 Software Downloads</h3>
-
-<p>
-
-Download Windows, MATLAB, Proteus, Multisim, Office, Drivers, Android tools and many other software.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="card card-custom p-4 h-100">
-
-<h3>🎓 Tutorials</h3>
-
-<p>
-
-Learn programming, networking, electronics, engineering software, web development, Django, Python and many more.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="card card-custom p-4 h-100">
-
-<h3>📺 Live Streaming</h3>
-
-<p>
-
-Watch educational livestreams, tutorials, and entertainment content directly from our platform.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="card card-custom p-4 h-100">
-
-<h3>🎬 Movies</h3>
-
-<p>
-
-Browse and download selected movies with an easy-to-use interface.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="card card-custom p-4 h-100">
-
-<h3>📚 Educational Resources</h3>
-
-<p>
-
-Access notes, projects, software setups and engineering learning resources.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="card card-custom p-4 h-100">
-
-<h3>⚡ Fast Support</h3>
-
-<p>
-
-Need help installing software? Contact us directly through WhatsApp, Email or Phone.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
 <!-- ==========================================
      PLATFORM STATISTICS
 =========================================== -->
@@ -1786,85 +1471,6 @@ Create Account
 </div>
 
 </section>
-<!-- CONTACT -->
-
-<section class="section">
-
-<div class="container">
-
-<div class="contact-box">
-
-<h2 class="mb-4">
-
-Contact Information
-
-</h2>
-
-<div class="row">
-
-<div class="col-md-6">
-
-<p>
-
-📍 <strong>Location:</strong>
-
-Mbeya, Tanzania
-
-</p>
-
-<p>
-
-📞 <strong>Phone:</strong>
-
-0744169499
-
-</p>
-
-<p>
-
-💬 <strong>WhatsApp:</strong>
-
-0744169499
-
-</p>
-
-</div>
-
-<div class="col-md-6">
-
-<p>
-
-📧 <strong>Email:</strong>
-
-johanesjackson2005@gmail.com
-
-</p>
-
-<p>
-
-💻 <strong>GitHub:</strong>
-
-github.com/johanes2005-web
-
-</p>
-
-<p>
-
-🏢 <strong>Company:</strong>
-
-JMJ Softwares
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
 <!-- ==========================================
      FOUNDER PROFILE
 ========================================== -->
@@ -1893,7 +1499,7 @@ The person behind JMJ Softwares.
 
 <div class="col-lg-4 text-center">
 
-<img src="{% static 'image/about.jpeg' %}"
+<img src="{% static 'image/about.png' %}"
 class="img-fluid rounded-4 shadow-lg"
 style="max-width:320px;">
 
@@ -2391,8 +1997,257 @@ Explore Software
 </div>
 
 </section>
-{% include 'partials/contact.html' %}
-{% include 'partials/footer.html' %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>s
-</html>
+<style>
+.hero{
+
+padding:100px 0;
+
+background:
+linear-gradient(rgba(6,12,25,.92),rgba(7,18,36,.92)),
+url("{% static 'image/logo.png' %}");
+
+background-size:cover;
+
+background-position:center;
+
+}
+
+.profile{
+
+width:320px;
+
+max-width:100%;
+
+border-radius:20px;
+
+border:4px solid #00bfff;
+
+box-shadow:0 0 35px rgba(0,191,255,.5);
+
+transition:.4s;
+
+}
+
+.profile:hover{
+
+transform:scale(1.03);
+
+}
+
+.logo{
+
+width:240px;
+
+max-width:100%;
+
+}
+
+.card-custom{
+
+background:#111827;
+
+border:1px solid rgba(0,191,255,.15);
+
+transition:.35s;
+
+}
+
+.card-custom:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 0 25px rgba(0,191,255,.35);
+
+}
+
+.badge{
+
+padding:10px 20px;
+
+font-size:15px;
+
+letter-spacing:1px;
+
+}
+
+.btn{
+
+border-radius:30px;
+
+padding:12px 28px;
+
+font-weight:600;
+
+}
+
+.btn:hover{
+
+transform:translateY(-3px);
+
+}
+.feature-icon{
+
+width:80px;
+
+height:80px;
+
+margin:auto;
+
+border-radius:50%;
+
+background:linear-gradient(135deg,#00bfff,#2563eb);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:34px;
+
+color:white;
+
+box-shadow:0 0 20px rgba(0,191,255,.35);
+
+}
+
+.card-custom ul{
+
+margin-top:15px;
+
+padding-left:20px;
+
+}
+
+.card-custom ul li{
+
+margin-bottom:8px;
+
+color:#d4d4d4;
+
+}
+
+.card-custom h4{
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+.card-custom p{
+
+color:#cfcfcf;
+
+line-height:1.7;
+
+}
+
+.bg-dark{
+
+background:#071428 !important;
+
+}
+.founder-img{
+
+width:100%;
+max-width:370px;
+border-radius:20px;
+border:4px solid #00bfff;
+box-shadow:0 0 35px rgba(0,191,255,.35);
+
+}
+
+.quote{
+
+border-left:5px solid #00bfff;
+padding-left:20px;
+font-style:italic;
+color:#9fdcff;
+
+}
+
+.timeline{
+
+border-left:3px solid #00bfff;
+padding-left:35px;
+
+}
+
+.timeline-item{
+
+margin-bottom:35px;
+position:relative;
+
+}
+
+.timeline-item::before{
+
+content:"";
+position:absolute;
+left:-46px;
+top:5px;
+width:18px;
+height:18px;
+background:#00bfff;
+border-radius:50%;
+
+}
+
+.timeline-year{
+
+font-weight:bold;
+font-size:20px;
+color:#00bfff;
+margin-bottom:8px;
+
+}
+
+.timeline-content{
+
+background:#111827;
+padding:18px;
+border-radius:12px;
+
+}
+
+.tech-card{
+
+background:#111827;
+padding:30px;
+text-align:center;
+border-radius:15px;
+transition:.3s;
+
+}
+
+.tech-card:hover{
+
+transform:translateY(-8px);
+box-shadow:0 0 20px rgba(0,191,255,.3);
+
+}
+
+.tech-card i{
+
+font-size:45px;
+margin-bottom:18px;
+color:#00bfff;
+
+}
+
+.adv-list{
+
+list-style:none;
+padding:0;
+
+}
+
+.adv-list li{
+
+padding:12px 0;
+font-size:18px;
+
+}
+
+</style>

@@ -2156,9 +2156,6 @@ transform:scale(.95);
     justify-content:center;
 }
 
-.chat-container{
-    height:calc(100dvh - 120px);
-}
 
 @media (min-width:992px){
 
@@ -2242,6 +2239,7 @@ transform:scale(.95);
 html,
 body{
     overflow:hidden;
+    height: 100%;
 }
 
 
@@ -2259,6 +2257,7 @@ body{
     display:flex;
 
     flex-direction:column;
+    overflow: hidden;
 
 }
 
@@ -2321,10 +2320,10 @@ body{
 .chat-area{
 
     flex:1;
-
-    height:auto;
-
     min-height:0;
+    display:flex;
+    flex-direction: column;
+    overflow: hidden;
 
 }
 
@@ -2371,7 +2370,7 @@ body{
     flex:1;
 
     min-height:0;
-
+   overflow-y: auto;
     padding:10px;
 
 }
@@ -2380,11 +2379,11 @@ body{
 /* input */
 
 .chat-input{
-
-    min-height:60px;
-
+     flex-shrink: 0;
+    min-height:65px;
+   width: 100%;
     padding:8px;
-
+   
 }
 
 
@@ -2460,7 +2459,7 @@ body{
 
 .chat-input form{
 
-    height:45px;
+    height:40px;
 
 }
 
@@ -2491,7 +2490,7 @@ body{
 .status-online{
 
 color:#00ff66;
-font-size:12px;
+font-size:15px;
 
 }
 
@@ -2499,6 +2498,52 @@ font-size:12px;
 .status-offline{
 
 color:red;
-font-size:12px;
+font-size:15px;
+
+}
+@media(max-width:480px){
+
+.chat-input{
+
+    gap:5px;
+
+    padding:6px;
+
+}
+
+
+.chat-input textarea{
+
+    width:100%;
+
+    font-size:13px;
+
+    padding:10px 12px;
+
+}
+
+
+.icon-btn{
+
+    width:36px;
+
+    height:36px;
+
+    min-width:36px;
+
+    font-size:16px;
+
+}
+
+
+#page-chat-send{
+
+    width:38px;
+
+    height:38px;
+
+    min-width:38px;
+
+}
 
 }

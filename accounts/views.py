@@ -721,7 +721,7 @@ def users_search(request):
 
     return JsonResponse(data, safe=False)
 
-@login_required
+
 def chat_home(request):
 
     search_user = request.GET.get("user", "")
