@@ -498,7 +498,13 @@ color:black;
 
 .chat-window{
 
+    display:none;
+
     position:fixed;
+
+    right:18px;
+
+    bottom:18px;
 
     width:420px;
 
