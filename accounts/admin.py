@@ -1,3 +1,5 @@
+from .models import Notification
+
 from django.contrib import admin
 from .models import Profile
 from django.contrib.auth.models import User
@@ -96,3 +98,19 @@ class ChatMessageAdmin(admin.ModelAdmin):
         return "Empty"
 
     message_preview.short_description = "Message"
+ 
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "user",
+        "title",
+        "is_read",
+        "created_at"
+    )
+
+    list_filter = (
+        "is_read",
+        "created_at"
+    )   

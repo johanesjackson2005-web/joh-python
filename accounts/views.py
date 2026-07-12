@@ -20,6 +20,8 @@ from .models import (
     Software, Tutorial, Category, LiveStream,
     PasswordResetOTP, Profile, ChatMessage, ChatMemory
 )
+from .models import Notification
+
 import os
 import mimetypes
 import base64
@@ -473,6 +475,24 @@ def category_softwares(request, category_id):
 
 
 
+@login_required
+def notifications(request):
+
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by(
+        "-created_at"
+    )
+
+
+    return render(
+        request,
+        "notifications.html",
+        {
+            "notifications": notifications
+        }
+    )
+
 
 # =========================
 # 🔐 AUTH
@@ -908,3 +928,27 @@ def ai_upload(request):
         "type": uploaded_file.content_type
 
     })
+
+
+def add_tutorial(request):
+
+    # mfano tutorial imeongezwa
+    tutorial = Tutorial.objects.create(
+        title="Django Authentication"
+    )
+
+
+    users = User.objects.all()
+
+
+    for user in users:
+
+        Notification.objects.create(
+
+            user=user,
+
+            title="New Tutorial Available",
+
+            message=f"Tutorial mpya imeongezwa: {tutorial.title}"
+
+        )

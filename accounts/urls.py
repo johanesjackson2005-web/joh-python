@@ -60,4 +60,9 @@ urlpatterns = [
     views.users_search,
     name='users_search'
 ),
+    path(
+    "notifications/",
+    views.notifications,
+    name="notifications"
+),
 ]

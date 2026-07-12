@@ -18,7 +18,6 @@
 </head>
 
 <body>
-
 <nav class="navbar">
     <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
     <form method="GET" action="/search/" class="search-form">
@@ -30,11 +29,27 @@
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
     <ul class="nav-links" id="navLinks">
-<li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻Admin</a></li>
         <li><a href="/">🏠Home</a></li>
          <li><a href="/chat/">💬 CHAT</a></li>
         <li><a href="/livestreams/">🔴Live</a></li>
+        <li><a href="{% url 'notifications' %}">
+
+🔔notification
+
+{% if notification_count > 0 %}
+
+<span class="badge">
+
+{{notification_count}}
+
+</span>
+
+{% endif %}
+
+
+</a></li>
         {% if user.is_authenticated %}
+        <li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻Admin</a></li>
         <li><a href="/ai-assistant/">🤖AI </a></li>
         <li><a href="/livestreams/">🔴Live</a></li>
         <li><a href="/tutorials/">📖Tutorials</a></li>
@@ -48,6 +63,7 @@
         {% endif %}
     </ul>
 </nav>
+
 
     <br><br>
 
