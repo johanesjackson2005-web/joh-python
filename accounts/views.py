@@ -20,26 +20,45 @@ from .models import (
     Software, Tutorial, Category, LiveStream,
     PasswordResetOTP, Profile, ChatMessage, ChatMemory
 )
+import os
+import mimetypes
+import base64
+import requests
+from django.conf import settings
 
 from .forms import RegisterForm, ContactForm
 from .email_service import send_otp_email
 from django.contrib.auth.models import User
 import os
 import mimetypes
-
+from .prompts import JMJ_SYSTEM_PROMPT
 # =========================
 # 🧠 GEMINI AI FUNCTIONS
 # =========================
 def get_memory(user, limit=10):
+
     if not user or not user.is_authenticated:
         return ""
 
-    msgs = ChatMemory.objects.filter(user=user).order_by("-created_at")[:5]
-    msgs = reversed(msgs)
+    messages = ChatMemory.objects.filter(
+        user=user
+    ).order_by(
+        "-created_at"
+    )[:limit]
+
+
+    messages = reversed(messages)
+
 
     memory_text = ""
-    for m in msgs:
-        memory_text += f"{m.role.upper()}: {m.message}\n"
+
+    for msg in messages:
+
+        memory_text += (
+            f"{msg.role.upper()}: "
+            f"{msg.message}\n"
+        )
+
 
     return memory_text
 def build_context(message):
@@ -80,45 +99,56 @@ def build_context(message):
 
     return context
 
-import os
-import mimetypes
-import base64
-import requests
-from django.conf import settings
 
 
-def gemini_ai(message, context="", memory="", file_path=None):
+def gemini_ai(message, context="", memory="", file_path=None, user=None):
 
     api_key = settings.GEMINI_API_KEY
+    user_info = "User name: Guest"
 
-    url = (
-        "https://generativelanguage.googleapis.com/v1/models/"
-        f"gemini-2.5-flash:generateContent?key={api_key}"
-    )
+    if user and user.is_authenticated:
 
-    prompt = f"""
-SYSTEM INSTRUCTIONS:
-- You are JMJ Softwares AI Assistant.
-- Reply in Kiswahili if the user speaks Kiswahili.
-- Reply in English if the user speaks English.
-- Answer clearly and accurately.
+      name = user.first_name or user.username
 
-WEBSITE KNOWLEDGE:
-{context}
+      user_info = f"""
+     USER INFORMATION:
 
-CHAT MEMORY:
-{memory}
+     Name:
+    {name}
 
-USER MESSAGE:
-{message}
+You may address the user by this name naturally.
 """
+    url = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    f"gemini-2.5-flash:generateContent?key={api_key}"
+)
 
+    user_prompt = f"""
+
+    {user_info}
+
+
+ WEBSITE KNOWLEDGE:
+
+ {context}
+
+
+ CHAT MEMORY:
+
+ {memory}
+
+
+ USER MESSAGE:
+
+ {message}
+
+"""
     # Text part
     parts = [
-        {
-            "text": prompt
-        }
-    ]
+    {
+        "text": user_prompt
+    }
+]
 
     # Optional image
     if file_path:
@@ -150,21 +180,37 @@ USER MESSAGE:
                 )
 
     payload = {
-        "contents": [
+
+     "systemInstruction"  : {
+
+        "parts": [
             {
-                "parts": parts
+                "text": JMJ_SYSTEM_PROMPT
             }
         ]
-    }
+
+    },
+
+    "contents": [
+
+        {
+            "parts": parts
+        }
+
+    ]
+
+}
 
     try:
 
         r = requests.post(
-            url,
-            json=payload,
-            timeout=30
-        )
-
+    url,
+    headers={
+        "Content-Type": "application/json"
+    },
+    json=payload,
+    timeout=30
+)
         print("STATUS:", r.status_code)
         print("RAW:", r.text)
 
@@ -277,7 +323,8 @@ def ai_assistant_api(request):
 
         memory,
 
-        file_path
+        file_path,
+        request.user
 
     )
 

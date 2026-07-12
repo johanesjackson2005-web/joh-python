@@ -850,21 +850,41 @@ if(targetEl){
 
 }
 
+document.addEventListener("keydown", function(e){
 
-
-
-
-document.addEventListener('keydown', function(e){
+    const input = document.activeElement;
 
     if(
-        e.key === "Enter" &&
-        document.activeElement.id === "chat-input" &&
-        e.ctrlKey
+        input &&
+        (
+            input.id === "chat-input" ||
+            input.id === "page-chat-input"
+        )
     ){
-        sendMessage();
+
+        // Enter = Send
+        if(e.key === "Enter" && !e.shiftKey){
+
+            e.preventDefault();
+            sendMessage();
+
+        }
+
+        // Shift + Enter = New line
+        if(e.key === "Enter" && e.shiftKey){
+
+            // textarea itaongeza newline yenyewe
+            return;
+
+        }
+
     }
 
 });
+
+
+
+
 const imageUpload = isChatPage
     ? document.getElementById("page-image-upload")
     : document.getElementById("image-upload");

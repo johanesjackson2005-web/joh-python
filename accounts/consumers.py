@@ -240,7 +240,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
            await self.channel_layer.group_send(
              self.group_name,
            {
-            "type": "chat.file",
+            "type": "chat_file",
             "id": saved_file.id,
             "url": data["url"],
             "name": data["name"]
@@ -279,7 +279,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                    await self.channel_layer.group_send(
                         self.group_name,
                 {
-                    "type": "chat.delete",
+                    "type": "chat_delete",
                     "message_id": message_id
                 }
             )
@@ -412,7 +412,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         "text": json.dumps(payload)
 
     }
-)
+)   
+    async def chat_message(self, event):
+
+     await self.send(
+        text_data=event["text"]
+    )
+    
     async def chat_delete(self, event):
 
      await self.send(
