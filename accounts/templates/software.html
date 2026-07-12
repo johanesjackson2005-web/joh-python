@@ -27,9 +27,9 @@ function toggleMenu(){
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
     <ul class="nav-links" id="navLinks">
-        <li><a href="/">🏠Home</a></li>
-         <li><a href="/chat/">💬 CHAT</a></li>
-        <li><a href="/livestreams/">🔴Live</a></li>
+        <li><a href="/">🏠  Home</a></li>
+         <li><a href="/chat/">💬  CHAT</a></li>
+        <li><a href="/livestreams/">🔴  Live</a></li>
         <li><a href="{% url 'notifications' %}">
 
 🔔notification
@@ -47,17 +47,16 @@ function toggleMenu(){
 
 </a></li>
         {% if user.is_authenticated %}
-        <li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻Admin</a></li>
-        <li><a href="/ai-assistant/">🤖AI </a></li>
-        <li><a href="/livestreams/">🔴Live</a></li>
+        <li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻 Admin</a></li>
+        <li><a href="/ai-assistant/">🤖  AI </a></li>
         <li><a href="/tutorials/">📖Tutorials</a></li>
            <li><a href="/logout/">🚪➡️Logout</a></li>
         {% else %}
-            <li><a href="/about/">ℹ️About</a></li>
+            <li><a href="/about/">ℹ️  About</a></li>
             <li><a href="/contactus/">📞Contact</a></li>
             <li><a href="/login/">👤🔑Login</a></li>
             <li><a href="/register/">👥➕Register</a></li>
-            <li><a href="/forgot-password/">Forgot Password</a></li>
+            <li><a href="/forgot-password/">👤🔑Forgot Password</a></li>
         {% endif %}
     </ul>
 </nav>
