@@ -1343,10 +1343,3 @@ window.addEventListener("resize", function(){
 
 
 
-const aiWidget = document.getElementById("ai-widget");
-
-if(aiWidget){
-
-    makeButtonDraggable(aiWidget);
-
-}
