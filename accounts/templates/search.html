@@ -20,8 +20,13 @@ function toggleMenu(){
 <nav class="navbar">
     <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
     <form method="GET" action="/search/" class="search-form">
-    <input type="text" name="q" placeholder="Search tools, tutorials..." />
-    <button type="submit">
+    <input 
+    id="searchInput"
+type="text" 
+name="q" 
+placeholder="Search software, tutorials, movies, games..." />
+<div id="searchResults" class="search-results"></div>
+        <button type="submit">
         <i class="fas fa-search"></i>
     </button>
 </form>
@@ -82,44 +87,7 @@ function toggleMenu(){
     {% if t.thumbnail %}
         <img src="{{ t.thumbnail.url }}" style="width:100%; border-radius:10px;">
     {% endif %}
-    <h2>
-🎬 Movies
-</h2>
 
-
-<div class="grid">
-
-{% for movie in movie_results %}
-
-<div class="card">
-
-<img src="{{movie.poster.url}}">
-
-
-<h3>
-{{movie.title}}
-</h3>
-
-
-<p>
-📅 {{movie.year}}
-</p>
-
-
-<p>
-⏱ {{movie.duration}}
-</p>
-
-
-<a href="{{movie.watch_link}}"
-target="_blank">
-
-WATCH
-
-</a>
-
-
-</div>
 
     {% if t.video_file %}
         <a href="{{ t.video_file.url }}" download class="btn">
@@ -135,6 +103,37 @@ WATCH
 </div>
 {% empty %}
 <p>No tutorials found.</p>
+{% endfor %}
+
+</div>
+<h3>🎬 Movies</h3>
+
+<div class="tools-grid">
+
+{% for movie in movie_results %}
+
+<div class="tool-card">
+
+<img src="{{ movie.poster.url }}">
+
+<h4>{{ movie.title }}</h4>
+
+<p>📅 {{ movie.year }}</p>
+
+<p>⏱ {{ movie.duration }}</p>
+
+<a href="{% url 'watch_movie' movie.id %}" class="btn">
+
+WATCH
+
+</a>
+
+</div>
+
+{% empty %}
+
+<p>No movies found.</p>
+
 {% endfor %}
 
 </div>
@@ -210,9 +209,237 @@ WATCH
 </div>
 
 </div>
+<!-- ================= ONLINE GAMES ================= -->
+
+<h3>
+🎮 Online Games
+</h3>
+
+
+<div class="tools-grid">
+
+
+{% for game in online_game_results %}
+
+
+<div class="tool-card">
+
+
+{% if game.thumbnail %}
+
+<img 
+src="{{game.thumbnail.url}}" 
+style="width:100%;border-radius:10px;">
+
+{% endif %}
+
+
+<h4>
+{{game.title}}
+</h4>
+
+
+<p>
+{{game.description|truncatechars:120}}
+</p>
+
+
+{% if game.category %}
+
+<p>
+🎯 {{game.category}}
+</p>
+
+{% endif %}
+
+
+
+<a href="{% url 'play_game' game.id %}" 
+class="btn">
+
+PLAY GAME
+
+</a>
+
+
+</div>
+
+
+{% empty %}
+
+
+<p>
+No online games found.
+</p>
+
+
+{% endfor %}
+
+
+</div>
+<!-- ================= OFFLINE GAMES ================= -->
+
+
+<h3>
+💾 Offline Games
+</h3>
+
+
+<div class="tools-grid">
+
+
+{% for game in offline_game_results %}
+
+
+<div class="tool-card">
+
+
+{% if game.thumbnail %}
+
+
+<img 
+src="{{game.thumbnail.url}}" 
+style="width:100%;border-radius:10px;">
+
+
+{% endif %}
+
+
+
+<h4>
+{{game.title}}
+</h4>
+
+
+<p>
+{{game.description|truncatechars:120}}
+</p>
+
+{% if game.version %}
+
+<p>
+
+Version: {{ game.version }}
+
+</p>
+
+{% endif %}
+
+{% if game.size %}
+
+<p>
+
+Size: {{ game.size }}
+
+</p>
+
+{% endif %}
+
+
+
+
+<a href="{{game.download_link}}" 
+target="_blank"
+class="btn">
+
+DOWNLOAD
+
+</a>
+
+
+</div>
+
+
+{% empty %}
+
+
+<p>
+No offline games found.
+</p>
+
+
+{% endfor %}
+
+
+</div>
+
 {% include 'partials/contact.html' %}
 {% include 'partials/footer.html' %}
+<script>
 
+const input=document.getElementById("searchInput");
+
+const box=document.getElementById("searchResults");
+
+input.addEventListener("keyup",()=>{
+
+let q=input.value;
+
+if(q.length<2){
+
+box.style.display="none";
+
+return;
+
+}
+
+fetch(`/live-search/?q=${q}`)
+
+.then(r=>r.json())
+
+.then(data=>{
+
+box.innerHTML="";
+
+if(data.length===0){
+
+box.innerHTML="<div class='search-item'>No results</div>";
+
+box.style.display="block";
+
+return;
+
+}
+
+data.forEach(item=>{
+
+box.innerHTML+=`
+
+<a href="${item.url}" class="search-item">
+
+<img src="${item.image}">
+
+<div>
+
+<div>${item.title}</div>
+
+<div class="search-type">${item.type}</div>
+
+</div>
+
+</a>
+
+`;
+
+});
+
+box.style.display="block";
+
+});
+
+});
+
+document.addEventListener("click",function(e){
+
+if(!box.contains(e.target)&&e.target!==input){
+
+box.style.display="none";
+
+}
+
+});
+
+</script>
 </body>
 <style>
 :root {
@@ -619,7 +846,79 @@ p2{
 .search-form button:hover {
     background: #2563eb;
 }
+.search-form{
+    position:relative;
+}
 
+.search-results{
+
+    position:absolute;
+
+    top:55px;
+
+    left:0;
+
+    width:100%;
+
+    max-height:450px;
+
+    overflow-y:auto;
+
+    background:#0f172a;
+
+    border-radius:12px;
+
+    display:none;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.5);
+
+    z-index:9999;
+
+}
+
+.search-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:12px;
+
+    color:white;
+
+    text-decoration:none;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.search-item:hover{
+
+    background:#1e3a8a;
+
+}
+
+.search-item img{
+
+    width:70px;
+
+    height:70px;
+
+    object-fit:cover;
+
+    border-radius:8px;
+
+}
+
+.search-type{
+
+    color:#3b82f6;
+
+    font-size:12px;
+
+}
 </style>
 
 </html

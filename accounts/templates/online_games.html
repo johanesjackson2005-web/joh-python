@@ -1,0 +1,318 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Online Games | JMJ SOFTWARES</title>
+
+<link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+
+body{
+
+background:
+linear-gradient(
+135deg,
+#020617,
+#172554,
+#0f172a
+);
+
+color:white;
+min-height:100vh;
+
+}
+
+
+/* HEADER */
+
+.header{
+
+padding:40px;
+text-align:center;
+
+}
+
+
+.header h1{
+
+font-size:45px;
+color:#38bdf8;
+
+}
+
+
+.header p{
+
+color:#cbd5e1;
+font-size:18px;
+
+}
+
+
+
+/* GRID */
+
+.games-container{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+
+padding:40px;
+
+}
+
+
+
+/* CARD */
+
+.game-card{
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(15px);
+
+border-radius:20px;
+
+overflow:hidden;
+
+border:1px solid rgba(255,255,255,0.1);
+
+transition:.4s;
+
+box-shadow:
+0 15px 35px rgba(0,0,0,.5);
+
+}
+
+
+.game-card:hover{
+
+transform:translateY(-10px);
+
+box-shadow:
+0 20px 40px #0284c7;
+
+}
+
+
+
+/* IMAGE */
+
+
+.game-card img{
+
+width:100%;
+
+height:180px;
+
+object-fit:cover;
+
+}
+
+
+
+.game-content{
+
+padding:20px;
+
+}
+
+
+
+.game-content h2{
+
+color:#38bdf8;
+
+margin-bottom:10px;
+
+}
+
+
+.game-content p{
+
+color:#cbd5e1;
+
+height:50px;
+
+overflow:hidden;
+
+}
+
+
+
+/* BUTTON */
+
+.play-btn{
+
+display:block;
+
+text-align:center;
+
+margin-top:20px;
+
+padding:12px;
+
+border-radius:30px;
+
+background:
+
+linear-gradient(
+90deg,
+#06b6d4,
+#2563eb
+);
+
+color:white;
+
+text-decoration:none;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+
+
+.play-btn:hover{
+
+background:
+
+linear-gradient(
+90deg,
+#2563eb,
+#9333ea
+);
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+
+<div class="header">
+
+<h1>
+🎮 Online Games
+</h1>
+
+<p>
+Play amazing online games directly from JMJ SOFTWARES
+</p>
+
+
+</div>
+
+
+
+
+<div class="games-container">
+
+
+{% for game in games %}
+
+
+<div class="game-card">
+
+
+{% if game.thumbnail %}
+
+<img src="{{game.thumbnail.url}}">
+
+{% endif %}
+
+
+
+<div class="game-content">
+
+
+<h2>
+{{game.title}}
+</h2>
+
+
+<p>
+{{game.description}}
+</p>
+
+
+
+{% if game.embed_link %}
+
+<a 
+href="{% url 'play_game' game.id %}"
+class="play-btn">
+
+🎮 PLAY NOW
+
+</a>
+
+
+{% else %}
+
+
+<a 
+href="{{game.game_link}}"
+class="play-btn"
+target="_blank">
+
+🌐 OPEN GAME
+
+</a>
+
+
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+
+
+{% empty %}
+
+
+<h2>
+No Online Games Available
+</h2>
+
+
+{% endfor %}
+
+
+
+</div>
+
+
+
+</body>
+
+</html>

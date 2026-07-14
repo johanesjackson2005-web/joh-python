@@ -13,6 +13,40 @@ admin.site.index_title = "Welcome to JOHBOY SETUPS Dashboard"
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 from django.utils.html import format_html
+from .models import Game
+
+from .models import OnlineGame, OfflineGame
+
+
+@admin.register(OnlineGame)
+class OnlineGameAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "category",
+        "created_at"
+    )
+
+
+
+@admin.register(OfflineGame)
+class OfflineGameAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "version",
+        "size",
+        "created_at"
+    )
+@admin.register(Game)
+class GameAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "game_type",
+        "platform",
+        "created_at"
+    )
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     list_display = (

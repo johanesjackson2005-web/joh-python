@@ -93,4 +93,19 @@ path(
     views.watch_tutorial,
     name="watch_tutorial"
 ),
+path(
+    "games/",
+    views.games,
+    name="games"
+),
+path(
+    "play-game/<int:id>/",
+    views.play_game,
+    name="play_game"
+),
+path(
+    "live-search/",
+    views.live_search,
+    name="live_search"
+),
 ]

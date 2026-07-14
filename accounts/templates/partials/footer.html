@@ -10,7 +10,48 @@
 <p>© 2026 All Rights Reserved.</p>
 
 </footer>
+<!-- QUICK ACCESS WIDGETS -->
+{% if user.is_authenticated %}
 
+<div class="quick-widgets">
+
+    <!-- LIVE WIDGET -->
+   
+    <a href="{% url 'livestreams' %}" class="quick-widget live-widget">
+
+        <div class="widget-icon">
+            🔴
+        </div>
+
+        <div class="widget-info">
+            <h4>Live</h4>
+            <p>Watch Live Events</p>
+        </div>
+
+    </a>
+
+
+
+    <!-- MOVIE WIDGET -->
+
+    <a href="{% url 'movies' %}" class="quick-widget movie-widget">
+
+        <div class="widget-icon">
+            🎬
+        </div>
+
+        <div class="widget-info">
+
+            <h4>Movies</h4>
+
+            <p>Watch Movies</p>
+
+        </div>
+
+    </a>
+
+{% endif %}
+</div>
 <!-- AI Assistant widget trigger (appears on pages with this footer) -->
 <div id="ai-widget"
 style="position:fixed;left:18px;bottom:18px;z-index:1200">

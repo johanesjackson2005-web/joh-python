@@ -21,8 +21,9 @@ from .models import (
     PasswordResetOTP, Profile, ChatMessage, ChatMemory ,Movie
 )
 from .models import Notification
-
+from.models import Game
 import os
+from .models import OnlineGame, OfflineGame
 import mimetypes
 import base64
 import requests
@@ -688,28 +689,69 @@ def watch_live(request, id):
         }
     )
 
+from django.db.models import Q
+
 def search_view(request):
 
-    query = request.GET.get("q", "")
+    query = request.GET.get("q", "").strip()
 
-    tutorial_results = Tutorial.objects.filter(title__icontains=query)
-    software_results = Software.objects.filter(name__icontains=query)
-    category_results = Category.objects.filter(name__icontains=query)
-    livestream_results = LiveStream.objects.filter(title__icontains=query)
+    tutorial_results = Tutorial.objects.filter(
+        Q(title__icontains=query) |
+        Q(description__icontains=query) |
+        Q(category__name__icontains=query)
+    )
+
+    software_results = Software.objects.filter(
+        Q(name__icontains=query) |
+        Q(description__icontains=query) |
+        Q(category__name__icontains=query)
+    )
+
+    category_results = Category.objects.filter(
+        Q(name__icontains=query) |
+        Q(description__icontains=query)
+    )
+
+    livestream_results = LiveStream.objects.filter(
+        Q(title__icontains=query) |
+        Q(description__icontains=query)
+    )
+
     movie_results = Movie.objects.filter(
-        title__icontains=query
+        Q(title__icontains=query) |
+        Q(category__icontains=query)
+    )
+
+    online_game_results = OnlineGame.objects.filter(
+        Q(title__icontains=query) |
+        Q(description__icontains=query) |
+        Q(category__icontains=query)
+    )
+
+    offline_game_results = OfflineGame.objects.filter(
+        Q(title__icontains=query) |
+        Q(description__icontains=query)
     )
 
     return render(request, "search.html", {
+
         "query": query,
+
         "tutorial_results": tutorial_results,
+
         "software_results": software_results,
+
         "category_results": category_results,
+
         "livestream_results": livestream_results,
+
         "movie_results": movie_results,
+
+        "online_game_results": online_game_results,
+
+        "offline_game_results": offline_game_results,
+
     })
-
-
 # =========================
 # 🎭 PROFILE
 # =========================
@@ -1154,3 +1196,197 @@ def watch_movie(request,id):
             "embed_url":embed_url
         }
     )
+def games(request):
+
+    online_games = Game.objects.filter(
+        game_type="ONLINE"
+    ).order_by("-created_at")
+
+
+    offline_games = Game.objects.filter(
+        game_type="OFFLINE"
+    ).order_by("-created_at")
+
+
+    return render(
+        request,
+        "games.html",
+        {
+            "online_games":online_games,
+            "offline_games":offline_games
+        }
+    )
+def online_games(request):
+
+    games = OnlineGame.objects.order_by(
+        "-created_at"
+    )
+
+
+    return render(
+        request,
+        "online_games.html",
+        {
+            "games":games
+        }
+    )
+
+
+
+def offline_games(request):
+
+    games = OfflineGame.objects.order_by(
+        "-created_at"
+    )
+
+
+    return render(
+        request,
+        "offline_games.html",
+        {
+            "games":games
+        }
+    )
+def play_game(request,id):
+
+    game = get_object_or_404(
+        OnlineGame,
+        id=id
+    )
+
+
+    return render(
+        request,
+        "watch_player.html",
+        {
+
+            "embed_url": game.embed_link,
+
+            "title": game.title,
+
+            "category": game.category,
+
+            "description": game.description,
+
+        }
+    )
+def live_search(request):
+
+    q = request.GET.get("q","")
+
+    results=[]
+
+    tutorials = Tutorial.objects.filter(
+        title__icontains=q
+    )[:3]
+
+    for t in tutorials:
+
+        results.append({
+
+            "type":"Tutorial",
+
+            "title":t.title,
+
+            "image":t.thumbnail.url if t.thumbnail else "",
+
+            "url":f"/tutorial/watch/{t.id}/"
+
+        })
+
+
+    movies = Movie.objects.filter(
+        title__icontains=q
+    )[:3]
+
+    for m in movies:
+
+        results.append({
+
+            "type":"Movie",
+
+            "title":m.title,
+
+            "image":m.poster.url,
+
+            "url":f"/watch/movie/{m.id}/"
+
+        })
+
+
+    livestreams = LiveStream.objects.filter(
+        title__icontains=q
+    )[:3]
+
+    for l in livestreams:
+
+        results.append({
+
+            "type":"Live",
+
+            "title":l.title,
+
+            "image":l.thumbnail.url if l.thumbnail else "",
+
+            "url":f"/watch/live/{l.id}/"
+
+        })
+
+
+    softwares = Software.objects.filter(
+        name__icontains=q
+    )[:3]
+
+    for s in softwares:
+
+        results.append({
+
+            "type":"Software",
+
+            "title":s.name,
+
+            "image":s.image.url if s.image else "",
+
+            "url":s.download_link
+
+        })
+
+
+    online = OnlineGame.objects.filter(
+        title__icontains=q
+    )[:3]
+
+    for g in online:
+
+        results.append({
+
+            "type":"Online Game",
+
+            "title":g.title,
+
+            "image":g.thumbnail.url if g.thumbnail else "",
+
+            "url":f"/play-game/{g.id}/"
+
+        })
+
+
+    offline = OfflineGame.objects.filter(
+        title__icontains=q
+    )[:3]
+
+    for g in offline:
+
+        results.append({
+
+            "type":"Offline Game",
+
+            "title":g.title,
+
+            "image":g.thumbnail.url if g.thumbnail else "",
+
+            "url":g.download_link
+
+        })
+
+    return JsonResponse(results,safe=False)

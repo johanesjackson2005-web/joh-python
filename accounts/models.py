@@ -389,3 +389,177 @@ class Movie(models.Model):
        else:
 
         return None
+class Game(models.Model):
+
+    GAME_TYPE = (
+
+        ("ONLINE","Online Game"),
+        ("OFFLINE","Offline Game"),
+
+    )
+
+
+    PLATFORM = (
+
+        ("PC","PC"),
+        ("ANDROID","Android"),
+        ("WEB","Web"),
+
+    )
+
+
+    title = models.CharField(
+        max_length=200
+    )
+
+
+    description = models.TextField(
+        blank=True
+    )
+
+
+    image = models.ImageField(
+        upload_to="games/"
+    )
+
+
+    game_type = models.CharField(
+        max_length=20,
+        choices=GAME_TYPE
+    )
+
+
+    platform = models.CharField(
+        max_length=20,
+        choices=PLATFORM
+    )
+
+
+    size = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+
+    play_link = models.URLField(
+        blank=True
+    )
+
+
+    embed_link = models.URLField(
+        blank=True,
+        null=True
+    )
+
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def __str__(self):
+
+        return self.title
+
+
+
+    def get_embed_url(self):
+
+        return self.embed_link
+class OnlineGame(models.Model):
+
+    title = models.CharField(
+        max_length=200
+    )
+
+    description = models.TextField(
+        blank=True
+    )
+
+
+    thumbnail = models.ImageField(
+        upload_to="online_games/",
+        blank=True,
+        null=True
+    )
+
+
+    game_link = models.URLField()
+
+
+    embed_link = models.URLField(
+        blank=True,
+        null=True
+    )
+
+
+    category = models.CharField(
+        max_length=100,
+        default="Action"
+    )
+
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def get_embed_url(self):
+
+        url = self.embed_link
+
+
+        if url:
+            return url
+
+        return None
+
+
+    def __str__(self):
+
+        return self.title
+
+
+
+class OfflineGame(models.Model):
+
+    title = models.CharField(
+        max_length=200
+    )
+
+
+    description = models.TextField(
+        blank=True
+    )
+
+
+    thumbnail = models.ImageField(
+        upload_to="offline_games/",
+        blank=True,
+        null=True
+    )
+
+
+    download_link = models.URLField()
+
+
+    size = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+
+    version = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def __str__(self):
+
+        return self.title
