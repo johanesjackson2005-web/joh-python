@@ -51,6 +51,11 @@ function toggleMenu(){
         <li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻 Admin</a></li>
         <li><a href="/ai-assistant/">🤖  AI </a></li>
         <li><a href="/tutorials/">📖Tutorials</a></li>
+        <li>
+    <a href="{% url 'movies' %}">
+        🎬 Movies
+    </a>
+</li>
            <li><a href="/logout/">🚪➡️Logout</a></li>
         {% else %}
             <li><a href="/about/">ℹ️  About</a></li>
@@ -77,6 +82,44 @@ function toggleMenu(){
     {% if t.thumbnail %}
         <img src="{{ t.thumbnail.url }}" style="width:100%; border-radius:10px;">
     {% endif %}
+    <h2>
+🎬 Movies
+</h2>
+
+
+<div class="grid">
+
+{% for movie in movie_results %}
+
+<div class="card">
+
+<img src="{{movie.poster.url}}">
+
+
+<h3>
+{{movie.title}}
+</h3>
+
+
+<p>
+📅 {{movie.year}}
+</p>
+
+
+<p>
+⏱ {{movie.duration}}
+</p>
+
+
+<a href="{{movie.watch_link}}"
+target="_blank">
+
+WATCH
+
+</a>
+
+
+</div>
 
     {% if t.video_file %}
         <a href="{{ t.video_file.url }}" download class="btn">

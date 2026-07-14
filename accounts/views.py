@@ -18,7 +18,7 @@ from channels.layers import get_channel_layer
 
 from .models import (
     Software, Tutorial, Category, LiveStream,
-    PasswordResetOTP, Profile, ChatMessage, ChatMemory
+    PasswordResetOTP, Profile, ChatMessage, ChatMemory ,Movie
 )
 from .models import Notification
 
@@ -677,13 +677,17 @@ def search_view(request):
     software_results = Software.objects.filter(name__icontains=query)
     category_results = Category.objects.filter(name__icontains=query)
     livestream_results = LiveStream.objects.filter(title__icontains=query)
+    movie_results = Movie.objects.filter(
+        title__icontains=query
+    )
 
     return render(request, "search.html", {
         "query": query,
         "tutorial_results": tutorial_results,
         "software_results": software_results,
         "category_results": category_results,
-        "livestream_results": livestream_results
+        "livestream_results": livestream_results,
+        "movie_results": movie_results,
     })
 
 
@@ -958,3 +962,53 @@ def add_tutorial(request):
             message=f"Tutorial mpya imeongezwa: {tutorial.title}"
 
         )
+
+from .models import Movie
+
+
+def movies(request):
+
+    movies = Movie.objects.all()
+
+
+    action = Movie.objects.filter(
+        category="Action"
+    )
+
+
+    comedy = Movie.objects.filter(
+        category="Comedy"
+    )
+
+
+    horror = Movie.objects.filter(
+        category="Horror"
+    )
+
+
+    animation = Movie.objects.filter(
+        category="Animation"
+    )
+
+
+
+    context = {
+
+        "movies":movies,
+
+        "action":action,
+
+        "comedy":comedy,
+
+        "horror":horror,
+
+        "animation":animation,
+
+    }
+
+
+    return render(
+        request,
+        "movies.html",
+        context
+    )

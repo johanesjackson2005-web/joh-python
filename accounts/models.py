@@ -234,3 +234,57 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"
+ 
+class Movie(models.Model):
+
+    CATEGORY_CHOICES = (
+
+        ("Action","Action"),
+        ("Comedy","Comedy"),
+        ("Horror","Horror"),
+        ("Animation","Animation"),
+        ("Sci-Fi","Sci-Fi"),
+        ("Drama","Drama"),
+
+    )
+
+
+    title = models.CharField(
+        max_length=200
+    )
+
+
+    category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES
+    )
+
+
+    poster = models.ImageField(
+        upload_to="movies/"
+    )
+
+
+    year = models.CharField(
+        max_length=10
+    )
+
+
+    duration = models.CharField(
+        max_length=50
+    )
+
+
+    watch_link = models.URLField()
+
+
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+
+    def __str__(self):
+
+        return self.title

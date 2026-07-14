@@ -1,0 +1,553 @@
+{% load static %}
+
+<html>
+
+<head>
+
+<title>
+JMJ Movies
+</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+</head>
+
+
+<body>
+
+
+<nav>
+<h2>
+🎬 JMJ MOVIES
+</h2>
+
+
+<form method="GET">
+
+<input 
+type="text"
+name="q"
+placeholder="Search movie...">
+
+<button>
+<i class="fas fa-search"></i>
+</button>
+
+</form>
+
+</nav>
+
+
+<h2>
+🔥 Action Movies
+</h2>
+
+
+<div class="movie-row">
+
+
+{% for movie in action %}
+
+
+<div class="movie-card">
+
+
+<img src="{{ movie.poster.url }}" 
+alt="{{ movie.title }}">
+
+
+
+<h3>
+{{ movie.title }}
+</h3>
+
+
+
+<div class="movie-info">
+
+<span>
+📅 {{ movie.year }}
+</span>
+
+
+<span>
+⏱ {{ movie.duration }}
+</span>
+
+</div>
+
+
+
+<a href="{{ movie.watch_link }}" target="_blank">
+
+<button class="watch-btn">
+
+▶ WATCH
+
+</button>
+
+</a>
+
+
+</div>
+
+
+{% empty %}
+
+<p>
+No Action Movies Available
+</p>
+
+
+{% endfor %}
+
+
+</div>
+<h2>
+😂 Comedy Movies
+</h2>
+
+
+<div class="movie-row">
+
+
+{% for movie in comedy %}
+
+
+<div class="movie-card">
+
+
+<img src="{{ movie.poster.url }}">
+
+
+<h3>
+{{movie.title}}
+</h3>
+
+
+<div class="movie-info">
+
+<span>
+📅 {{movie.year}}
+</span>
+
+<span>
+⏱ {{movie.duration}}
+</span>
+
+</div>
+
+
+<a href="{{movie.watch_link}}" target="_blank">
+
+<button class="watch-btn">
+
+▶ WATCH
+
+</button>
+
+</a>
+
+
+</div>
+
+
+{% endfor %}
+
+
+</div>
+<h2>
+👻 Horror Movies
+</h2>
+
+
+<div class="movie-row">
+
+
+{% for movie in horror %}
+
+<div class="movie-card">
+
+
+<img src="{{movie.poster.url}}">
+
+
+<h3>
+{{movie.title}}
+</h3>
+
+
+<div class="movie-info">
+
+<span>
+📅 {{movie.year}}
+</span>
+
+<span>
+⏱ {{movie.duration}}
+</span>
+
+</div>
+
+
+<a href="{{movie.watch_link}}" target="_blank">
+
+<button class="watch-btn">
+▶ WATCH
+</button>
+
+</a>
+
+
+</div>
+
+{% endfor %}
+
+
+</div>
+<h2>
+🎨 Animation Movies
+</h2>
+
+
+<div class="movie-row">
+
+
+{% for movie in animation %}
+
+
+<div class="movie-card">
+
+<img src="{{movie.poster.url}}">
+
+
+<h3>
+{{movie.title}}
+</h3>
+
+
+<div class="movie-info">
+
+<span>
+📅 {{movie.year}}
+</span>
+
+<span>
+⏱ {{movie.duration}}
+</span>
+
+</div>
+
+
+<a href="{{movie.watch_link}}" target="_blank">
+
+<button class="watch-btn">
+▶ WATCH
+</button>
+
+
+</a>
+
+
+</div>
+
+
+{% endfor %}
+
+
+</div>
+
+
+
+</body>
+
+
+</html>
+<style>
+    /* ================= MOVIE PAGE ================= */
+
+body{
+
+    background:#080808;
+    color:white;
+    font-family:Segoe UI, sans-serif;
+
+}
+
+
+/* Movie title */
+
+h1{
+
+    margin-top:100px;
+    text-align:center;
+    font-size:40px;
+
+}
+
+
+h2{
+
+    margin-left:40px;
+    margin-top:50px;
+    color:white;
+    font-size:28px;
+
+}
+
+
+/* ================= MOVIE ROW ================= */
+
+
+.movie-row{
+
+    display:flex;
+
+    gap:20px;
+
+    padding:20px 40px;
+
+    overflow-x:auto;
+
+    scroll-behavior:smooth;
+
+}
+
+
+/* scrollbar */
+
+.movie-row::-webkit-scrollbar{
+
+    height:8px;
+
+}
+
+
+.movie-row::-webkit-scrollbar-thumb{
+
+    background:#e50914;
+
+    border-radius:10px;
+
+}
+
+
+
+/* ================= MOVIE CARD ================= */
+
+
+.movie-card{
+
+    min-width:220px;
+
+    background:#151515;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    transition:0.3s;
+
+    box-shadow:
+    0 10px 20px rgba(0,0,0,0.5);
+
+}
+
+
+
+.movie-card:hover{
+
+    transform:scale(1.08);
+
+    z-index:10;
+
+}
+
+
+
+/* Poster */
+
+
+.movie-card img{
+
+    width:220px;
+
+    height:320px;
+
+    object-fit:cover;
+
+}
+
+
+
+/* Movie name */
+
+
+.movie-card h3{
+
+    padding:10px;
+
+    font-size:18px;
+
+    text-align:center;
+
+}
+
+
+
+/* Year and duration */
+
+
+.movie-info{
+
+    display:flex;
+
+    justify-content:space-around;
+
+    color:#aaa;
+
+    font-size:14px;
+
+    padding:5px;
+
+}
+
+
+
+/* Watch button */
+
+
+.watch-btn{
+
+    width:90%;
+
+    margin:15px;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#e50914;
+
+    color:white;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+
+
+.watch-btn:hover{
+
+    background:#ff0000;
+
+}
+
+
+
+/* ================= SEARCH ================= */
+
+
+.movie-search{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-top:30px;
+
+}
+
+
+
+.movie-search input{
+
+    width:350px;
+
+    padding:12px 20px;
+
+    border-radius:25px;
+
+    border:none;
+
+    outline:none;
+
+}
+
+
+
+.movie-search button{
+
+    margin-left:10px;
+
+    background:#e50914;
+
+    color:white;
+
+    border:none;
+
+    border-radius:50%;
+
+    width:45px;
+
+    height:45px;
+
+}
+
+
+
+/* ================= MOBILE ================= */
+
+
+@media(max-width:768px){
+
+
+h1{
+
+    font-size:30px;
+
+}
+
+
+h2{
+
+    margin-left:20px;
+
+    font-size:22px;
+
+}
+
+
+.movie-row{
+
+    padding:20px;
+
+}
+
+
+.movie-card{
+
+    min-width:170px;
+
+}
+
+
+.movie-card img{
+
+    width:170px;
+
+    height:250px;
+
+}
+
+
+}
+</style>

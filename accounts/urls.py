@@ -65,4 +65,9 @@ urlpatterns = [
     views.notifications,
     name="notifications"
 ),
+path(
+    "movies/",
+    views.movies,
+    name="movies"
+),
 ]

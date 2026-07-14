@@ -1,5 +1,5 @@
 from .models import Notification
-
+from .models import Movie
 from django.contrib import admin
 from .models import Profile
 from django.contrib.auth.models import User
@@ -114,3 +114,17 @@ class NotificationAdmin(admin.ModelAdmin):
         "is_read",
         "created_at"
     )   
+    
+from .models import Movie
+
+
+@admin.register(Movie)
+class MovieAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "year",
+        "duration"
+    )
+
+
