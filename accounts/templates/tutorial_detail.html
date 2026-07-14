@@ -16,8 +16,12 @@
 
 <p>{{ tutorial.description }}</p>
 
-<a href="{{ tutorial.youtube_link }}" target="_blank">
-    ▶ Watch on YouTube
+<a 
+class="btn"
+href="{% url 'watch_tutorial' tutorial.id %}">
+
+▶ Watch Tutorial
+
 </a>
 
 <hr>

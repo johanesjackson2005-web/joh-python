@@ -104,14 +104,11 @@ Ended
 
 <a
 class="btn"
-href="{{ stream.youtube_live }}"
-target="_blank">
+href="{% url 'watch_live' stream.id %}">
 
-🔴Watch Live
+🔴 Watch Live
 
 </a>
-
-</div>
 
 {% endfor %}
 

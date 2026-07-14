@@ -69,5 +69,28 @@ path(
     "movies/",
     views.movies,
     name="movies"
+
+),
+path(
+    "movie-search/",
+    views.movie_search,
+    name="movie_search"
+),
+path(
+    "watch/<int:id>/",
+    views.watch_movie,
+    name="watch_movie"
+),
+path(
+    "watch-live/<int:id>/",
+    views.watch_live,
+    name="watch_live"
+),
+
+
+path(
+    "watch-tutorial/<int:id>/",
+    views.watch_tutorial,
+    name="watch_tutorial"
 ),
 ]

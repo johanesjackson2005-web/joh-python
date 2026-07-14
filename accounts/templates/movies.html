@@ -24,18 +24,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 </h2>
 
 
-<form method="GET">
+<div class="movie-search">
+
 
 <input 
+id="movieSearch"
 type="text"
-name="q"
 placeholder="Search movie...">
 
-<button>
-<i class="fas fa-search"></i>
-</button>
 
-</form>
+</div>
+<div id="searchResults"
+class="movie-row">
+
+</div>
 
 </nav>
 
@@ -220,8 +222,10 @@ No Action Movies Available
 
 <div class="movie-card">
 
-<img src="{{movie.poster.url}}">
-
+<img 
+src="{{ movie.poster.url }}"
+loading="lazy"
+alt="{{movie.title}}">
 
 <h3>
 {{movie.title}}
@@ -241,7 +245,7 @@ No Action Movies Available
 </div>
 
 
-<a href="{{movie.watch_link}}" target="_blank">
+<a href="{% url 'watch_movie' movie.id %}">
 
 <button class="watch-btn">
 ▶ WATCH
@@ -259,12 +263,165 @@ No Action Movies Available
 
 </div>
 
+<div class="pagination">
 
+
+{% if movies.has_previous %}
+
+<a href="?page={{movies.previous_page_number}}">
+
+⬅ Previous
+
+</a>
+
+{% endif %}
+
+
+
+<span>
+
+Page {{movies.number}}
+of {{movies.paginator.num_pages}}
+
+</span>
+
+
+
+
+{% if movies.has_next %}
+
+<a href="?page={{movies.next_page_number}}">
+
+Next ➡
+
+</a>
+
+
+{% endif %}
+
+
+</div>
 
 </body>
+<script>
 
 
-</html>
+const searchInput =
+document.getElementById(
+"movieSearch"
+);
+
+
+const results =
+document.getElementById(
+"searchResults"
+);
+
+
+
+searchInput.addEventListener(
+"keyup",
+function(){
+
+
+let query=this.value;
+
+
+
+if(query.length < 1){
+
+results.innerHTML="";
+
+return;
+
+}
+
+
+
+fetch(
+"/movie-search/?q="+query
+)
+
+
+.then(response=>response.json())
+
+
+.then(data=>{
+
+
+results.innerHTML="";
+
+
+
+if(data.movies.length === 0){
+
+results.innerHTML =
+"<h2>No Movie Found</h2>";
+
+return;
+
+}
+
+
+data.movies.forEach(movie=>{
+
+<div class="movie-card">
+
+
+<img src="${movie.poster}">
+
+
+<h3>
+${movie.title}
+</h3>
+
+
+<div class="movie-info">
+
+<span>
+📅 ${movie.year}
+</span>
+
+
+<span>
+⏱ ${movie.duration}
+</span>
+
+
+</div>
+
+
+<a href="${movie.link}"
+target="_blank">
+
+
+<button class="watch-btn">
+
+▶ WATCH
+
+</button>
+
+
+</a>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+});
+
+
+});
+
+
+</script>
 <style>
     /* ================= MOVIE PAGE ================= */
 
@@ -549,5 +706,44 @@ h2{
 }
 
 
+
+}
+.pagination{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:20px;
+
+margin:50px;
+
+}
+
+
+
+.pagination a{
+
+background:#e50914;
+
+color:white;
+
+padding:10px 20px;
+
+border-radius:8px;
+
+text-decoration:none;
+
+}
+
+
+
+.pagination span{
+
+color:#aaa;
+
 }
 </style>
+</html>

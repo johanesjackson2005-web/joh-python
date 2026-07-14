@@ -15,7 +15,7 @@ from django.db.models import Q
 from django.core.files.storage import default_storage
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
+from django.core.paginator import Paginator
 from .models import (
     Software, Tutorial, Category, LiveStream,
     PasswordResetOTP, Profile, ChatMessage, ChatMemory ,Movie
@@ -33,6 +33,7 @@ from .email_service import send_otp_email
 from django.contrib.auth.models import User
 import os
 import mimetypes
+
 from .prompts import JMJ_SYSTEM_PROMPT
 # =========================
 # 🧠 GEMINI AI FUNCTIONS
@@ -667,7 +668,25 @@ def tutorial_detail(request, tutorial_id):
 def livestreams(request):
     livestreams = LiveStream.objects.order_by("-created_at")
     return render(request, "livestreams.html", {"livestreams": livestreams})
+def watch_live(request, id):
 
+    stream = get_object_or_404(
+        LiveStream,
+        id=id
+    )
+
+
+    embed_url = stream.get_embed_url()
+
+
+    return render(
+        request,
+        "watch_player.html",
+        {
+            "stream": stream,
+            "embed_url": embed_url
+        }
+    )
 
 def search_view(request):
 
@@ -962,34 +981,106 @@ def add_tutorial(request):
             message=f"Tutorial mpya imeongezwa: {tutorial.title}"
 
         )
+def watch_tutorial(request, id):
+
+      tutorial = get_object_or_404(
+        Tutorial,
+        id=id
+    )
+
+
+      embed_url = tutorial.get_embed_url()
+
+
+      return render(
+        request,
+        "watch_player.html",
+        {
+            "tutorial": tutorial,
+            "embed_url": embed_url
+        }
+    )
 
 from .models import Movie
 
 
 def movies(request):
 
-    movies = Movie.objects.all()
+    movie_list = Movie.objects.only(
 
+    "title",
 
-    action = Movie.objects.filter(
-        category="Action"
+    "poster",
+
+    "year",
+
+    "duration",
+
+    "watch_link"
+
+).order_by(
+    "-created_at"
+)
+
+    paginator = Paginator(
+        movie_list,
+        20
     )
 
 
-    comedy = Movie.objects.filter(
-        category="Comedy"
+    page_number = request.GET.get(
+        "page"
     )
 
 
-    horror = Movie.objects.filter(
-        category="Horror"
+    movies = paginator.get_page(
+        page_number
     )
+    action = Movie.objects.only(
+    "title",
+    "poster",
+    "year",
+    "duration",
+    "watch_link"
+).filter(
+    category="Action"
+)
+    comedy = Movie.objects.only(
+    "title",
+    "poster",
+    "year",
+    "duration",
+    "watch_link"
+).filter(
+    category="Comedy"
+)
 
 
-    animation = Movie.objects.filter(
-        category="Animation"
-    )
+    horror = Movie.objects.only(
+    "title",
+    "poster",
+    "year",
+    "duration",
+    "watch_link"
+).filter(
+    category="Horror"
+)
 
+
+    animation = Movie.objects.only(
+    "title",
+    "poster",
+    "year",
+    "duration",
+    "watch_link"
+).filter(
+    category="Animation"
+)
+
+
+    
+
+    
 
 
     context = {
@@ -1011,4 +1102,55 @@ def movies(request):
         request,
         "movies.html",
         context
+    )
+def movie_search(request):
+
+    query = request.GET.get("q","")
+
+
+    movies = Movie.objects.filter(
+        title__icontains=query
+    )
+
+
+    data=[]
+
+
+    for movie in movies:
+
+        data.append({
+
+            "title": movie.title,
+
+            "poster": movie.poster.url,
+
+            "year": movie.year,
+
+            "duration": movie.duration,
+
+            "link": movie.watch_link
+
+        })
+
+
+    return JsonResponse(
+        {
+            "movies":data
+        }
+    )
+def watch_movie(request,id):
+
+    movie = Movie.objects.get(id=id)
+
+
+    embed_url = movie.get_embed_url()
+
+
+    return render(
+        request,
+        "watch_player.html",
+        {
+            "movie":movie,
+            "embed_url":embed_url
+        }
     )

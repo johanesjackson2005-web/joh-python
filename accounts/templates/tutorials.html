@@ -79,7 +79,13 @@ function toggleMenu(){
         <div class="tool-card">
             <h3>{{ tutorial.title }}</h3>
             <p>{{ tutorial.description|truncatewords:30 }}</p>
-            <a href="{% url 'tutorial_detail' tutorial.id %}" class="btn">View</a>
+           <a 
+class="btn"
+href="{% url 'watch_tutorial' tutorial.id %}">
+
+▶ Watch Tutorial
+
+</a>
         </div>
         {% empty %}
         <h2>No tutorials available.</h2>

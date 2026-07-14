@@ -1,0 +1,231 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>
+JMJ PLAYER
+</title>
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+<style>
+
+body{
+
+background:#121e3b;
+color:white;
+font-family:Segoe UI,sans-serif;
+
+}
+
+
+.player-container{
+
+width:90%;
+max-width:1200px;
+margin:100px auto;
+
+}
+
+
+.video-box{
+
+background:#000;
+
+border-radius:15px;
+
+overflow:hidden;
+
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+}
+
+
+.video-box iframe{
+
+width:100%;
+
+height:600px;
+
+border:none;
+
+}
+
+
+
+.info-card{
+
+margin-top:25px;
+
+background:rgba(15,23,42,.7);
+
+backdrop-filter:blur(10px);
+
+padding:30px;
+
+border-radius:15px;
+
+}
+
+
+
+.info-card h1{
+
+color:#3b82f6;
+
+}
+
+
+.info{
+
+display:flex;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+}
+
+
+
+.tag{
+
+background:#2563eb;
+
+padding:8px 15px;
+
+border-radius:20px;
+
+}
+
+
+
+@media(max-width:700px){
+
+.video-box iframe{
+
+height:250px;
+
+}
+
+
+.player-container{
+
+width:95%;
+
+}
+
+}
+
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="player-container">
+
+
+<div class="video-box">
+
+
+{% if embed_url %}
+
+
+<iframe
+
+src="{{embed_url}}"
+
+allowfullscreen>
+
+</iframe>
+
+
+{% else %}
+
+
+<p>
+Video cannot be embedded.
+</p>
+
+
+{% endif %}
+
+
+</div>
+
+
+
+<div class="info-card">
+
+
+<h1>
+
+{{title}}
+
+</h1>
+
+
+
+<div class="info">
+
+
+{% if year %}
+
+<span class="tag">
+
+📅 {{year}}
+
+</span>
+
+{% endif %}
+
+
+
+{% if duration %}
+
+<span class="tag">
+
+⏱ {{duration}}
+
+</span>
+
+{% endif %}
+
+
+
+{% if category %}
+
+<span class="tag">
+
+📂 {{category}}
+
+</span>
+
+{% endif %}
+
+
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
 class Background(models.Model):
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to='backgrounds/')
@@ -69,6 +71,31 @@ class Tutorial(models.Model):
 
     def __str__(self):
         return self.title
+    def get_embed_url(self):
+
+      url = self.youtube_link
+
+
+      if "youtube.com/watch?v=" in url:
+
+        video_id = url.split("watch?v=")[1].split("&")[0]
+
+        return f"https://www.youtube.com/embed/{video_id}"
+
+
+      elif "youtu.be/" in url:
+
+        video_id = url.split("youtu.be/")[1].split("?")[0]
+
+        return f"https://www.youtube.com/embed/{video_id}"
+
+
+      elif "youtube.com/embed/" in url:
+
+        return url
+
+
+      return None
     
 from django.utils import timezone
 
@@ -102,10 +129,34 @@ class LiveStream(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+    def get_embed_url(self):
 
+     url = self.youtube_live
+
+
+     if "youtube.com/watch?v=" in url:
+
+        video_id = url.split("watch?v=")[1].split("&")[0]
+
+        return f"https://www.youtube.com/embed/{video_id}"
+
+
+     elif "youtu.be/" in url:
+
+        video_id = url.split("youtu.be/")[1].split("?")[0]
+
+        return f"https://www.youtube.com/embed/{video_id}"
+
+
+     elif "youtube.com/embed/" in url:
+
+        return url
+
+
+     return None
     def __str__(self):
         return self.title
-   
+    
 
 
 
@@ -274,7 +325,10 @@ class Movie(models.Model):
         max_length=50
     )
 
-
+    embed_link = models.URLField(
+    blank=True,
+    null=True
+)
     watch_link = models.URLField()
 
 
@@ -288,3 +342,50 @@ class Movie(models.Model):
     def __str__(self):
 
         return self.title
+    def save(self, *args, **kwargs):
+
+      super().save(*args, **kwargs)
+
+
+      if self.poster:
+
+         img = Image.open(
+            self.poster.path
+        )
+
+
+         max_size = (600,900)
+
+
+         img.thumbnail(
+            max_size
+        )
+
+
+         img.save(
+            self.poster.path,
+            quality=85,
+            optimize=True
+        )
+    def get_embed_url(self):
+
+       url = self.watch_link
+
+
+       if "youtube.com/watch?v=" in url:
+
+        video_id = url.split("v=")[1]
+
+        return f"https://www.youtube.com/embed/{video_id}"
+
+
+       elif "youtu.be/" in url:
+
+        video_id = url.split("/")[-1]
+
+        return f"https://www.youtube.com/embed/{video_id}"
+
+
+       else:
+
+        return None

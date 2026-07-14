@@ -12,6 +12,7 @@ admin.site.site_title = "JOHBOY SETUPS"
 admin.site.index_title = "Welcome to JOHBOY SETUPS Dashboard"   
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+from django.utils.html import format_html
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     list_display = (
@@ -117,14 +118,64 @@ class NotificationAdmin(admin.ModelAdmin):
     
 from .models import Movie
 
-
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
 
     list_display = (
+
+        "poster_preview",
+
         "title",
+
+        "category",
+
         "year",
-        "duration"
+
+        "duration",
+
     )
 
 
+    search_fields = (
+
+        "title",
+
+        "category",
+
+        "year",
+
+    )
+
+
+    list_filter = (
+
+        "category",
+
+        "year",
+
+    )
+
+
+    ordering = (
+
+        "-created_at",
+
+    )
+    list_per_page = 20
+
+    save_on_top = True
+
+    date_hierarchy = "created_at"
+
+
+
+    def poster_preview(self, obj):
+
+       if obj.poster:
+
+        return format_html(
+            '<img src="{}" width="70" height="100" style="border-radius:8px; object-fit:cover;" />',
+            obj.poster.url
+        )
+
+       return "No Poster"
