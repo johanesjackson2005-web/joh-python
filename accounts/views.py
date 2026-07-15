@@ -1210,11 +1210,8 @@ def games(request):
 
     return render(
         request,
-        "games.html",
-        {
-            "online_games":online_games,
-            "offline_games":offline_games
-        }
+        "games.html"
+        
     )
 def online_games(request):
 

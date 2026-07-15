@@ -202,22 +202,13 @@ placeholder="Search software, tutorials, movies, games..." />
 </div>
 
 <!-- CONTACT BOX (FINAL SECTION) -->
+
+</div>
 <h1>ABOUT US</h1>
  <section class="promo-banner">
         <img src="{% static 'image/footer.png' %}"
             alt="JMJ SOFTWARES Advertisement">
-</section>
-<br><br><br>
-<h1>DEVELOPED BY</h1>
-<section class="promo-banner">
-        <img src="{% static 'image/boy.png' %}"
-            alt="JMJ SOFTWARES Advertisement">
-</section>
-    </div>
-</section>
-</div>
-
-{% include 'partials/contact.html' %}
+ </section>
 {% else %}
 <div class="content-wrapper">
     <div class="hero">
@@ -298,47 +289,17 @@ placeholder="Search software, tutorials, movies, games..." />
  <section class="promo-banner">
         <img src="{% static 'image/footer.png' %}"
             alt="JMJ SOFTWARES Advertisement">
-</section><br>
-<h2>Contact us</h2>
-<div class="contact-box">
-    <div class="contact-item">
-        <i class="fa-brands fa-whatsapp green"></i>
-        <h3>WhatsApp</h3>
-        <pre>0744169499</pre>
-    </div>
-
-    <div class="contact-item">
-        <i class="fa-solid fa-phone"></i>
-        <h3>Mobile</h3>
-        <pre>0744169499</pre>
-    </div>
-
-    <div class="contact-item">
-        <i class="fa-solid fa-envelope"></i>
-        <h3>Email</h3>
-        <pre>johanesjackson2005@gmail.com</pre>
-    </div>
-    <div class="contact-item">
-        <i class="fa-brands fa-github"></i>
-        <h3>GitHub</h3>
-        <pre>Johanes2005-web</pre>
-    </div>
-
-
-</section>
-
+<
 </div>
 <br><br>
-<h1>DEVELOPED BY</h1>
-<section class="promo-banner">
-    <img src="{% static 'image/boy.png' %}"
-         alt="JMJ SOFTWARES Advertisement">
-</section>
+
 <h4>THANK YOU FOR VISITING JMJ SOFTWARES</h4>
 
 {% endif %}
-{% include 'partials/footer.html' %}
+
 </body>
+{% include 'about.html' %}
+
 <style>
 /* ================= BASE ================= */
 :root {

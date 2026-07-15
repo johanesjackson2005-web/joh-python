@@ -14,6 +14,17 @@
 {% if user.is_authenticated %}
 
 <div class="quick-widgets">
+<a href="{% url 'games' %}" class="quick-widget live-widget">
+
+        <div class="widget-icon">
+             🎮 
+        </div>
+         
+        <div class="widget-info">
+            <h4>GAMES</h4>
+        </div>
+
+    </a>
 
     <!-- LIVE WIDGET -->
    
@@ -25,7 +36,6 @@
 
         <div class="widget-info">
             <h4>Live</h4>
-            <p>Watch Live Events</p>
         </div>
 
     </a>
@@ -43,8 +53,6 @@
         <div class="widget-info">
 
             <h4>Movies</h4>
-
-            <p>Watch Movies</p>
 
         </div>
 
@@ -288,7 +296,6 @@ rows="1">
 
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
-
         button.style.left = rect.left + "px";
         button.style.top = rect.top + "px";
 

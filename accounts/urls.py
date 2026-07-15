@@ -98,6 +98,9 @@ path(
     views.games,
     name="games"
 ),
+    path("games/online/", views.online_games, name="online_games"),
+    path("games/offline/", views.offline_games, name="offline_games"),
+
 path(
     "play-game/<int:id>/",
     views.play_game,
