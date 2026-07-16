@@ -1214,59 +1214,30 @@ def games(request):
         
     )
 def online_games(request):
+    games = Game.objects.filter(
+        game_type="ONLINE"
+    ).order_by("-created_at")
 
-    games = OnlineGame.objects.order_by(
-        "-created_at"
-    )
-
-
-    return render(
-        request,
-        "online_games.html",
-        {
-            "games":games
-        }
-    )
-
-
-
+    return render(request, "online_games.html", {
+        "games": games
+    })
 def offline_games(request):
+    games = Game.objects.filter(
+        game_type="OFFLINE"
+    ).order_by("-created_at")
 
-    games = OfflineGame.objects.order_by(
-        "-created_at"
-    )
+    return render(request, "offline_games.html", {
+        "games": games
+    })
+def play_game(request, id):
+    game = get_object_or_404(Game, id=id)
 
+    return render(request, "watch_player.html", {
+        "embed_url": game.embed_link,
+        "title": game.title,
+        "description": game.description,
+    })
 
-    return render(
-        request,
-        "offline_games.html",
-        {
-            "games":games
-        }
-    )
-def play_game(request,id):
-
-    game = get_object_or_404(
-        OnlineGame,
-        id=id
-    )
-
-
-    return render(
-        request,
-        "watch_player.html",
-        {
-
-            "embed_url": game.embed_link,
-
-            "title": game.title,
-
-            "category": game.category,
-
-            "description": game.description,
-
-        }
-    )
 def live_search(request):
 
     q = request.GET.get("q","")

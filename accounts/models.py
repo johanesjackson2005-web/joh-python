@@ -451,7 +451,7 @@ class Game(models.Model):
         null=True
     )
 
-
+    download_link=models.URLField(blank=True)
     created_at = models.DateTimeField(
         auto_now_add=True
     )

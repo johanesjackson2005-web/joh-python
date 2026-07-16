@@ -241,10 +241,8 @@ Play amazing online games directly from JMJ SOFTWARES
 <div class="game-card">
 
 
-{% if game.thumbnail %}
-
-<img src="{{game.thumbnail.url}}">
-
+{% if game.image %}
+<img src="{{ game.image.url }}">
 {% endif %}
 
 
@@ -278,7 +276,7 @@ class="play-btn">
 
 
 <a 
-href="{{game.game_link}}"
+href="{{game.play_link}}"
 class="play-btn"
 target="_blank">
 
