@@ -27,15 +27,39 @@ class Contact(models.Model):
     admin_reply = models.TextField(blank=True, null=True)
     
    
-
 class Category(models.Model):
+    ICON_CHOICES = [
+        ("fa-globe", "Web"),
+        ("fa-code", "Development"),
+        ("fa-gamepad", "Games"),
+        ("fa-desktop", "Operating System"),
+        ("fa-shield-halved", "Security"),
+        ("fa-ruler-combined", "Design"),
+        ("fa-microchip", "Simulation"),
+        ("fa-mobile-screen", "Mobile Apps"),
+        ("fa-film", "Movies"),
+        ("fa-music", "Music"),
+        ("fa-camera", "Photography"),
+        ("fa-robot", "AI"),
+        ("fa-book", "Books"),
+        ("fa-network-wired", "Networking"),
+        ("fa-cloud", "Cloud"),
+        ("fa-database", "Database"),
+        ("fa-terminal", "Terminal"),
+        ("fa-laptop-code", "Programming"),
+        ("fa-folder-open", "Other"),
+    ]
+
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to="categories/", blank=True, null=True)
+    icon = models.CharField(
+        max_length=50,
+        choices=ICON_CHOICES,
+        default="fa-folder-open"
+    )
 
     def __str__(self):
         return self.name
-
 
 class Software(models.Model):
     

@@ -157,26 +157,28 @@ placeholder="Search software, tutorials, movies, games..." />
         <p>Verified game and utility setups ...</p>
         <a class="btn" href="utilities/">OPEN</a>
     </div>
-      <div class="tool-grid">
+      <div class="tools-grid">
 
-    {% for category in categories %}
+{% for category in categories %}
 
-    <div class="tool-card">
+<div class="tool-card">
 
-        <h2>{{ category.name }}</h2>
-           {{category.image}}
+    <i class="fa-solid {{ category.icon }}"></i>
 
-        <p>{{ category.description }}</p>
+    <h3>{{ category.name }}</h3>
 
-        <a class="btn" href="/category/{{ category.id }}/">
-            Open
-        </a>
+    <p>{{ category.description }}</p>
 
-    </div>
+    <a class="btn"
+       href="{% url 'category_softwares' category.id %}">
+        OPEN
+    </a>
 
-    {% endfor %}
+</div>
 
-     </div>
+{% endfor %}
+
+</div>
 </div>
 
 <!-- FEATURES -->
@@ -730,6 +732,26 @@ padding:4px 8px;
 
 font-size:12px;
 
+}
+.tool-image{
+    width:90px;
+    height:90px;
+    object-fit:cover;
+    border-radius:18px;
+    margin-bottom:18px;
+    border:2px solid rgba(59,130,246,.4);
+    box-shadow:0 8px 20px rgba(0,0,0,.35);
+}
+.tool-card i{
+    font-size:65px;
+    color:#38bdf8;
+    margin-bottom:20px;
+    transition:.4s;
+}
+
+.tool-card:hover i{
+    color:#ffffff;
+    transform:scale(1.15) rotate(5deg);
 }
 
 </style>
