@@ -29,26 +29,109 @@ class Contact(models.Model):
    
 class Category(models.Model):
     ICON_CHOICES = [
-        ("fa-globe", "Web"),
-        ("fa-code", "Development"),
-        ("fa-gamepad", "Games"),
-        ("fa-desktop", "Operating System"),
-        ("fa-shield-halved", "Security"),
-        ("fa-ruler-combined", "Design"),
-        ("fa-microchip", "Simulation"),
-        ("fa-mobile-screen", "Mobile Apps"),
-        ("fa-film", "Movies"),
-        ("fa-music", "Music"),
-        ("fa-camera", "Photography"),
-        ("fa-robot", "AI"),
-        ("fa-book", "Books"),
-        ("fa-network-wired", "Networking"),
-        ("fa-cloud", "Cloud"),
-        ("fa-database", "Database"),
-        ("fa-terminal", "Terminal"),
-        ("fa-laptop-code", "Programming"),
-        ("fa-folder-open", "Other"),
-    ]
+
+    # Web & Development
+    ("fa-globe", "Web"),
+    ("fa-code", "Development"),
+    ("fa-laptop-code", "Programming"),
+    ("fa-terminal", "Terminal"),
+    ("fa-server", "Server"),
+    ("fa-database", "Database"),
+    ("fa-file-code", "Source Code"),
+    ("fa-code-branch", "Version Control"),
+    ("fa-sitemap", "Architecture"),
+    ("fa-cubes", "Frameworks"),
+
+    # Games & Entertainment
+    ("fa-gamepad", "Games"),
+    ("fa-dice", "Gaming Tools"),
+    ("fa-trophy", "Achievements"),
+    ("fa-film", "Movies"),
+    ("fa-music", "Music"),
+    ("fa-headphones", "Audio"),
+    ("fa-photo-film", "Media"),
+    ("fa-camera", "Photography"),
+    ("fa-video", "Video Editing"),
+
+    # Operating Systems
+    ("fa-desktop", "Operating System"),
+    ("fa-laptop", "Laptop Software"),
+    ("fa-computer", "Computer"),
+    ("fa-mobile-screen", "Mobile Apps"),
+    ("fa-tablet-screen-button", "Tablet"),
+    ("fa-tv", "Smart TV"),
+
+    # Security
+    ("fa-shield-halved", "Security"),
+    ("fa-lock", "Privacy"),
+    ("fa-key", "Encryption"),
+    ("fa-user-secret", "Hacking Tools"),
+    ("fa-virus", "Antivirus"),
+    ("fa-bug", "Debugging"),
+    ("fa-fingerprint", "Authentication"),
+    ("fa-eye", "Monitoring"),
+
+    # Design & Engineering
+    ("fa-ruler-combined", "Design"),
+    ("fa-pen-ruler", "CAD Design"),
+    ("fa-palette", "Graphics"),
+    ("fa-image", "Images"),
+    ("fa-object-group", "UI Design"),
+    ("fa-cube", "3D Modeling"),
+    ("fa-compass-drafting", "Engineering"),
+
+    # Simulation & Electronics
+    ("fa-microchip", "Simulation"),
+    ("fa-memory", "Hardware"),
+    ("fa-bolt", "Electronics"),
+    ("fa-gears", "Engineering Tools"),
+    ("fa-robot", "Robotics"),
+    ("fa-wave-square", "Signal Processing"),
+
+    # AI & Data
+    ("fa-robot", "Artificial Intelligence"),
+    ("fa-brain", "Machine Learning"),
+    ("fa-chart-line", "Data Analysis"),
+    ("fa-chart-column", "Statistics"),
+    ("fa-database", "Data Science"),
+
+    # Networking & Cloud
+    ("fa-network-wired", "Networking"),
+    ("fa-wifi", "Wireless"),
+    ("fa-cloud", "Cloud"),
+    ("fa-cloud-arrow-down", "Cloud Download"),
+    ("fa-globe-americas", "Internet"),
+    ("fa-link", "Connections"),
+
+    # Tools & Utilities
+    ("fa-folder-open", "Other"),
+    ("fa-folder", "Files"),
+    ("fa-download", "Downloads"),
+    ("fa-upload", "Uploads"),
+    ("fa-box", "Packages"),
+    ("fa-wrench", "Utilities"),
+    ("fa-screwdriver-wrench", "Maintenance"),
+    ("fa-gear", "Settings"),
+    ("fa-sliders", "Configuration"),
+
+    # Communication / Live
+    ("fa-comments", "Chat"),
+    ("fa-comment-dots", "Messages"),
+    ("fa-broadcast-tower", "Live Broadcast"),
+    ("fa-video", "Live Video"),
+    ("fa-microphone", "Voice"),
+    ("fa-podcast", "Podcast"),
+    ("fa-signal", "Live Signal"),
+    ("fa-circle", "Online Status"),
+
+    # Documents
+    ("fa-book", "Books"),
+    ("fa-file", "Documents"),
+    ("fa-file-pdf", "PDF"),
+    ("fa-file-word", "Documents Editor"),
+    ("fa-file-excel", "Spreadsheets"),
+
+]
 
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
