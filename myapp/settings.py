@@ -2,7 +2,13 @@ from pathlib import Path
 import dj_database_url
 import os
 from dotenv import load_dotenv
+import cloudinary
 
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # Channels (optional)
@@ -112,6 +120,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # WhiteNoise storage
 STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
@@ -143,17 +154,16 @@ else:
             },
         },
     }
-    MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA FILES
 
+MEDIA_URL = '/media/'
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
-
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 # CSRF SETTINGS
