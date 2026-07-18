@@ -16,7 +16,14 @@ from django.utils.html import format_html
 from .models import Game
 
 from .models import OnlineGame, OfflineGame
+@admin.register(LiveStream)
+class LiveStreamAdmin(admin.ModelAdmin):
 
+    list_display = (
+        "title",
+        "status",
+        "created_at"
+    )
 
 @admin.register(OnlineGame)
 class OnlineGameAdmin(admin.ModelAdmin):
@@ -85,7 +92,6 @@ class TutorialAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Software)
-admin.site.register(LiveStream)
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 

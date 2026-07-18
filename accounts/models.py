@@ -246,7 +246,10 @@ class LiveStream(models.Model):
     ]
 
     title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+
+    description = models.TextField(
+        blank=True
+    )
 
     thumbnail = models.ImageField(
         upload_to="livestreams/",
@@ -254,14 +257,17 @@ class LiveStream(models.Model):
         null=True
     )
 
-    # Link ya website halisi
+
+    # website halisi
     watch_link = models.URLField()
 
-    # Link ya embed (optional)
+
+    # iframe embed link
     embed_link = models.URLField(
         blank=True,
         null=True
     )
+
 
     status = models.CharField(
         max_length=20,
@@ -269,38 +275,51 @@ class LiveStream(models.Model):
         default="UPCOMING"
     )
 
+
     start_time = models.DateTimeField(
         default=timezone.now
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
 
     def get_embed_url(self):
 
-        # Kama umeweka embed_link itumie hiyo
         if self.embed_link:
             return self.embed_link
 
+
         url = self.watch_link
 
-        # YouTube
+
+        # Youtube
         if "youtube.com/watch?v=" in url:
+
             video_id = url.split("watch?v=")[1].split("&")[0]
+
             return f"https://www.youtube.com/embed/{video_id}"
+
 
         elif "youtu.be/" in url:
+
             video_id = url.split("youtu.be/")[1].split("?")[0]
+
             return f"https://www.youtube.com/embed/{video_id}"
 
+
         elif "youtube.com/embed/" in url:
+
             return url
 
-        # Hakuna embed inayojulikana
+
         return None
+
 
     def __str__(self):
         return self.title
-
 
 class Profile(models.Model):
 

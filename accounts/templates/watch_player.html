@@ -146,17 +146,36 @@ width:95%;
     width="100%"
     height="700"
     frameborder="0"
+    allow="autoplay; fullscreen"
     allowfullscreen>
 </iframe>
+
 
 {% else %}
 
 <script>
+
+{% if movie %}
+
 window.location.href="{{ movie.watch_link }}";
-</script>
+
+{% elif stream %}
+
+window.location.href="{{ stream.watch_link }}";
+
+{% elif tutorial %}
+
+window.location.href="{{ tutorial.watch_link }}";
+
+{% elif game %}
+
+window.location.href="{{ game.embed_link }}";
 
 {% endif %}
 
+</script>
+
+{% endif %}
 
 </div>
 
@@ -164,27 +183,48 @@ window.location.href="{{ movie.watch_link }}";
 
 <div class="info-card">
 
-
 <h1>
 
-{{title}}
+{% if movie %}
+
+{{movie.title}}
+
+{% elif stream %}
+
+{{stream.title}}
+
+{% elif tutorial %}
+
+{{tutorial.title}}
+
+{% endif %}
 
 </h1>
 
 
 
+
 <div class="info">
 
-
-{% if year %}
+{% if movie %}
 
 <span class="tag">
-
-📅 {{year}}
-
+📅 {{movie.year}}
 </span>
 
+
+<span class="tag">
+⏱ {{movie.duration}}
+</span>
+
+
+<span class="tag">
+📂 {{movie.category}}
+</span>
+
+
 {% endif %}
+
 {% if description %}
 
 <p style="
