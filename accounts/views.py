@@ -757,20 +757,57 @@ def search_view(request):
     })
 # =========================
 # 🎭 PROFILE
-# =========================
-
-@login_required
+# @login_required
 def choose_avatar(request):
 
-    profile = request.user.profile
-    avatars = [f"avatar{i}.jpg" for i in range(1, 71)]
+    profile, created = Profile.objects.get_or_create(
+        user=request.user
+    )
+
+    avatars = [
+        f"avatar{i}.jpg"
+        for i in range(1,71)
+    ]
+
 
     if request.method == "POST":
-        profile.avatar = request.POST.get("avatar")
-        profile.save()
+
+        # User amepakia picha yake
+        custom_avatar = request.FILES.get(
+            "custom_avatar"
+        )
+
+
+        if custom_avatar:
+
+            profile.avatar = custom_avatar
+            profile.save()
+
+            return redirect("home")
+
+
+        # User amechagua avatar iliyopo
+        selected_avatar = request.POST.get(
+            "avatar"
+        )
+
+
+        if selected_avatar:
+
+            profile.avatar = selected_avatar
+            profile.save()
+
+
         return redirect("home")
 
-    return render(request, "choose_avatar.html", {"avatars": avatars})
+
+    return render(
+        request,
+        "choose_avatar.html",
+        {
+            "avatars": avatars
+        }
+    )
 def users_search(request):
 
     query = request.GET.get('q', '')

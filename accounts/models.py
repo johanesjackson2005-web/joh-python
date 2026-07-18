@@ -327,11 +327,12 @@ class Profile(models.Model):
         User,
         on_delete=models.CASCADE
     )
-
-    avatar = models.CharField(
-        max_length=100,
-        default="default.jpg"
-    )
+    avatar = models.ImageField(
+    upload_to="avatars/",
+    max_length=100,
+    default="default.jpg"
+)
+    
 
     last_seen = models.DateTimeField(
         null=True,
@@ -508,29 +509,32 @@ class Movie(models.Model):
         return self.title
     def save(self, *args, **kwargs):
 
-      super().save(*args, **kwargs)
+       if self.poster:
 
+         img = Image.open(self.poster)
 
-      if self.poster:
+         max_size = (600, 900)
 
-         img = Image.open(
-            self.poster.path
-        )
+         img.thumbnail(max_size)
 
-
-         max_size = (600,900)
-
-
-         img.thumbnail(
-            max_size
-        )
-
+         output = BytesIO()
 
          img.save(
-            self.poster.path,
+            output,
+            format=img.format,
             quality=85,
             optimize=True
         )
+
+         output.seek(0)
+
+         self.poster = ContentFile(
+            output.read(),
+            name=self.poster.name
+        )
+
+
+         super().save(*args, **kwargs)
     def get_embed_url(self):
 
        url = self.watch_link

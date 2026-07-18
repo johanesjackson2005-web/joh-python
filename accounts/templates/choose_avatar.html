@@ -13,7 +13,7 @@
 
 <body>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="page-header">
@@ -28,25 +28,75 @@
     </div>
 
     <div class="avatar-grid">
-        {% for avatar in avatars %}
-        <label class="avatar-item">
-            <input
-                type="radio"
-                name="avatar"
-                value="{{ avatar }}"
-                onchange="enableButton()"
-                hidden>
 
-            <img src="{% static 'profile/' %}{{ avatar }}" alt="">
-        </label>
-        {% endfor %}
+<!-- CUSTOM UPLOAD -->
+<label class="avatar-item upload-avatar">
+
+    <input 
+        type="file"
+        name="custom_avatar"
+        id="customAvatar"
+        accept="image/*"
+        hidden
+        onchange="previewAvatar(event)">
+
+    <div class="plus-box">
+        <i class="fas fa-plus"></i>
+        <span>Upload</span>
     </div>
+
+</label>
+
+
+{% for avatar in avatars %}
+<label class="avatar-item">
+
+    <input
+        type="radio"
+        name="avatar"
+        value="{{ avatar }}"
+        onchange="enableButton()"
+        hidden>
+
+    <img src="{% static 'profile/' %}{{ avatar }}" alt="">
+
+</label>
+{% endfor %}
+
+</div>
 
 </form>
 
 <script>
 function enableButton(){
     document.getElementById("continueBtn").disabled = false;
+}
+function previewAvatar(event){
+
+    let file = event.target.files[0];
+
+    if(file){
+
+        enableButton();
+
+        let reader = new FileReader();
+
+        reader.onload=function(e){
+
+            document.querySelector(".plus-box").innerHTML =
+            `
+            <img src="${e.target.result}">
+            `;
+
+        }
+
+        reader.readAsDataURL(file);
+    }
+}
+
+
+function enableButton(){
+    document.getElementById("continueBtn").disabled=false;
 }
 </script>
 
@@ -188,5 +238,55 @@ body{
         width:95px;
         height:95px;
     }
+}
+.upload-avatar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+
+.plus-box{
+
+    width:140px;
+    height:140px;
+
+    border-radius:50%;
+    border:3px dashed #3b82f6;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    color:#3b82f6;
+    font-size:35px;
+
+    transition:.3s;
+}
+
+
+.plus-box span{
+    font-size:14px;
+    margin-top:5px;
+}
+
+
+.plus-box:hover{
+    transform:scale(1.05);
+    background:rgba(59,130,246,.1);
+}
+
+
+.plus-box img{
+
+    width:100%;
+    height:100%;
+
+    border-radius:50%;
+    object-fit:cover;
+
 }
 </style>
