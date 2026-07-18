@@ -71,7 +71,6 @@ placeholder="Search software, tutorials, movies, games..." />
     </ul>
 </nav>
 <h1>Live Streaming</h1>
-
 <div class="tools-grid">
 
 {% for stream in livestreams %}
@@ -113,13 +112,11 @@ href="{% url 'watch_live' stream.id %}">
 🔴 Watch Live
 
 </a>
-
+</div>
 {% endfor %}
 
-</div>
-</div>
 </body>
-
+</div>
 
 {% include 'partials/footer.html' %}
 <style>
