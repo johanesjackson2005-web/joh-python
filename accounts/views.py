@@ -669,7 +669,9 @@ def tutorial_detail(request, tutorial_id):
 def livestreams(request):
     livestreams = LiveStream.objects.order_by("-created_at")
     return render(request, "livestreams.html", {"livestreams": livestreams})
-def watch_live(request,id):
+from django.shortcuts import get_object_or_404, redirect
+
+def watch_live(request, id):
 
     stream = get_object_or_404(
         LiveStream,
@@ -679,18 +681,17 @@ def watch_live(request,id):
     embed_url = stream.get_embed_url()
 
     if embed_url:
-
         return render(
             request,
             "watch_player.html",
             {
-                "stream":stream,
-                "embed_url":embed_url
+                "stream": stream,
+                "embed_url": embed_url
             }
         )
 
-    return redirect(stream.youtube_live)
-
+    # Kama embed haipo au haisupport, nenda website halisi
+    return redirect(stream.watch_link)
 from django.db.models import Q
 
 def search_view(request):
