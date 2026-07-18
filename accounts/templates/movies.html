@@ -163,6 +163,53 @@ No Action Movies Available
 
 
 </div>
+<!-- ================= SERIES ================= -->
+<h2>📺 TV Series</h2>
+
+<div class="movie-row">
+    {% for movie in series %}
+    <div class="movie-card">
+        <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+
+        <h3>{{ movie.title }}</h3>
+
+        <div class="movie-info">
+            <span>{{ movie.year }}</span>
+            <span>{{ movie.duration }}</span>
+        </div>
+
+        <a href="{% url 'watch_movie' movie.id %}">
+            <button class="watch-btn">▶ WATCH</button>
+        </a>
+    </div>
+    {% empty %}
+        <p>No TV Series Available</p>
+    {% endfor %}
+</div>
+
+<!-- ================= FILMS ================= -->
+<h2>🎞 Films</h2>
+
+<div class="movie-row">
+    {% for movie in films %}
+    <div class="movie-card">
+        <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+
+        <h3>{{ movie.title }}</h3>
+
+        <div class="movie-info">
+            <span>{{ movie.year }}</span>
+            <span>{{ movie.duration }}</span>
+        </div>
+
+        <a href="{% url 'watch_movie' movie.id %}">
+            <button class="watch-btn">▶ WATCH</button>
+        </a>
+    </div>
+    {% empty %}
+        <p>No Films Available</p>
+    {% endfor %}
+</div>
 <h2>
 😂 Comedy Movies
 </h2>

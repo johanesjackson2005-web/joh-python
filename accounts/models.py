@@ -429,11 +429,14 @@ class Movie(models.Model):
     CATEGORY_CHOICES = (
 
         ("Action","Action"),
+        ("series", "series"),
+        ("Film", "Film"),
         ("Comedy","Comedy"),
         ("Horror","Horror"),
         ("Animation","Animation"),
         ("Sci-Fi","Sci-Fi"),
         ("Drama","Drama"),
+        
 
     )
 

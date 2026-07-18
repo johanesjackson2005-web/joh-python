@@ -1096,7 +1096,14 @@ def movies(request):
 ).filter(
     category="Comedy"
 )
+    series = Movie.objects.only(
+        "title", "poster", "year", "duration", "watch_link"
+    ).filter(category="Series")
 
+    # NEW
+    films = Movie.objects.only(
+        "title", "poster", "year", "duration", "watch_link"
+    ).filter(category="Film")
 
     horror = Movie.objects.only(
     "title",
@@ -1136,6 +1143,8 @@ def movies(request):
         "horror":horror,
 
         "animation":animation,
+        "series":series,
+        "films":films,
 
     }
 
