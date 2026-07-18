@@ -669,25 +669,27 @@ def tutorial_detail(request, tutorial_id):
 def livestreams(request):
     livestreams = LiveStream.objects.order_by("-created_at")
     return render(request, "livestreams.html", {"livestreams": livestreams})
-def watch_live(request, id):
+def watch_live(request,id):
 
     stream = get_object_or_404(
         LiveStream,
         id=id
     )
 
-
     embed_url = stream.get_embed_url()
 
+    if embed_url:
 
-    return render(
-        request,
-        "watch_player.html",
-        {
-            "stream": stream,
-            "embed_url": embed_url
-        }
-    )
+        return render(
+            request,
+            "watch_player.html",
+            {
+                "stream":stream,
+                "embed_url":embed_url
+            }
+        )
+
+    return redirect(stream.youtube_live)
 
 from django.db.models import Q
 
@@ -1189,22 +1191,24 @@ def movie_search(request):
             "movies":data
         }
     )
+
 def watch_movie(request,id):
 
-    movie = Movie.objects.get(id=id)
-
+    movie = get_object_or_404(Movie,id=id)
 
     embed_url = movie.get_embed_url()
 
+    if embed_url:
+        return render(
+            request,
+            "watch_player.html",
+            {
+                "movie":movie,
+                "embed_url":embed_url
+            }
+        )
 
-    return render(
-        request,
-        "watch_player.html",
-        {
-            "movie":movie,
-            "embed_url":embed_url
-        }
-    )
+    return redirect(movie.watch_link)
 def games(request):
 
     online_games = Game.objects.filter(

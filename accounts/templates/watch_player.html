@@ -141,23 +141,19 @@ width:95%;
 
 {% if embed_url %}
 
-
 <iframe
-
-src="{{embed_url}}"
-
-allowfullscreen>
-
+    src="{{ embed_url }}"
+    width="100%"
+    height="700"
+    frameborder="0"
+    allowfullscreen>
 </iframe>
-
 
 {% else %}
 
-
-<p>
-Video cannot be embedded.
-</p>
-
+<script>
+window.location.href="{{ movie.watch_link }}";
+</script>
 
 {% endif %}
 

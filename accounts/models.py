@@ -267,32 +267,26 @@ class LiveStream(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
-    def get_embed_url(self):
+def get_embed_url(self):
 
-     url = self.youtube_live
+    if self.embed_link:
+        return self.embed_link
 
+    url = self.watch_link
 
-     if "youtube.com/watch?v=" in url:
-
+    if "youtube.com/watch?v=" in url:
         video_id = url.split("watch?v=")[1].split("&")[0]
-
         return f"https://www.youtube.com/embed/{video_id}"
 
-
-     elif "youtu.be/" in url:
-
-        video_id = url.split("youtu.be/")[1].split("?")[0]
-
+    elif "youtu.be/" in url:
+        video_id = url.split("/")[-1]
         return f"https://www.youtube.com/embed/{video_id}"
 
-
-     elif "youtube.com/embed/" in url:
-
+    elif "youtube.com/embed/" in url:
         return url
 
-
-     return None
-    def __str__(self):
+    return None
+def __str__(self):
         return self.title
     
 
@@ -429,7 +423,7 @@ class Movie(models.Model):
     CATEGORY_CHOICES = (
 
         ("Action","Action"),
-        ("series", "series"),
+        ("Series", "Series"),
         ("Film", "Film"),
         ("Comedy","Comedy"),
         ("Horror","Horror"),
