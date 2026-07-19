@@ -90,7 +90,10 @@ ASGI_APPLICATION = 'myapp.asgi.application'
 # DATABASE
 DATABASES = {
     "default": dj_database_url.parse(
-        os.environ.get("DATABASE_URL"),
+        os.environ.get(
+            "DATABASE_URL",
+            "sqlite:///db.sqlite3"
+        ),
         conn_max_age=600,
         ssl_require=True
     )
