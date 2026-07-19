@@ -25,6 +25,3 @@ cpu_kind = 'shared'
 cpus = 1
 memory_mb = 1024
 
-[[statics]]
-guest_path = '/code/static'
-url_prefix = '/static/'
