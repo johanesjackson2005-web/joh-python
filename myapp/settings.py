@@ -137,6 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # REDIS / CHANNELS
+# REDIS / CHANNELS
+
 REDIS_URL = os.getenv("REDIS_URL")
 
 if REDIS_URL and REDIS_URL.startswith("redis://") and "upstash.io" in REDIS_URL:
@@ -148,21 +150,18 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
-                REDIS_URL
+                {
+                    "address": REDIS_URL,
+                    "ssl": True,
+                }
             ],
         },
     },
 }
+
 MEDIA_URL = '/media/'
 
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+
 # CSRF SETTINGS
 CSRF_TRUSTED_ORIGINS = [
     "https://johanes2005.onrender.com",
