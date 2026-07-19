@@ -137,7 +137,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # REDIS / CHANNELS
-REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
+REDIS_URL = os.getenv('REDIS_URL')
 
 if REDIS_URL.startswith('redis://') and 'upstash.io' in REDIS_URL:
     REDIS_URL = REDIS_URL.replace('redis://', 'rediss://', 1)
