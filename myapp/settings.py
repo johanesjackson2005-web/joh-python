@@ -138,11 +138,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # REDIS / CHANNELS
 # REDIS / CHANNELS
-
 REDIS_URL = os.getenv("REDIS_URL")
-
-if REDIS_URL and REDIS_URL.startswith("redis://") and "upstash.io" in REDIS_URL:
-    REDIS_URL = REDIS_URL.replace("redis://", "rediss://", 1)
 
 
 CHANNEL_LAYERS = {
@@ -150,14 +146,12 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
-                {
-                    "address": REDIS_URL,
-                    "ssl": True,
-                }
+                REDIS_URL
             ],
         },
     },
 }
+
 
 MEDIA_URL = '/media/'
 
