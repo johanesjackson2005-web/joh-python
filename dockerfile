@@ -16,4 +16,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
-CMD ["gunicorn","myapp.asgi:application","--bind","0.0.0.0:8000","--workers","1","--worker-class","uvicorn.workers.UvicornWorker"]
+CMD ["gunicorn","myapp.asgi:application","-k","uvicorn.workers.UvicornWorker","--bind","0.0.0.0:8000","--workers", "1","--timeout","120"]
