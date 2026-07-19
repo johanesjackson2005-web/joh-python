@@ -1,7 +1,7 @@
 app = 'joh-python'
 primary_region = 'jnb'
 
-console_command = '/code/manage.py shell'
+console_command = '/app/manage.py shell'
 
 
 [deploy]
@@ -13,7 +13,7 @@ PORT = '8000'
 
 
 [processes]
-app = "gunicorn myapp.asgi:application --bind 0.0.0.0:8000 --workers 2 --worker-class uvicorn.workers.UvicornWorker"
+app = "gunicorn myapp.asgi:application --bind 0.0.0.0:8000 --workers 1 --worker-class uvicorn.workers.UvicornWorker"
 
 
 [http_service]
@@ -24,6 +24,7 @@ processes = ["app"]
 auto_stop_machines = false
 auto_start_machines = true
 min_machines_running = 1
+grace_period = "30s"
 
 
 [http_service.concurrency]
@@ -33,8 +34,8 @@ soft_limit = 500
 
 
 [[http_service.checks]]
-interval = "15s"
-timeout = "5s"
+interval = "30s"
+timeout = "10s"
 method = "GET"
 path = "/"
 
@@ -44,4 +45,3 @@ memory = '1gb'
 cpu_kind = 'shared'
 cpus = 1
 memory_mb = 1024
-
