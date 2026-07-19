@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 RUN python manage.py collectstatic --noinput
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--worker-class", "uvicorn.workers.UvicornWorker", "myapp.asgi:application"]
+CMD ["daphne","-b","0.0.0.0","-p","8000","myapp.asgi:application"]
