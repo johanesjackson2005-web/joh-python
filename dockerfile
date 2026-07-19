@@ -15,5 +15,6 @@ RUN pip install --upgrade pip \
 COPY . .
 
 EXPOSE 8000
+RUN python manage.py collectstatic --noinput
 
-CMD ["gunicorn", "myapp.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "myapp.asgi:application"]
