@@ -6,13 +6,13 @@ console_command = '/code/manage.py shell'
 release_command = 'python manage.py migrate --noinput'
 
 [env]
-PORT = '8080'
+PORT = '8000'
 
 [processes]
-app = 'gunicorn --bind 0.0.0.0:8080 --workers 2 --worker-class uvicorn.workers.UvicornWorker myapp.asgi:application'
+app = 'gunicorn --bind 0.0.0.0:8000 --workers 2 --worker-class uvicorn.workers.UvicornWorker myapp.asgi:application'
 
 [http_service]
-internal_port = 8080
+internal_port = 8000
 force_https = true
 auto_stop_machines = 'stop'
 auto_start_machines = true
