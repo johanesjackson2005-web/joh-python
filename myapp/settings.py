@@ -137,25 +137,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # REDIS / CHANNELS
-# REDIS / CHANNELS
 REDIS_URL = os.getenv("REDIS_URL")
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
-                {
-                    "address": os.environ.get("REDIS_URL"),
-                    "ssl": True,
-                }
+                REDIS_URL
             ],
             "capacity": 1500,
             "expiry": 10,
         },
     },
 }
-
-
 
 MEDIA_URL = '/media/'
 
