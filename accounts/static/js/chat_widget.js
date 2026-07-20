@@ -1113,6 +1113,37 @@ if(fileUpload){
     });
 
 }
+function toggleMenu(){
+    document.getElementById("navLinks").classList.toggle("active");
+}
+window.addEventListener("resize", function(){
+
+    const modal = qs('#chat-modal');
+
+    if(!modal) return;
+
+    if(modal.style.display === "block"){
+
+        const rect = modal.getBoundingClientRect();
+
+        if(rect.right > window.innerWidth){
+
+            modal.style.left =
+            (window.innerWidth - rect.width - 10)+"px";
+
+        }
+
+        if(rect.bottom > window.innerHeight){
+
+            modal.style.top =
+            (window.innerHeight - rect.height - 10)+"px";
+
+        }
+
+    }
+
+});
+
 
 
 
@@ -1325,36 +1356,5 @@ if(backPopup){
     });
 
 }
-function toggleMenu(){
-    document.getElementById("navLinks").classList.toggle("active");
-}
-window.addEventListener("resize", function(){
-
-    const modal = qs('#chat-modal');
-
-    if(!modal) return;
-
-    if(modal.style.display === "block"){
-
-        const rect = modal.getBoundingClientRect();
-
-        if(rect.right > window.innerWidth){
-
-            modal.style.left =
-            (window.innerWidth - rect.width - 10)+"px";
-
-        }
-
-        if(rect.bottom > window.innerHeight){
-
-            modal.style.top =
-            (window.innerHeight - rect.height - 10)+"px";
-
-        }
-
-    }
-
-});
-
 
 
