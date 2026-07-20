@@ -280,8 +280,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # ==========================================
                 if msg.sender == user or user.is_staff:
 
-                   await database_sync_to_async(msg.delete)()
-
                    await self.channel_layer.group_send(
                         self.group_name,
                 {
@@ -289,6 +287,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "message_id": message_id
                 }
             )
+                   await database_sync_to_async(msg.delete)()
 
         # ==========================================
         # RECEIVER => Delete for me only
