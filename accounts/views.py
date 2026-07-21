@@ -34,6 +34,7 @@ from .email_service import send_otp_email
 from django.contrib.auth.models import User
 import os
 import mimetypes
+import cloudinary.uploader
 
 from .prompts import JMJ_SYSTEM_PROMPT
 # =========================
@@ -937,10 +938,17 @@ def chat_upload(request):
        
 
         # save file kwenye MEDIA
-         file_path = default_storage.save(
-            f"chat/uploads/{uploaded_file.name}",
-            uploaded_file
-        )
+        
+
+         result = cloudinary.uploader.upload(
+            uploaded_file,
+           resource_type="auto",
+           folder="chat/uploads"
+           )
+
+
+         file_path = result["public_id"]
+         file_url = result["secure_url"]
 
 
          file_url = default_storage.url(file_path)

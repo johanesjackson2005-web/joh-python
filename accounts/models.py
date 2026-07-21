@@ -372,6 +372,11 @@ class ChatMessage(models.Model):
         null=True,
         blank=True
     )
+    file_type = models.CharField(
+    max_length=100,
+    blank=True,
+    null=True
+)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

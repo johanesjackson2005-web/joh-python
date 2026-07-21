@@ -1143,15 +1143,17 @@ if(
 
 socket.send(JSON.stringify({
 
-    type:"file",
+type:"file",
 
-    id:data.id,
+id:data.id,
 
-    url:data.url,
+url:data.url,
 
-    name:data.name,
+name:data.name,
 
-    room:roomName
+file_type:data.type,
+
+room:roomName
 
 }));
 
