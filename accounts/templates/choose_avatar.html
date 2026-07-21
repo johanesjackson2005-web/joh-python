@@ -1,108 +1,132 @@
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Avatar</title>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-
-<body>
 
 <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
 
-    <div class="page-header">
-        <div>
-            <h1>Select Your Profile Picture</h1>
-            <p>Choose one avatar to continue.</p>
-        </div>
+{% csrf_token %}
 
-        <button type="submit" id="continueBtn" disabled>
-            Continue <i class="fas fa-arrow-right"></i>
-        </button>
+
+<div class="page-header">
+
+    <div>
+        <h1>Select Your Profile Picture</h1>
+        <p>Choose one avatar to continue.</p>
     </div>
 
-    <div class="avatar-grid">
 
-<!-- CUSTOM UPLOAD -->
-<label class="avatar-item upload-avatar">
-
-    <input 
-        type="file"
-        name="custom_avatar"
-        id="customAvatar"
-        accept="image/*"
-        hidden
-        onchange="previewAvatar(event)">
-
-    <div class="plus-box">
-        <i class="fas fa-plus"></i>
-        <span>Upload</span>
-    </div>
-
-</label>
-
-
-{% for avatar in avatars %}
-<label class="avatar-item">
-
-    <input
-        type="radio"
-        name="avatar"
-        value="{{ avatar }}"
-        onchange="enableButton()"
-        hidden>
-
-    <img src="{% static 'profile/' %}{{ avatar }}" alt="">
-
-</label>
-{% endfor %}
+    <button type="submit" id="continueBtn" disabled>
+        Continue <i class="fas fa-arrow-right"></i>
+    </button>
 
 </div>
 
+
+
+<div class="avatar-grid">
+
+
+<!-- CUSTOM UPLOAD -->
+
+<label for="customAvatar" class="plus-box">
+
+
+<input 
+    type="file"
+    name="custom_avatar"
+    id="customAvatar"
+    accept="image/*"
+    hidden
+    onchange="previewAvatar(event)">
+
+
+<div id="uploadPreview">
+
+    <i class="fas fa-plus"></i>
+
+    <span>Upload</span>
+
+</div>
+
+
+</label>
+
+
+
+
+<!-- DEFAULT AVATARS -->
+
+{% for avatar in avatars %}
+
+<label class="avatar-item">
+
+<input
+    type="radio"
+    name="avatar"
+    value="{{ avatar }}"
+    onchange="enableButton()"
+    hidden>
+
+
+<img src="{% static 'profile/' %}{{ avatar }}" alt="">
+
+</label>
+
+
+{% endfor %}
+
+
+</div>
+
+
 </form>
 
-<script>
-function enableButton(){
-    document.getElementById("continueBtn").disabled = false;
-}
-function previewAvatar(event){
 
-    let file = event.target.files[0];
-
-    if(file){
-
-        enableButton();
-
-        let reader = new FileReader();
-
-        reader.onload=function(e){
-
-            document.querySelector(".plus-box").innerHTML =
-            `
-            <img src="${e.target.result}">
-            `;
-
-        }
-
-        reader.readAsDataURL(file);
-    }
-}
-
-
-function enableButton(){
-    document.getElementById("continueBtn").disabled=false;
-}
-</script>
 
 {% include 'partials/contact.html' %}
 {% include 'partials/footer.html' %}
+<script>
 
+function previewAvatar(event){
+
+    const file = event.target.files[0];
+
+    if(!file) return;
+
+
+    const reader = new FileReader();
+
+
+    reader.onload = function(){
+
+        document.getElementById("uploadPreview").innerHTML = `
+
+            <img src="${reader.result}">
+
+        `;
+
+
+        enableButton();
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+
+function enableButton(){
+
+    document.getElementById("continueBtn").disabled = false;
+
+}
+
+</script>
 </body>
 <style>
 

@@ -20,6 +20,9 @@ from .models import (
     Software, Tutorial, Category, LiveStream,
     PasswordResetOTP, Profile, ChatMessage, ChatMemory ,Movie
 )
+from PIL import Image
+from django.core.files.base import ContentFile
+from io import BytesIO
 from .models import Notification
 from.models import Game
 import os
@@ -781,12 +784,33 @@ def choose_avatar(request):
 
         if custom_avatar:
 
-            profile.avatar = custom_avatar
-            profile.save()
+          img = Image.open(custom_avatar)
 
-            return redirect("home")
+          img = img.convert("RGB")
+
+          img.thumbnail((300,300))
 
 
+          buffer = BytesIO()
+
+          img.save(
+             buffer,
+             format="JPEG",
+             quality=85
+    )
+
+
+          profile.avatar.save(
+           custom_avatar.name,
+            ContentFile(buffer.getvalue()),
+             save=False
+           )
+
+
+          profile.save()
+
+
+          return redirect("home")
         # User amechagua avatar iliyopo
         selected_avatar = request.POST.get(
             "avatar"
