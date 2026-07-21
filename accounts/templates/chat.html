@@ -293,30 +293,27 @@ style="
 
 {% endif %}'
 )
-"
-        {% for msg in messages %}
+">
 
-            <div class="message {% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
+{% for msg in messages %}
 
-                <div class="bubble">
+<div class="message {% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
 
-                    {{ msg.message }}
+    <div class="bubble">
+        {{ msg.message }}
+    </div>
 
-                </div>
+</div>
 
-            </div>
+{% empty %}
 
-        {% empty %}
+<div class="empty-chat">
+    Start your conversation.
+</div>
 
-            <div class="empty-chat">
+{% endfor %}
 
-                Start your conversation.
-
-            </div>
-
-        {% endfor %}
-
-        </div>
+</div>
 
 <div class="chat-input">
     <div class="plus-container">
