@@ -146,7 +146,48 @@ let wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
       setTimeout(function(){ o.stop(); ctx.close(); }, 120);
     }catch(e){}
   }
+function updateUserStatus(username, status){
 
+    const users = document.querySelectorAll(".user");
+
+
+    users.forEach(user => {
+
+        const name = user.querySelector(".user-name");
+
+
+        if(name && name.innerText.trim() === username){
+
+            const statusBox = user.querySelector(".last-message");
+
+
+            if(statusBox){
+
+                if(status === "online"){
+
+                    statusBox.innerHTML = `
+                    <span style="color:#00ff66">
+                    ● Online
+                    </span>
+                    `;
+
+                }else{
+
+                    statusBox.innerHTML = `
+                    <span style="color:red">
+                    ● Offline
+                    </span>
+                    `;
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
  function connect(){
 
  if(socket){
