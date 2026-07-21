@@ -951,12 +951,6 @@ def chat_upload(request):
          file_url = result["secure_url"]
 
 
-         file_url = default_storage.url(file_path)
-
-
-         print("SAVED:", file_path)
-         print("URL:", file_url)
-
 
         # ===============================
         # SAVE FILE AS CHAT MESSAGE
