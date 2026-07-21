@@ -218,7 +218,19 @@ appendFile(
 );
 
 }
+if (data.type === "user_status") {
 
+    console.log(
+        data.username + " is " + data.status
+    );
+
+    updateUserStatus(
+        data.username,
+        data.status
+    );
+
+    return;
+}
 // message ya kawaida + history ya database
 
 };

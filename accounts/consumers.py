@@ -5,38 +5,76 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import ChatMessage
-
+import redis
+from django.conf import settings
 
 User = get_user_model()
-
+redis_client = redis.from_url(
+    settings.REDIS_URL,
+    decode_responses=True
+)
 
 class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def set_user_online(self):
 
-     user = self.scope["user"]
+       user = self.scope["user"]
 
-     if user.is_authenticated:
+       if user.is_authenticated:
 
-        profile = user.profile
-
-        profile.is_online = True
-        profile.save()
+        key = f"user_online_{user.id}"
 
 
+        count = redis_client.incr(key)
+
+
+        # expire baada ya saa moja kama connection imekufa vibaya
+        redis_client.expire(
+            key,
+            3600
+        )
+
+
+        # connection ya kwanza ndiyo inamfanya online
+        if count == 1:
+
+            profile = user.profile
+
+            profile.is_online = True
+
+            profile.save()
 
     @database_sync_to_async
     def set_user_offline(self):
 
-     user = self.scope["user"]
+      user = self.scope["user"]
 
-     if user.is_authenticated:
 
-        profile = user.profile
+      if user.is_authenticated:
 
-        profile.is_online = False
-        profile.last_seen = timezone.now()
-        profile.save()
+
+        key = f"user_online_{user.id}"
+
+
+        count = redis_client.decr(key)
+
+
+
+        # hakuna connection tena
+        if count <= 0:
+
+
+            redis_client.delete(key)
+
+
+            profile = user.profile
+
+
+            profile.is_online = False
+
+            profile.last_seen = timezone.now()
+
+            profile.save()
     async def connect(self):
 
         # Room name from URL
@@ -139,13 +177,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
     self.room_name,
     self.scope.get("user")
 )
-
+        await self.channel_layer.group_add(
+    "online_users",
+    self.channel_name
+)
 # Tuma messages 50 za mwisho wakati user anaingia
         if self.scope['user'].is_authenticated:
-            user_id = self.scope['user'].id
-        else:
-            user_id = None
 
+           await self.channel_layer.group_send(
+                "online_users",
+             {
+            "type": "user_status",
+            "username": self.scope["user"].username,
+            "status": "online"
+           }
+              )
+
+           user_id = self.scope['user'].id
+
+        else:
+
+           user_id = None
         messages = await self.get_last_messages(user_id)
 
         for msg in messages:
@@ -169,18 +221,52 @@ class ChatConsumer(AsyncWebsocketConsumer):
      
      }))
          
-
     async def disconnect(self, close_code):
 
-       await self.set_user_offline()
+    # Ondoa kwenye chat room
+        if hasattr(self, "group_name"):
 
-       if hasattr(self, "group_name"):
+            await self.channel_layer.group_discard(
+               self.group_name,
+               self.channel_name
+          )
 
+
+    # Ondoa kwenye online users group
         await self.channel_layer.group_discard(
-            self.group_name,
+             "online_users",
             self.channel_name
         )
-        
+
+
+        user = self.scope.get("user")
+
+
+        if user and user.is_authenticated:
+
+            # update database
+           await self.set_user_offline()
+
+
+        # waambie wengine user ameondoka
+           await self.channel_layer.group_send(
+            "online_users",
+            {
+                "type": "user_status",
+                "username": user.username,
+                "status": "offline"
+            }
+        )
+    
+    async def user_status(self, event):
+
+     await self.send(
+        text_data=json.dumps({
+            "type": "user_status",
+            "username": event["username"],
+            "status": event["status"]
+        })
+    )  
     @database_sync_to_async
     def get_last_messages(self, user_id):
 
