@@ -112,18 +112,20 @@
         {% for u in users %}
 <a href="{% url 'chat_home' %}?room=pm_{{ request.user.username|lower }}_{{ u.username|lower }}"
 class="user {% if selected_user == u %}active{% endif %}">
-        
-            {% if u.profile.avatar %}
+        {% if u.profile.avatar %}
 
-<img src="{{ u.profile.avatar.url }}"
-     class="user-avatar">
+<img src="{{ u.profile.avatar.url }}">
+
+{% elif u.profile.avatar_choice %}
+
+<img src="{% static 'profile/' %}{{ u.profile.avatar_choice }}">
 
 {% else %}
 
-<img src="{% static 'image/logo1.png' %}"
-     class="user-avatar">
+<img src="{% static 'image/logo1.png' %}">
 
 {% endif %}
+            
 
             <div class="user-info">
 
@@ -244,6 +246,10 @@ value="{{ request.session.previous_page }}">
 
 <img src="{{ selected_user.profile.avatar.url }}">
 
+{% elif selected_user.profile.avatar_choice %}
+
+<img src="{% static 'profile/' %}{{ selected_user.profile.avatar_choice }}">
+
 {% else %}
 
 <img src="{% static 'image/logo1.png' %}">
@@ -275,7 +281,18 @@ value="{{ request.session.previous_page }}">
 class="messages"
 id="page-chat-messages"
 style="
---profile:url('{% if request.user.profile.avatar %}{{ request.user.profile.avatar.url }}{% else %}{% static 'image/logo1.png' %}{% endif %}')
+--profile:url(
+'{% if request.user.profile.avatar %}
+{{ request.user.profile.avatar.url }}
+
+{% elif request.user.profile.avatar_choice %}
+{% static 'profile/' %}{{ request.user.profile.avatar_choice }}
+
+{% else %}
+{% static 'image/logo1.png' %}
+
+{% endif %}'
+)
 "
         {% for msg in messages %}
 

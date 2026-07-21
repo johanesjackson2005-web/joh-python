@@ -322,17 +322,24 @@ class LiveStream(models.Model):
         return self.title
 
 class Profile(models.Model):
-
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE
     )
+
+    # Avatar ya user aliyoupload
     avatar = models.ImageField(
-    upload_to="avatars/",
-    max_length=100,
-    default="default.jpg"
-)
-    
+        upload_to="avatars/",
+        blank=True,
+        null=True
+    )
+
+    # Avatar ya static aliyochagua
+    avatar_choice = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
 
     last_seen = models.DateTimeField(
         null=True,
@@ -342,9 +349,9 @@ class Profile(models.Model):
     is_online = models.BooleanField(
         default=False
     )
+
     def __str__(self):
         return self.user.username
-
 class ChatMessage(models.Model):
 
     sender = models.ForeignKey(

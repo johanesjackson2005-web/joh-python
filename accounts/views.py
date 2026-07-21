@@ -770,61 +770,56 @@ def choose_avatar(request):
 
     avatars = [
         f"avatar{i}.jpg"
-        for i in range(1,71)
+        for i in range(1, 71)
     ]
-
 
     if request.method == "POST":
 
-        # User amepakia picha yake
-        custom_avatar = request.FILES.get(
-            "custom_avatar"
-        )
-
+        custom_avatar = request.FILES.get("custom_avatar")
 
         if custom_avatar:
 
-          img = Image.open(custom_avatar)
+            img = Image.open(custom_avatar)
 
-          img = img.convert("RGB")
+            img = img.convert("RGB")
 
-          img.thumbnail((300,300))
+            img.thumbnail((300, 300))
 
+            buffer = BytesIO()
 
-          buffer = BytesIO()
+            img.save(
+                buffer,
+                format="JPEG",
+                quality=85
+            )
 
-          img.save(
-             buffer,
-             format="JPEG",
-             quality=85
-    )
+            # User ameupload picha yake
+            profile.avatar.save(
+                custom_avatar.name,
+                ContentFile(buffer.getvalue()),
+                save=False
+            )
 
+            profile.avatar_choice = ""   # <-- muhimu
 
-          profile.avatar.save(
-           custom_avatar.name,
-            ContentFile(buffer.getvalue()),
-             save=False
-           )
+            profile.save()
 
+            return redirect("home")
 
-          profile.save()
-
-
-          return redirect("home")
-        # User amechagua avatar iliyopo
-        selected_avatar = request.POST.get(
-            "avatar"
-        )
-
+        selected_avatar = request.POST.get("avatar")
 
         if selected_avatar:
 
-            profile.avatar = selected_avatar
+            # User amechagua avatar ya mfumo
+            profile.avatar.delete(save=False)
+
+            profile.avatar = None
+
+            profile.avatar_choice = selected_avatar
+
             profile.save()
 
-
         return redirect("home")
-
 
     return render(
         request,

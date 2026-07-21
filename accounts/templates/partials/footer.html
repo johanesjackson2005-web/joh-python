@@ -97,11 +97,19 @@ background-image:url('{% static 'image/logo1.png' %}');
         <div class="ai-header">
 
          <img id="chat-avatar"
+<img id="chat-avatar"
+
 {% if user.profile.avatar %}
 src="{{ user.profile.avatar.url }}"
+
+{% elif user.profile.avatar_choice %}
+src="{% static 'profile/' %}{{ user.profile.avatar_choice }}"
+
 {% else %}
 src="{% static 'image/logo2.png' %}"
+
 {% endif %}
+
 style="
 width:50px;
 height:50px;
