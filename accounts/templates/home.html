@@ -96,15 +96,39 @@ placeholder="Search software, tutorials, movies, games..." />
 
 <!-- HERO -->
 <div class="hero">
-    {% if user.is_authenticated %}
-    <div class="user-profile">
-    <img src="{% static 'profile/' %}{{ request.user.profile.avatar }}"
-         width="150"
-         height="150"
-         style="border-radius:50%;">
 
-    <span>{{ request.user.username }}</span>
+{% if user.is_authenticated %}
 
+<div class="user-profile">
+
+{% if request.user.profile.avatar %}
+
+<img src="{{ request.user.profile.avatar.url }}"
+     width="150"
+     height="150"
+     style="
+     border-radius:50%;
+     object-fit:cover;
+     ">
+
+{% else %}
+
+<img src="{% static 'profile/default.jpg' %}"
+     width="150"
+     height="150"
+     style="
+     border-radius:50%;
+     object-fit:cover;
+     ">
+
+{% endif %}
+
+
+<span>{{ request.user.username }}</span>
+
+</div>
+
+{% endif %}
 </div>
         <h2 style="color:#facc15;">Welcome {{ user.username }}</h2>
     

@@ -2547,3 +2547,15 @@ font-size:15px;
 }
 
 }
+.user-avatar,
+.sidebar img,
+.chat-area img{
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
