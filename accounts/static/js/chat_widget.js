@@ -397,16 +397,20 @@ console.log("file created", id)
 
 
     else if(
-        url.match(/\.(webm|mp3|wav)$/i)
-    ){
+    name.match(/\.(webm|mp3|wav|ogg|m4a)$/i)
+    ||
+    url.includes("video/upload")
+){
 
-        content = `
+      content = `
 
-        <audio controls>
-            <source src="${url}">
-        </audio>
+<audio controls preload="metadata">
+    <source src="${url}" type="audio/webm">
+    Your browser does not support audio.
+</audio>
 
-        `;
+`;
+ 
 
     }
 

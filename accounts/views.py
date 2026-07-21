@@ -980,7 +980,8 @@ def chat_upload(request):
 
             message="",
 
-            file=file_path
+            file=file_path,
+            file_type=uploaded_file.content_type,
 
         )
 
