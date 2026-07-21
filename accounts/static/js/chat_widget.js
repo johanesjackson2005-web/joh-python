@@ -117,12 +117,13 @@ else{
 let roomName = computeRoomName();
 
 console.log("FIRST ROOM:", roomName);
-const protocol = 'wss';
+const protocol = window.location.protocol === "https:"
+    ? "wss"
+    : "ws";
 
-const CHAT_SOCKET_HOST = "joh-python.fly.dev";
+const CHAT_SOCKET_HOST = window.location.host;
 
 let wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
-
   let socket;
   let unreadCount = 0;
   const badgeEl = qs('#chat-badge');
