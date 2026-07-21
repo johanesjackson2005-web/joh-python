@@ -117,13 +117,13 @@ else{
 let roomName = computeRoomName();
 
 console.log("FIRST ROOM:", roomName);
+const protocol = 'wss';
 
+const CHAT_SOCKET_HOST = "joh-python.fly.dev";
 
-const protocol = (location.protocol === 'https:') ? 'wss' : 'ws';
+let wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
 
-
-let wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
-   let socket;
+  let socket;
   let unreadCount = 0;
   const badgeEl = qs('#chat-badge');
 
@@ -167,8 +167,7 @@ roomName = computeRoomName();
 console.log("CONNECTING ROOM:", roomName);
 
 
-wsUrl = protocol + '://' + location.host + '/ws/chat/' + roomName + '/';
-
+wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
 
 console.log("WEBSOCKET URL:", wsUrl);
 
