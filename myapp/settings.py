@@ -19,7 +19,12 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [
+    "joh-python.fly.dev",
+    "johanes2005.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 X_FRAME_OPTIONS = "ALLOWALL"
 # OpenAI API Key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -144,7 +149,9 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
-                REDIS_URL
+                {
+                    "address": REDIS_URL,
+                }
             ],
             "capacity": 1500,
             "expiry": 10,
