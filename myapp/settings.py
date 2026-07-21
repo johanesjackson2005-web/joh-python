@@ -144,28 +144,20 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 REDIS_URL = os.getenv("REDIS_URL")
 
 CHANNEL_LAYERS = {
-
     "default": {
-
-        "BACKEND":
-        "channels_redis.core.RedisChannelLayer",
-
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-
             "hosts": [
-                REDIS_URL
+                {
+                    "address": REDIS_URL,
+                    "ssl_cert_reqs": None,
+                }
             ],
-
-            "capacity":1500,
-
-            "expiry":120,
-
+            "capacity": 1500,
+            "expiry": 120,
         },
-
     },
-
 }
-
 MEDIA_URL = '/media/'
 
 
