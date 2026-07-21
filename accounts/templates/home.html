@@ -104,31 +104,31 @@ placeholder="Search software, tutorials, movies, games..." />
 {% if request.user.profile.avatar %}
 
 <img src="{{ request.user.profile.avatar.url }}"
-     width="50"
-     height="50"
+     width="150"
+     height="150"
      style="border-radius:50%;object-fit:cover;">
 
 {% elif request.user.profile.avatar_choice %}
 
 <img src="{% static 'profile/' %}{{ request.user.profile.avatar_choice }}"
-     width="50"
-     height="50"
+     width="150"
+     height="150"
      style="border-radius:50%;object-fit:cover;">
 
 {% else %}
 
 <img src="{% static 'image/logo1.png' %}"
-     width="50"
-     height="50"
+     width="150"
+     height="150"
      style="border-radius:50%;object-fit:cover;">
 
 
 
 <span>{{ request.user.username }}</span>
-</div>
+
 {% endif %}
 
-
+</div>
         <h2 style="color:#facc15;">Welcome {{ user.username }}</h2>
     
     <h1>JMJ SOFTWARES</h1>
