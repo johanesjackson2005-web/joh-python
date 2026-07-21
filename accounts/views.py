@@ -989,7 +989,8 @@ def chat_upload(request):
 
             "url": file_url,
 
-            "name": uploaded_file.name
+            "name": uploaded_file.name,
+            "type":uploaded_file.content_type
 
         })
 

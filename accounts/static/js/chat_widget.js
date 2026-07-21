@@ -247,10 +247,23 @@ appendMessage(
 );
 
 }
-
-
 if(data.type==="file"){
-    console.log("file received",data);
+
+console.log("file received",data);
+
+
+if(data.file_type &&
+data.file_type.startsWith("audio")){
+
+
+appendVoice(
+    data.id,
+    data.url
+);
+
+
+}else{
+
 
 appendFile(
     data.id,
@@ -258,7 +271,14 @@ appendFile(
     data.url
 );
 
+
 }
+
+
+}
+
+
+
 if (data.type === "user_status") {
 
     console.log(
@@ -1115,23 +1135,35 @@ body:formData
 
 console.log("UPLOAD RESULT",data);
 
-
-if(socket && socket.readyState===WebSocket.OPEN){
-
+if(
+    data.url &&
+    socket &&
+    socket.readyState===WebSocket.OPEN
+){
 
 socket.send(JSON.stringify({
 
-type:"file",
-id:data.id,
+    type:"file",
 
-url:data.url,
+    id:data.id,
 
-name:data.name,
-room:roomName
+    url:data.url,
+
+    name:data.name,
+
+    room:roomName
 
 }));
 
+}else{
+
+console.error(
+"Upload failed:",
+data
+);
+
 }
+
 
 
 });
