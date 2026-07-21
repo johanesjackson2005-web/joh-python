@@ -104,22 +104,22 @@ placeholder="Search software, tutorials, movies, games..." />
 {% if request.user.profile.avatar %}
 
 <img src="{{ request.user.profile.avatar.url }}"
-     width="45"
-     height="45"
+     width="50"
+     height="50"
      style="border-radius:50%;object-fit:cover;">
 
 {% elif request.user.profile.avatar_choice %}
 
 <img src="{% static 'profile/' %}{{ request.user.profile.avatar_choice }}"
-     width="45"
-     height="45"
+     width="50"
+     height="50"
      style="border-radius:50%;object-fit:cover;">
 
 {% else %}
 
 <img src="{% static 'image/logo1.png' %}"
-     width="45"
-     height="45"
+     width="50"
+     height="50"
      style="border-radius:50%;object-fit:cover;">
 
 {% endif %}
