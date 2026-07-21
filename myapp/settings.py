@@ -4,16 +4,17 @@ import os
 from dotenv import load_dotenv
 import cloudinary
 
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
-)
+
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load .env
 load_dotenv(BASE_DIR / ".env")
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 
 # SECURITY
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -24,6 +25,7 @@ ALLOWED_HOSTS = [
     "johanes2005.onrender.com",
     "localhost",
     "127.0.0.1",
+    ".fly.dev",
 ]
 X_FRAME_OPTIONS = "ALLOWALL"
 # OpenAI API Key
@@ -149,15 +151,17 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
-                {
-                    "address": REDIS_URL,
-                }
+                REDIS_URL
             ],
             "capacity": 1500,
             "expiry": 10,
+            "symmetric_encryption_keys": [
+                SECRET_KEY
+            ],
         },
     },
 }
+
 
 MEDIA_URL = '/media/'
 
