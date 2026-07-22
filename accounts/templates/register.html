@@ -1,326 +1,395 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<script>
-function toggleMenu(){
-    document.getElementById("navLinks").classList.toggle("active");
-}
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Register | JMJ SOFTWARES</title>
+
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+<link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
 </head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
 <nav class="navbar">
-    <div class="logo"><a href="/"> <img src="{% static 'image/logo2.png' %}" alt="JMJ SOFTWARES" style="height:48px;object-fit:contain;margin-right:10px;border-radius:6px;vertical-align:middle;"> <span style="font-weight:700;color:white;font-size:1.05rem;margin-left:6px">JMJ SOFTWARES</span></a></div>
-    <form method="GET" action="/search/" class="search-form">
-    <input type="text" name="q" placeholder="Search tools, tutorials..." />
-    <button type="submit">
-        <i class="fas fa-search"></i>
-    </button>
-</form>
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
-    <ul class="nav-links" id="navLinks">
-        <li><a href="/">🏠  Home</a></li>
-         <li><a href="/chat/">💬  CHAT</a></li>
-        <li><a href="/livestreams/">🔴  Live</a></li>
-        <li><a href="{% url 'notifications' %}">
+<div class="logo">
 
-🔔notification
+<a href="/">
+<img src="{% static 'image/logo2.png' %}">
+<span>JMJ SOFTWARES</span>
+</a>
 
-{% if notification_count > 0 %}
-
-<span class="badge">
-
-{{notification_count}}
-
-</span>
-
-{% endif %}
-
-
-</a></li>
-        {% if user.is_authenticated %}
-        <li><a href="https://johanes2005.onrender.com/admin/">🧑‍💻 Admin</a></li>
-        <li><a href="/ai-assistant/">🤖  AI </a></li>
-        <li><a href="/tutorials/">📖Tutorials</a></li>
-           <li><a href="/logout/">🚪➡️Logout</a></li>
-        {% else %}
-            <li><a href="/about/">ℹ️  About</a></li>
-            <li><a href="/contactus/">📞Contact</a></li>
-            <li><a href="/login/">👤🔑Login</a></li>
-            <li><a href="/register/">👥➕Register</a></li>
-            <li><a href="/forgot-password/">👤🔑Forgot Password</a></li>
-        {% endif %}
-    </ul>
-</nav>
-
- <div class='tools-grid'>
-     <div class='login-Box'>
-      <div class='tool-card'>
-        <form method="POST">
-      <h2 >REGISTRATION</h2>
-      {% if messages %}
-    {% for message in messages %}
-        <p1>{{ message }}</p1>
-    {% endfor %}
-{% endif %}
-      {% csrf_token %}
-      <div class="form-group">
-        {% if form.username.errors %}
-            <span class="error">{{ form.username.errors }}</span>
-        {% endif %}
-      {{ form.as_p }} <pre>❌Don't use special characters
-❌Do not use Emojis like 😀, 😎, etc
-❌Do not leave spaces like "John Doe"
-❌Maximum length is 100 characters</pre>
-        <label1>
-       <input type="checkbox">
-      I agree to the terms and conditions
-       </label1>
-              <br>
-       <button type="submit">Register</button><br><br>
-              <a href=/login/ style='color: #e6ff07 ; font-size: 20px'>Already have an account? Login</a>
-            <br>
-              <a href='/' class="forgot" style='color: #e6ff07 ; font-size: 20px'>
-                    Back to Home
-                </a>
-            </form>
-           </div>
-     </div>
 </div>
 
-<style>
-    body {
-        display: flex;
-        justify-content: center;
-        background-size: cover;
-            font-family: Arial, sans-serif;
-                     
-    background-color: #0c1b3f;
-    color: var(--text-main);
-    line-height: 1.6;
-    overflow-x: hidden;
-        }
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-}
-.tool-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 30px 50px;
-    border-radius: 12px;
-    transition: var(--transition);
-    align-items: center;
-            justify-content: center;
-}
-.tool-card:hover {
-    transform: translateY(-5px);
-    background: rgba(7, 45, 133, 0.85);
-    box-shadow: 0 10px 25px -5px rgba(19, 176, 182, 0.5);
-     border: 2px solid rgba(11, 133, 155, 0.2);
-}
-.login-Box{
-                position: relative;
-                background-color: #0c1b3f;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
 
-     button {
-            background-color: blue;
-            color: white;
-            font-size: 20px;
-            padding: 10px 70px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: darkblue;
-        }
-     label{
-            font-size: 20px;
-            font-family: Arial, sans-serif;
-            color: white;
-            padding: 10px;
-        }
-    span {
-        color: red;
-        font-size: 0.1px;
-        
-    }
-    input {
-        width: 53%;
-        height: 1%;
-        color: black;
-        font-size: 12px;
-        font-family: Arial, sans-serif;
-        background-color:  #ccd3e4;
-        border: 2px solid black;
-        border-radius: 5px;
-        padding: 10px;
-    }
-    #id_username {
-        width: 70%;
-        placeholder: "Username";
-            color: black;
-            font-size: 15px;
-            font-family: Arial, sans-serif;
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 5px;
-            padding: 10px;
-    }
-    #id_email { 
-        width: 70%;
-
-        placeholder: "john@gmail.com";
-            color: black;
-            font-size: 15px;
-            font-family: Arial, sans-serif;
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 5px;
-            padding: 10px
-    }
-    #id_password {
-        width: 70%;
-         placeholder: "Password";
-            color: black;
-            font-size: 15px;
-            font-family: Arial, sans-serif;
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 5px;
-            padding: 10px
-    }
-    h2 {
-        color:white;
-        font-size: 40px;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-    label1 {
-        font-size: 15px;
-        font-family: Arial, sans-serif;
-        color: white;
-        padding: 10px;
-    }
-    p1{
-        color: red;
-        font-size: 15px;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-    .navbar{
-    position:fixed;
-    top:0;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:5px 20px;
-    background:rgba(6, 5, 10, 0.7);
-    backdrop-filter:blur(10px);
-    z-index:1000;
-}
-
-.logo a{
-    color:white;
-    text-decoration:none;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.nav-links{
-    display:flex;
-    list-style:none;
-    gap:18px;
-}
-
-.nav-links li a{
-    color:white;
-    text-decoration:none;
-    padding:8px 12px;
-    border-radius:6px;
-    transition:0.3s;
-}
-
-.nav-links li a:hover{
-    background:#3b82f6;
-}
-
-.menu-toggle{
-    display:none;
-    font-size:28px;
-    cursor:pointer;
-}
-
-@media(max-width:768px){
-    .menu-toggle{display:block;}
-    .nav-links{
-        display:none;
-        flex-direction:column;
-        position:absolute;
-        top:70px;
-        left:0;
-        width:100%;
-        background:#111827;
-        padding:20px;
-    }
-    .nav-links.active{display:flex;}
-}
-/* ================= FOOTER ================= */
-.footer{
-    background:  #000000;
-    border-top:2px solid rgba(255,255,255,0.1);
-    padding:40px 20px;
-    text-align:center;
-    margin-top:50px;
-}
-
-.footer-content h3{
-    color:#3b82f6;
-    font-size:28px;
-    margin-bottom:10px;
-}
-
-.footer-content p{
-    color:#cbd5e1;
-    margin:8px 0;
-}
-
-.footer-contact{
-    margin:12px 0;
-    font-size:16px;
-    color:white;
-}
-
-.footer-contact i{
-    color:#3b82f6;
-    margin-right:8px;
-}
-
-.copyright{
-    margin-top:20px;
-    font-size:14px;
-    color:#94a3b8;
-}
-pre{
-    color: #ff4d07;
-    font-size: 17px;
-    font-family: arial, sans-serif;
-}
+<div class="menu-toggle" onclick="toggleMenu()">
+☰
+</div>
 
 
-</style>
+<ul class="nav-links" id="navLinks">
+
+
+<li>
+<a href="/">
+🏠 Home
+</a>
+</li>
+
+
+<li>
+<a href="/chat/">
+💬 Chat
+</a>
+</li>
+
+
+<li>
+<a href="/livestreams/">
+🔴 Live
+</a>
+</li>
+
+
+<li>
+<a href="{% url 'notifications' %}">
+🔔 Notification
+
+{% if notification_count > 0 %}
+<span class="badge">
+{{notification_count}}
+</span>
+{% endif %}
+
+</a>
+</li>
+
+
+
+{% if user.is_authenticated %}
+
+
+<li>
+<a href="/admin/">
+🧑‍💻 Admin
+</a>
+</li>
+
+
+<li>
+<a href="/ai-assistant/">
+🤖 AI
+</a>
+</li>
+
+
+<li>
+<a href="/tutorials/">
+📖 Tutorials
+</a>
+</li>
+
+
+<li>
+<a href="/logout/">
+🚪 Logout
+</a>
+</li>
+
+
+{% else %}
+
+
+<li>
+<a href="/about/">
+ℹ️ About
+</a>
+</li>
+
+
+<li>
+<a href="/contactus/">
+📞 Contact
+</a>
+</li>
+
+
+<li>
+<a href="/login/">
+👤 Login
+</a>
+</li>
+
+
+<li>
+<a href="/register/" class="active">
+👥 Register
+</a>
+</li>
+
+
+<li>
+<a href="/forgot-password/">
+🔑 Forgot Password
+</a>
+</li>
+
+
+{% endif %}
+
+
+</ul>
+
+
+</nav>
+
+
+
+<!-- ================= REGISTER ================= -->
+
+
+<section class="register-container">
+
+
+<div class="register-card">
+
+
+<div class="register-header">
+
+<i class="fa-solid fa-user-plus"></i>
+
+<h1>
+Create Account
+</h1>
+
+<p>
+Join JMJ SOFTWARES community
+</p>
+
+
+</div>
+
+
+
+
+<form method="POST">
+
+
+{% csrf_token %}
+
+
+
+
+<!-- USERNAME -->
+
+<div class="input-box">
+
+<label>
+<i class="fa-solid fa-user"></i>
+Username
+</label>
+
+
+{{form.username}}
+
+
+{% for error in form.username.errors %}
+
+<p class="error">
+<i class="fa-solid fa-circle-exclamation"></i>
+{{error}}
+</p>
+
+{% endfor %}
+
+
+</div>
+
+
+
+
+<!-- EMAIL -->
+
+
+<div class="input-box">
+
+
+<label>
+<i class="fa-solid fa-envelope"></i>
+Email
+</label>
+
+
+{{form.email}}
+
+
+
+{% for error in form.email.errors %}
+
+<p class="error">
+
+<i class="fa-solid fa-circle-exclamation"></i>
+
+{{error}}
+
+</p>
+
+{% endfor %}
+
+
+</div>
+
+
+
+
+<!-- PASSWORD -->
+
+
+<div class="input-box">
+
+
+<label>
+
+<i class="fa-solid fa-lock"></i>
+
+Password
+
+</label>
+
+
+
+<div class="password-box">
+
+{{form.password}}
+
+<button type="button" onclick="showPassword()">
+
+<i class="fa-solid fa-eye"></i>
+
+</button>
+
+</div>
+
+
+
+
+{% for error in form.password.errors %}
+
+<p class="error">
+
+<i class="fa-solid fa-circle-exclamation"></i>
+
+{{error}}
+
+</p>
+
+
+{% endfor %}
+
+
+
+</div>
+
+
+
+
+<button class="register-btn">
+
+
+<i class="fa-solid fa-user-plus"></i>
+
+Register
+
+
+</button>
+
+
+
+<div class="login-link">
+
+Already have account?
+
+<a href="/login/">
+
+Login
+
+</a>
+
+</div>
+
+
+
+</form>
+
+
+</div>
+
+
+</section>
+
+
+
+
 {% include 'partials/contact.html' %}
+
 {% include 'partials/footer.html' %}
+
+
+
+
+<script>
+
+
+function toggleMenu(){
+
+document
+.getElementById("navLinks")
+.classList.toggle("active");
+
+}
+
+
+
+function showPassword(){
+
+let password =
+document.querySelector(
+"input[name='password']"
+);
+
+
+if(password.type==="password"){
+
+password.type="text";
+
+}else{
+
+password.type="password";
+
+}
+
+
+}
+
+
+</script>
+
+
+</body>
+
+
+</html>

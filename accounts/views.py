@@ -426,8 +426,8 @@ def home(request):
 
         profile, _ = Profile.objects.get_or_create(user=request.user)
 
-        if profile.avatar == "default.jpg":
-            return redirect("choose_avatar")
+        if not profile.avatar_selected:
+           return redirect("choose_avatar")
 
         # usijionyeshe mwenyewe kwenye list
         users = users.exclude(id=request.user.id)
@@ -506,28 +506,33 @@ def notifications(request):
 
 def register(request):
 
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
+    if request.method == "POST":
 
-        if form.is_valid():
+      form = RegisterForm(request.POST)
 
-            email = form.cleaned_data['email']
+      if form.is_valid():
 
-            if get_user_model().objects.filter(email=email).exists():
-                messages.error(request, "Email already exists")
-                return redirect('register')
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data["password"])
+        user.save()
 
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
+        messages.success(
+            request,
+            "Registration successful."
+        )
 
-            messages.success(request, "Account created successfully")
-            return redirect('login')
+        return redirect("login")
 
     else:
-        form = RegisterForm()
+      form = RegisterForm()
 
-    return render(request, 'register.html', {'form': form})
+    return render(
+    request,
+    "register.html",
+    {
+        "form": form
+    }
+)
 
 
 def login_view(request):
@@ -761,7 +766,7 @@ def search_view(request):
     })
 # =========================
 # 🎭 PROFILE
-# @login_required
+@login_required
 def choose_avatar(request):
 
     profile, created = Profile.objects.get_or_create(
@@ -801,7 +806,7 @@ def choose_avatar(request):
             )
 
             profile.avatar_choice = ""   # <-- muhimu
-
+            profile.avatar_selected=True
             profile.save()
 
             return redirect("home")
@@ -816,7 +821,7 @@ def choose_avatar(request):
             profile.avatar = None
 
             profile.avatar_choice = selected_avatar
-
+            profile.avatar_selected=True
             profile.save()
 
         return redirect("home")

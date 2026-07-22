@@ -327,28 +327,27 @@ class Profile(models.Model):
         on_delete=models.CASCADE
     )
 
-    # Avatar ya user aliyoupload
     avatar = models.ImageField(
         upload_to="avatars/",
         blank=True,
         null=True
     )
 
-    # Avatar ya static aliyochagua
     avatar_choice = models.CharField(
         max_length=100,
         blank=True,
         null=True
     )
 
+    # MPYA
+    avatar_selected = models.BooleanField(default=False)
+
     last_seen = models.DateTimeField(
         null=True,
         blank=True
     )
 
-    is_online = models.BooleanField(
-        default=False
-    )
+    is_online = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
