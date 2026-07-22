@@ -67,7 +67,7 @@ style="position:fixed;left:18px;bottom:18px;z-index:1200">
 	<button id="ai-open" title="Ask the assistant" aria-label="Open AI assistant" class="ai-open-btn">
 		<img class="ai-avatar" src="{% if user.is_authenticated and user.profile.avatar %}{% static 'image/screenshot.png' %}{% else %}{% static 'image/screenshot.png' %}{% endif %}" alt="Assistant">
 		<span class="ai-badge" id="ai-badge" aria-hidden="true" style="display:none">•</span>
-		<span class="ai-label" id="ai-label">ASSISTANCE</span>
+		<span class="ai-label" id="ai-label">Assistance</span>
 	</button>
 </div>
 	<!-- Chat widget (user-to-user / admin-to-user) -->
