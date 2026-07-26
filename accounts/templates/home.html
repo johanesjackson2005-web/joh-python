@@ -100,7 +100,7 @@ placeholder="Search software, tutorials, movies, games..." />
 {% if user.is_authenticated %}
 
 <div class="user-profile">
-
+<a href="{% url 'choose_avatar' %}">
 {% if request.user.profile.avatar %}
 
 <img src="{{ request.user.profile.avatar.url }}"
