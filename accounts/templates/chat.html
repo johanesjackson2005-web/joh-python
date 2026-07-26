@@ -136,11 +136,11 @@ class="user {% if selected_user == u %}active{% endif %}">
     </div>
 
     <span
-        class="dm-counter"
-        id="dm-counter-{{ u.username }}"
-        style="display:none;">
-        0
-    </span>
+class="dm-counter"
+id="dm-counter-{{ u.username|lower }}"
+style="display:none;">
+0
+</span>
 
 </div>
 

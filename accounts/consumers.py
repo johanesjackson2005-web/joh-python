@@ -236,23 +236,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else msg.guest_name
       ),
     "message": msg.message,
-     "avatar": (
-    msg.sender.profile.avatar.url
-    if (
-        msg.sender
-        and hasattr(msg.sender, "profile")
-        and msg.sender.profile.avatar
-    )
-    else (
-        settings.STATIC_URL + "profile/" + msg.sender.profile.avatar_choice
-        if (
-            msg.sender
-            and hasattr(msg.sender, "profile")
-            and msg.sender.profile.avatar_choice
-        )
-        else settings.STATIC_URL + "image/logo1.png"
-    )
-),
+    "avatar": await self.get_user_avatar(msg.sender),
      
      }))
          
@@ -327,7 +311,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
         return reversed(list(messages))
+    @database_sync_to_async
+    def get_user_avatar(self, user):
 
+        default = settings.STATIC_URL + "image/logo1.png"
+
+
+        if not user:
+           return default
+
+
+        try:
+
+            profile = user.profile
+
+
+            if profile.avatar:
+
+             return profile.avatar.url
+
+
+            elif profile.avatar_choice:
+
+             return (
+                settings.STATIC_URL
+                + "profile/"
+                + profile.avatar_choice
+            )
+
+
+        except Exception as e:
+
+         print("PROFILE ERROR:", e)
+
+
+        return default
    
     # =====================================
     # RECEIVE MESSAGE
@@ -509,22 +527,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 # PROFILE IMAGE
-        avatar = "/static/image/logo1.png"
+        avatar = settings.STATIC_URL + "image/logo1.png"
 
         if sender_obj:
-         try:
-               if sender_obj.profile.avatar:
-                 avatar = sender_obj.profile.avatar.url
 
-               elif sender_obj.profile.avatar_choice:
-                  avatar = (
+          try:
+
+               profile = await database_sync_to_async(
+                lambda: sender_obj.profile
+                )()
+
+
+               if profile.avatar:
+
+                  avatar = profile.avatar.url
+
+
+               elif profile.avatar_choice:
+
+                   avatar = (
                 settings.STATIC_URL +
                 "profile/" +
-                sender_obj.profile.avatar_choice
+                profile.avatar_choice
             )
 
-         except Exception:
-              pass
+
+          except Exception as e:
+
+            print("AVATAR ERROR:", e)
         payload = {
 
     "type": "message",
@@ -556,7 +586,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
               User.objects.get
                )(username=parts[2])
 
-              receiver = user2 if sender_obj == user1 else user1
+              receiver = user2 if sender_obj.username == user1.username else user1
 
               await self.channel_layer.group_send(
 
@@ -612,6 +642,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "sender_id": event["sender_id"]
         })
     )
+    
     async def chat_file(self,event):
 
       await self.send(
@@ -625,4 +656,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "name":event["name"]
 
         })
-    )     
+    )    

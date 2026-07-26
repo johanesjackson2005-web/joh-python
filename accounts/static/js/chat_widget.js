@@ -265,13 +265,34 @@ socket = new WebSocket(wsUrl);
    socket.onmessage = function(e){
 
 const data = JSON.parse(e.data);
+// DM NOTIFICATION
+
 if(data.type === "dm_notification"){
 
 
-    showDMNotification(
-        data.from,
-        data.sender_id
+    let username = data.from.toLowerCase();
+
+
+    let counter = document.getElementById(
+        "dm-counter-" + username
     );
+
+
+    if(counter){
+
+
+        let number = parseInt(
+            counter.innerText || 0
+        );
+
+
+        counter.innerText = number + 1;
+
+
+        counter.style.display = "inline-flex";
+
+
+    }
 
 
     return;
