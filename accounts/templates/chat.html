@@ -276,8 +276,6 @@ value="{{ request.session.previous_page }}">
 {% endif %}
 
         </div>
-<div class="messages" id="page-chat-messages">
-
 {% for msg in messages %}
 
 <div class="message {% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
@@ -311,13 +309,10 @@ value="{{ request.session.previous_page }}">
 {% empty %}
 
 <div class="empty-chat">
-
 Start your conversation.
-
 </div>
 
 {% endfor %}
-
 </div>
 <div class="chat-input">
     <div class="plus-container">
