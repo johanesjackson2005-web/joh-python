@@ -79,9 +79,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Room name from URL
         self.room_name = self.scope['url_route']['kwargs'].get(
-            'room_name',
-            'global'
-        )
+              'room_name',
+              'global'
+             )
+
+
+# FIX PRIVATE ROOM ORDER
+        if self.room_name.startswith("pm_"):
+
+           parts = self.room_name.split("_")
+
+           if len(parts) == 3:
+
+              users = sorted([
+              parts[1].lower(),
+             parts[2].lower()
+            ])
+
+        self.room_name = f"pm_{users[0]}_{users[1]}"
 
         self.group_name = f'chat_{self.room_name}'
         print(

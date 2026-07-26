@@ -2588,3 +2588,22 @@ font-size:15px;
 
     padding:0 6px;
 }
+.dm-badge{
+
+background:red;
+color:white;
+
+font-size:12px;
+
+min-width:20px;
+height:20px;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+margin-left:auto;
+
+}
