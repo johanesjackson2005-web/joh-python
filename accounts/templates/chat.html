@@ -126,16 +126,20 @@ data-username="{{ u.username|lower }}">
 <img src="{% static 'image/logo1.png' %}">
 
 {% endif %}
-            
 
-            <div class="user-info" data-user-id="{{u.id}}">
+<div class="user-info" data-user-id="{{u.id}}">
 
-                <div class="user-name-row">
+    <div class="user-name-row">
 
-    <div class="user-name">
-        {{ u.username }}
+        <div class="user-name">
+            {{ u.username }}
+        </div>
+
+        <span class="dm-counter" style="display:none;">
+            0
+        </span>
+
     </div>
-<span class="dm-counter" style="display:none">0</span>
 
 </div>
 

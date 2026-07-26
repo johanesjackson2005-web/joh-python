@@ -289,19 +289,35 @@ console.log("DM Notification", data);
     if(room===activeRoom){
         return;
     }
-const userBox = document.querySelector(
-    '.user[data-username="' + data.from.toLowerCase() + '"]'
+const userBox = [...document.querySelectorAll(".user-info")]
+.find(el => 
+    el.querySelector(".user-name")?.innerText.trim().toLowerCase()
+    === data.from.toLowerCase()
 );
-
 if(userBox){
 
-    const counter = userBox.querySelector(".dm-counter");
+    let counter = userBox.querySelector(".dm-counter");
 
-    let count = parseInt(counter.textContent || "0");
 
-    counter.textContent = count + 1;
+if(!counter){
 
-    counter.style.display = "inline-flex";
+    counter = document.createElement("span");
+
+    counter.className = "dm-counter";
+
+    counter.innerText = "0";
+
+    userBox.appendChild(counter);
+
+}
+
+
+let count = parseInt(counter.innerText || "0");
+
+
+counter.innerText = count + 1;
+
+counter.style.display = "inline-flex";
 }
    
     playBeep();
