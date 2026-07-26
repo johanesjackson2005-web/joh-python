@@ -265,38 +265,46 @@ socket = new WebSocket(wsUrl);
    socket.onmessage = function(e){
 
 const data = JSON.parse(e.data);
+
+console.log("WS RECEIVED:", data);
 // DM NOTIFICATION
 
-if(data.type === "dm_notification"){
+if(data.type==="dm_notification"){
+console.log("DM Notification", data);
+    const activeRoom = computeRoomName();
 
+    const sender = data.from.toLowerCase();
 
-    let username = data.from.toLowerCase();
+    const current = username.toLowerCase();
 
+    const expectedRoom = [
+        sender,
+        current
+    ].sort();
 
-    let counter = document.getElementById(
-        "dm-counter-" + username
-    );
+    const room = "pm_"+expectedRoom[0]+"_"+expectedRoom[1];
 
-
-    if(counter){
-
-
-        let number = parseInt(
-            counter.innerText || 0
-        );
-
-
-        counter.innerText = number + 1;
-
-
-        counter.style.display = "inline-flex";
-
-
+    if(room===activeRoom){
+        return;
     }
+const userBox = document.querySelector(
+    '.user[data-username="' + data.from.toLowerCase() + '"]'
+);
 
+if(userBox){
+
+    const counter = userBox.querySelector(".dm-counter");
+
+    let count = parseInt(counter.textContent || "0");
+
+    counter.textContent = count + 1;
+
+    counter.style.display = "inline-flex";
+}
+   
+    playBeep();
 
     return;
-
 }
 if (data.type === "delete") {
 
@@ -1011,6 +1019,22 @@ if(this.value === "public"){
 if(targetEl){
 
     targetEl.addEventListener("change", function(){
+        const activeUser = document.querySelector(
+    '.user[data-username="' + this.value.toLowerCase() + '"]'
+);
+
+if(activeUser){
+
+    const badge = activeUser.querySelector(".dm-counter");
+
+    if(badge){
+
+        badge.textContent = "0";
+        badge.style.display = "none";
+
+    }
+
+}
 
         connect();
 

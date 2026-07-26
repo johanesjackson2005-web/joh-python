@@ -111,7 +111,8 @@
 
         {% for u in users %}
 <a href="{% url 'chat_home' %}?room=pm_{{ request.user.username|lower }}_{{ u.username|lower }}"
-class="user {% if selected_user == u %}active{% endif %}">
+class="user {% if selected_user == u %}active{% endif %}"
+data-username="{{ u.username|lower }}">
         {% if u.profile.avatar %}
 
 <img src="{{ u.profile.avatar.url }}">
@@ -134,13 +135,7 @@ class="user {% if selected_user == u %}active{% endif %}">
     <div class="user-name">
         {{ u.username }}
     </div>
-
-    <span
-class="dm-counter"
-id="dm-counter-{{ u.username|lower }}"
-style="display:none;">
-0
-</span>
+<span class="dm-counter" style="display:none">0</span>
 
 </div>
 
