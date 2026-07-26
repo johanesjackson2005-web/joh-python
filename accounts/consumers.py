@@ -7,7 +7,7 @@ from django.utils import timezone
 from .models import ChatMessage
 import redis
 from django.conf import settings
-
+from django.core.cache import cache
 User = get_user_model()
 redis_client = redis.from_url(
     settings.REDIS_URL,
@@ -606,20 +606,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
               print("USER1:", user1.username)
               print("USER2:", user2.username)
+              key = f"unread_{receiver.id}_{sender_obj.id}"
+
+              count = await database_sync_to_async(
+                  lambda: cache.incr(key) if cache.get(key) else cache.set(key,1,86400)
+               )()
+
+
               await self.channel_layer.group_send(
 
-               f"user_{receiver.id}",
+                f"user_{receiver.id}",
 
-              {
-                "type": "dm_notification",
+      {
+        "type": "dm_notification",
 
-                "from": sender_obj.username,
+         "from": sender_obj.username,
 
-                "sender_id": sender_obj.id
+             "sender_id": sender_obj.id,
 
-            }
+                 "count": cache.get(key)
 
-          )
+                   }
+
+                 )
 
            except Exception as e:
 
@@ -651,18 +660,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message_id": event["message_id"]
         })
  )   
-    async def dm_notification(self, event):
-        
-      await self.send(
-        text_data=json.dumps({
-            "type": "dm_notification",
-            "from": event["from"],
-            "sender_id": event["sender_id"]
-            
-        })
     
-    )
-      print("DM EVENT:", event)
     async def chat_file(self,event):
 
       await self.send(
@@ -674,6 +672,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "url":event["url"],
 
             "name":event["name"]
+
+        })
+    )
+    async def dm_notification(self,event):
+
+        await self.send(
+                text_data=json.dumps({
+
+            "type":"dm_notification",
+
+            "from":event["from"],
+
+            "sender_id":event["sender_id"],
+
+            "count":event["count"]
 
         })
     )    

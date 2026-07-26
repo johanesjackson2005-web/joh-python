@@ -135,9 +135,12 @@ data-username="{{ u.username|lower }}">
             {{ u.username }}
         </div>
 
-        <span class="dm-counter" style="display:none;">
-            0
-        </span>
+        <span 
+class="dm-counter"
+data-user="{{u.username|lower}}"
+style="display:none;">
+0
+</span>
 
     </div>
 

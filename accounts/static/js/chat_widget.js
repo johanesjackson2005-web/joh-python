@@ -146,47 +146,36 @@ let wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
       setTimeout(function(){ o.stop(); ctx.close(); }, 120);
     }catch(e){}
   }
-function showDMNotification(username, sender_id){
+function showDMNotification(username){
 
-
-    const userBox = document.querySelector(
-        `[data-user-id="${sender_id}"]`
+    const userBox = [...document.querySelectorAll(".user-info")]
+    .find(el =>
+        el.querySelector(".user-name")
+        ?.innerText.trim().toLowerCase()
+        === username.toLowerCase()
     );
 
 
     if(userBox){
 
+        let badge = userBox.querySelector(".dm-counter");
 
-        let badge = userBox.querySelector(
-            ".dm-counter"
+
+        let count = parseInt(
+            badge.innerText || "0"
         );
 
 
-        if(!badge){
-
-            badge = document.createElement("span");
-
-            badge.className="dm-counter";
-
-            badge.innerText="1";
-
-            userBox.appendChild(badge);
+        count++;
 
 
-        }else{
-
-
-            badge.innerText =
-            parseInt(badge.innerText)+1;
-
-
-        }
+        badge.innerText = count;
+        badge.style.display="inline-flex";
 
     }
 
 
     playBeep();
-
 
 }
 function updateUserStatus(username, status){
