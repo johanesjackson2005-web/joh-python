@@ -424,26 +424,23 @@ def home(request):
 
     if request.user.is_authenticated:
 
-        profile, _ = Profile.objects.get_or_create(user=request.user)
+        profile, _ = Profile.objects.get_or_create(
+            user=request.user
+)
 
         if not profile.avatar_selected:
            return redirect("choose_avatar")
 
-        # usijionyeshe mwenyewe kwenye list
-        users = users.exclude(id=request.user.id)
 
-    else:
+        return render(request,"home.html",{
 
-        users = User.objects.none()
+    "categories":categories,
+    "tutorials":tutorials,
+    "livestreams":livestreams,
+    "users":users,
+    "profile":profile,
 
-    return render(request, "home.html", {
-
-        "categories": categories,
-        "tutorials": tutorials,
-        "livestreams": livestreams,
-        "users": users,
-
-    })
+})
 
 
 def about(request):
@@ -780,52 +777,59 @@ def choose_avatar(request):
 
     if request.method == "POST":
 
-        custom_avatar = request.FILES.get("custom_avatar")
+       custom_avatar = request.FILES.get("custom_avatar")
 
-        if custom_avatar:
 
-            img = Image.open(custom_avatar)
+       if custom_avatar:
 
-            img = img.convert("RGB")
+        img = Image.open(custom_avatar)
 
-            img.thumbnail((300, 300))
+        img = img.convert("RGB")
 
-            buffer = BytesIO()
+        img.thumbnail((300,300))
 
-            img.save(
-                buffer,
-                format="JPEG",
-                quality=85
-            )
 
-            # User ameupload picha yake
-            profile.avatar.save(
-                custom_avatar.name,
-                ContentFile(buffer.getvalue()),
-                save=False
-            )
+        buffer = BytesIO()
 
-            profile.avatar_choice = ""   # <-- muhimu
-            profile.avatar_selected=True
-            profile.save()
+        img.save(
+            buffer,
+            format="JPEG",
+            quality=85
+        )
 
-            return redirect("home")
 
-        selected_avatar = request.POST.get("avatar")
+        profile.avatar_choice = ""
 
-        if selected_avatar:
+        profile.avatar.save(
+            f"{request.user.username}_avatar.jpg",
+            ContentFile(buffer.getvalue()),
+            save=True
+        )
 
-            # User amechagua avatar ya mfumo
-            profile.avatar.delete(save=False)
 
-            profile.avatar = None
+        profile.avatar_selected = True
+        profile.save()
 
-            profile.avatar_choice = selected_avatar
-            profile.avatar_selected=True
-            profile.save()
 
         return redirect("home")
 
+
+
+    selected_avatar = request.POST.get("avatar")
+
+
+    if selected_avatar:
+
+        profile.avatar = None
+
+        profile.avatar_choice = selected_avatar
+
+        profile.avatar_selected = True
+
+        profile.save()
+
+
+        return redirect("home")
     return render(
         request,
         "choose_avatar.html",
