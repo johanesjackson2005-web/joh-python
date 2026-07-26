@@ -129,11 +129,20 @@ class="user {% if selected_user == u %}active{% endif %}">
 
             <div class="user-info">
 
-                <div class="user-name">
+                <div class="user-name-row">
 
-                    {{ u.username }}
+    <div class="user-name">
+        {{ u.username }}
+    </div>
 
-                </div>
+    <span
+        class="dm-counter"
+        id="dm-counter-{{ u.username }}"
+        style="display:none;">
+        0
+    </span>
+
+</div>
 
                 <div class="last-message">
 

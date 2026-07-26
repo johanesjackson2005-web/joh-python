@@ -2559,3 +2559,32 @@ font-size:15px;
     object-fit:cover;
 
 }
+.user-name-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.dm-counter{
+
+    min-width:20px;
+    height:20px;
+
+    border-radius:50%;
+
+    background:#ff2b2b;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    padding:0 6px;
+}

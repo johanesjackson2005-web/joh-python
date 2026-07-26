@@ -84,6 +84,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         self.group_name = f'chat_{self.room_name}'
+        print(
+    "CONNECTED USER:",
+    self.scope["user"].username,
+    "ROOM:",
+    self.room_name
+)
 
 
         # ===============================
@@ -146,16 +152,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 else:
 
                     username = getattr(
-                        user,
-                        'username',
-                        ''
-                    )
+                    user,
+                    "username",
+                    ""
+                    ).lower()
 
-                    allowed = (
-                        username == a or
-                        username == b
-                    )
+                    a = a.lower()
+                    b = b.lower()
 
+                    allowed = username in (a, b)
 
         if not allowed:
 
@@ -192,6 +197,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "status": "online"
            }
               )
+           if self.scope["user"].is_authenticated:
+
+             await self.channel_layer.group_add(
+             f"user_{self.scope['user'].id}",
+              self.channel_name
+    )
 
            user_id = self.scope['user'].id
 
@@ -246,9 +257,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
              "online_users",
             self.channel_name
         )
-
-
+        
         user = self.scope.get("user")
+
+        if user and user.is_authenticated:
+
+            await self.channel_layer.group_discard(
+        f"user_{user.id}",
+        self.channel_name
+          )
 
 
         if user and user.is_authenticated:
@@ -507,7 +524,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
      }
 
+       # ==========================
+# DM Notification
+# ==========================
+        if self.room_name.startswith("pm_") and sender_obj:
 
+           try:
+
+              parts = self.room_name.split("_", 2)
+
+              user1 = await database_sync_to_async(
+              User.objects.get
+               )(username=parts[1])
+
+              user2 = await database_sync_to_async(
+              User.objects.get
+               )(username=parts[2])
+
+              receiver = user2 if sender_obj == user1 else user1
+
+              await self.channel_layer.group_send(
+
+               f"user_{receiver.id}",
+
+              {
+                "type": "dm_notification",
+
+                "from": sender_obj.username,
+
+                "sender_id": sender_obj.id
+
+            }
+
+          )
+
+           except Exception as e:
+
+              print("DM Notification Error:", e)
 
         await self.channel_layer.group_send(
 
@@ -535,6 +588,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message_id": event["message_id"]
         })
  )   
+    async def dm_notification(self, event):
+
+      await self.send(
+        text_data=json.dumps({
+            "type": "dm_notification",
+            "from": event["from"],
+            "sender_id": event["sender_id"]
+        })
+    )
     async def chat_file(self,event):
 
       await self.send(
