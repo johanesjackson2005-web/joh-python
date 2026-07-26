@@ -146,6 +146,49 @@ let wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
       setTimeout(function(){ o.stop(); ctx.close(); }, 120);
     }catch(e){}
   }
+function showDMNotification(username, sender_id){
+
+
+    const userBox = document.querySelector(
+        `[data-user-id="${sender_id}"]`
+    );
+
+
+    if(userBox){
+
+
+        let badge = userBox.querySelector(
+            ".dm-count"
+        );
+
+
+        if(!badge){
+
+            badge = document.createElement("span");
+
+            badge.className="dm-count";
+
+            badge.innerText="1";
+
+            userBox.appendChild(badge);
+
+
+        }else{
+
+
+            badge.innerText =
+            parseInt(badge.innerText)+1;
+
+
+        }
+
+    }
+
+
+    playBeep();
+
+
+}
 function updateUserStatus(username, status){
 
     const users = document.querySelectorAll(".user");
@@ -222,6 +265,18 @@ socket = new WebSocket(wsUrl);
    socket.onmessage = function(e){
 
 const data = JSON.parse(e.data);
+if(data.type === "dm_notification"){
+
+
+    showDMNotification(
+        data.from,
+        data.sender_id
+    );
+
+
+    return;
+
+}
 if (data.type === "delete") {
 
     let messageBox = document.querySelector(
