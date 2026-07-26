@@ -158,7 +158,7 @@ function showDMNotification(username, sender_id){
 
 
         let badge = userBox.querySelector(
-            ".dm-count"
+            ".dm-counter"
         );
 
 
@@ -166,7 +166,7 @@ function showDMNotification(username, sender_id){
 
             badge = document.createElement("span");
 
-            badge.className="dm-count";
+            badge.className="dm-counter";
 
             badge.innerText="1";
 
@@ -266,7 +266,9 @@ socket = new WebSocket(wsUrl);
 
 const data = JSON.parse(e.data);
 
-console.log("WS RECEIVED:", data);
+console.log(data.type);
+console.log(data.from);
+console.log(data.sender_id);
 // DM NOTIFICATION
 
 if(data.type==="dm_notification"){

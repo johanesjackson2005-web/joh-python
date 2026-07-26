@@ -218,6 +218,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
              f"user_{self.scope['user'].id}",
               self.channel_name
     )
+           print("JOINED:", f"user_{self.scope['user'].id}")
 
            user_id = self.scope['user'].id
 
@@ -572,6 +573,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
        # ==========================
 # DM Notification
 # ==========================
+        print("===== DM START =====")
+        print("ROOM:", self.room_name)
+        print("SENDER:", sender_obj.username if sender_obj else None)
         if self.room_name.startswith("pm_") and sender_obj:
 
            try:
@@ -587,7 +591,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
                )(username=parts[2])
 
               receiver = user2 if sender_obj.username == user1.username else user1
+              print("Trying notification...")
 
+              parts = self.room_name.split("_", 2)
+              print(parts)
+
+              user1 = await database_sync_to_async(User.objects.get)(
+              username=parts[1]
+              )
+
+              user2 = await database_sync_to_async(User.objects.get)(
+              username=parts[2]
+               )
+
+              print("USER1:", user1.username)
+              print("USER2:", user2.username)
               await self.channel_layer.group_send(
 
                f"user_{receiver.id}",
@@ -634,15 +652,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         })
  )   
     async def dm_notification(self, event):
-
+        
       await self.send(
         text_data=json.dumps({
             "type": "dm_notification",
             "from": event["from"],
             "sender_id": event["sender_id"]
+            
         })
-    )
     
+    )
+      print("DM EVENT:", event)
     async def chat_file(self,event):
 
       await self.send(
