@@ -211,13 +211,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
       ),
     "message": msg.message,
      "avatar": (
-    "/static/profile/" + str(msg.sender.profile.avatar)
-    if msg.sender 
-    and hasattr(msg.sender, "profile")
-    and msg.sender.profile.avatar
-    else "/static/image/logo1.png"
+    msg.sender.profile.avatar.url
+    if (
+        msg.sender
+        and hasattr(msg.sender, "profile")
+        and msg.sender.profile.avatar
+    )
+    else (
+        settings.STATIC_URL + "profile/" + msg.sender.profile.avatar_choice
+        if (
+            msg.sender
+            and hasattr(msg.sender, "profile")
+            and msg.sender.profile.avatar_choice
+        )
+        else settings.STATIC_URL + "image/logo1.png"
+    )
 ),
-     
      
      }))
          
@@ -472,10 +481,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if sender_obj:
          try:
-              if sender_obj.profile.avatar:
-                 avatar = "/static/profile/" + str(sender_obj.profile.avatar)
+               if sender_obj.profile.avatar:
+                 avatar = sender_obj.profile.avatar.url
+
+               elif sender_obj.profile.avatar_choice:
+                  avatar = (
+                settings.STATIC_URL +
+                "profile/" +
+                sender_obj.profile.avatar_choice
+            )
+
          except Exception:
-             pass
+              pass
         payload = {
 
     "type": "message",

@@ -276,44 +276,47 @@ value="{{ request.session.previous_page }}">
 {% endif %}
 
         </div>
+
+     <div 
+class="messages"
+id="page-chat-messages"
+style="
+--profile:url(
+'{% if request.user.profile.avatar %}
+{{ request.user.profile.avatar.url }}
+
+{% elif request.user.profile.avatar_choice %}
+{% static 'profile/' %}{{ request.user.profile.avatar_choice }}
+
+{% else %}
+{% static 'image/logo1.png' %}
+
+{% endif %}'
+)
+">
 {% for msg in messages %}
 
 <div class="message {% if msg.sender == request.user %}outgoing{% else %}incoming{% endif %}">
 
     <div class="message-avatar">
-
         {% if msg.sender.profile.avatar %}
-
-            <img src="{{ msg.sender.profile.avatar.url }}" alt="avatar">
-
+            <img src="{{ msg.sender.profile.avatar.url }}">
         {% elif msg.sender.profile.avatar_choice %}
-
-            <img src="{% static 'profile/' %}{{ msg.sender.profile.avatar_choice }}" alt="avatar">
-
+            <img src="{% static 'profile/' %}{{ msg.sender.profile.avatar_choice }}">
         {% else %}
-
-            <img src="{% static 'image/logo1.png' %}" alt="avatar">
-
+            <img src="{% static 'image/logo1.png' %}">
         {% endif %}
-
     </div>
 
     <div class="bubble">
-
         {{ msg.message }}
-
     </div>
 
-</div>
-
-{% empty %}
-
-<div class="empty-chat">
-Start your conversation.
 </div>
 
 {% endfor %}
 </div>
+
 <div class="chat-input">
     <div class="plus-container">
 
