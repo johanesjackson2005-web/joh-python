@@ -421,7 +421,7 @@ def home(request):
     livestreams = LiveStream.objects.order_by("-created_at")[:4]
 
     users = User.objects.filter(is_active=True)
-
+    profile=None
     if request.user.is_authenticated:
 
         profile, _ = Profile.objects.get_or_create(
@@ -432,7 +432,7 @@ def home(request):
            return redirect("choose_avatar")
 
 
-        return render(request,"home.html",{
+    return render(request,"home.html",{
 
     "categories":categories,
     "tutorials":tutorials,

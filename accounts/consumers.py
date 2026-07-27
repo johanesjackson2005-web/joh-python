@@ -508,24 +508,101 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         try:
 
-          saved_message = await database_sync_to_async(
-           ChatMessage.objects.create
-    )(
-          sender=sender_obj,
-          guest_name=None if sender_obj else username,
-          room=self.room_name,
-          message=message,
-          
+             saved_message = await database_sync_to_async(
+               ChatMessage.objects.create
+            )(
+                 sender=sender_obj,
+                guest_name=None if sender_obj else username,
+               room=self.room_name,
+                message=message,
     )
 
-          print("MESSAGE SAVED:", saved_message.id)
+             print("MESSAGE SAVED:", saved_message.id)
+
 
         except Exception as e:
 
-           print("SAVE ERROR:", e)
-           return
+            print("SAVE ERROR:", e)
+            return
+          # ==========================
+# GLOBAL UNREAD COUNTER
+# ==========================
+# ==========================
+# UNREAD COUNTER
+# ==========================
+
+        if sender_obj:
 
 
+           receivers = []
+
+
+    # PRIVATE CHAT
+           if self.room_name.startswith("pm_"):
+
+
+             receiver = await self.get_private_receiver(
+                self.room_name,
+                sender_obj
+             )
+
+
+             if receiver:
+
+                receivers.append(receiver)
+
+
+
+    # PUBLIC CHAT
+           else:
+
+
+            receivers = await self.get_public_users(
+            sender_obj
+        )
+
+
+
+           for receiver_id in receivers:
+
+
+               key = f"unread_{receiver_id}_{sender_obj.id}"
+
+
+               old = cache.get(key)
+
+
+               if old:
+
+                count = cache.incr(key)
+
+               else:
+
+                 cache.set(
+                   key,
+                   1,
+                   86400
+            )
+
+                 count = 1
+
+
+
+               await self.channel_layer.group_send(
+
+            f"user_{receiver_id}",
+
+            {
+                "type":"dm_notification",
+
+                "from":sender_obj.username,
+
+                "sender_id":sender_obj.id,
+
+                "count":count
+            }
+        )
+                
 
 # PROFILE IMAGE
         avatar = settings.STATIC_URL + "image/logo1.png"
@@ -677,16 +754,66 @@ class ChatConsumer(AsyncWebsocketConsumer):
     )
     async def dm_notification(self,event):
 
+        print("NOTIFICATION RECEIVED:", event)
+
         await self.send(
-                text_data=json.dumps({
-
+        text_data=json.dumps({
             "type":"dm_notification",
-
             "from":event["from"],
-
             "sender_id":event["sender_id"],
-
             "count":event["count"]
-
         })
-    )    
+    )
+    @database_sync_to_async
+    def get_all_users_except_sender(self, sender):
+
+     return list(
+        User.objects
+        .exclude(id=sender.id)
+        .values_list(
+            "id",
+            flat=True
+        )
+    ) 
+    @database_sync_to_async
+    def get_public_users(self, sender):
+
+      return list(
+        User.objects
+        .exclude(id=sender.id)
+        .values_list(
+            "id",
+            flat=True
+        )
+    )
+    @database_sync_to_async
+    def get_private_receiver(self, room, sender):
+
+        parts = room.split("_")
+
+        if len(parts) != 3:
+         return None
+
+
+        user1 = parts[1]
+        user2 = parts[2]
+
+
+        if sender.username.lower() == user1.lower():
+
+             username = user2
+
+        else:
+
+             username = user1
+        try:
+
+             user = User.objects.get(
+               username=username
+             )
+
+             return user.id
+
+        except User.DoesNotExist:
+
+           return None
