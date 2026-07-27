@@ -191,13 +191,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 # SET USER ONLINE
         await self.set_user_online()
-        user = self.scope.get("user")
-
-        if user and user.is_authenticated:
-           redis_client.set(
-        f"active_room_{user.id}",
-        self.room_name
-    )
 
         print(
     "CHAT CONNECTED:",
@@ -279,13 +272,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             # update database
            await self.set_user_offline()
-           redis_client.delete(
-           f"active_room_{user.id}"
-            )
-           print(
-    "ACTIVE ROOM REMOVED:",
-    user.username
-)
+
 
         # waambie wengine user ameondoka
            await self.channel_layer.group_send(
@@ -521,121 +508,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         try:
 
-             saved_message = await database_sync_to_async(
-               ChatMessage.objects.create
-            )(
-                 sender=sender_obj,
-                guest_name=None if sender_obj else username,
-               room=self.room_name,
-                message=message,
+          saved_message = await database_sync_to_async(
+           ChatMessage.objects.create
+    )(
+          sender=sender_obj,
+          guest_name=None if sender_obj else username,
+          room=self.room_name,
+          message=message,
+          
     )
 
-             print("MESSAGE SAVED:", saved_message.id)
-
+          print("MESSAGE SAVED:", saved_message.id)
 
         except Exception as e:
 
-            print("SAVE ERROR:", e)
-            return
-          # ==========================
-# GLOBAL UNREAD COUNTER
-# ==========================
-# ==========================
-# UNREAD COUNTER
-# ==========================
-
-        if sender_obj:
+           print("SAVE ERROR:", e)
+           return
 
 
-           receivers = []
-
-
-    # PRIVATE CHAT
-           if self.room_name.startswith("pm_"):
-
-
-             receiver = await self.get_private_receiver(
-                self.room_name,
-                sender_obj
-             )
-
-
-             if receiver:
-
-                receivers.append(receiver)
-
-
-
-    # PUBLIC CHAT
-           else:
-
-
-            receivers = await self.get_public_users(
-            sender_obj
-        )
-
-
-
-           for receiver_id in receivers:
-
-              active_room = self.get_active_room(receiver_id)
-
-              print(
-                     "CHECK UNREAD:",
-                      "receiver:",
-                      receiver_id,
-                              "active:",
-                            active_room,
-                           "current:",
-                         self.room_name
-                         )
-
-
-    # kama receiver yupo kwenye hiyo chat
-    # hakuna unread
-              if active_room == self.room_name:
-
-                continue
-
-
-
-              key = f"unread_{receiver_id}_{sender_obj.id}"
-
-
-              old = cache.get(key)
-
-
-              if old:
-
-                  count = cache.incr(key)
-
-              else:
-
-                  cache.set(
-                       key,
-                      1,
-                         86400
-                           )
-
-                  count = 1
-
-
-
-              await self.channel_layer.group_send(
-
-            f"user_{receiver_id}",
-
-            {
-                "type":"dm_notification",
-
-                "from":sender_obj.username,
-
-                "sender_id":sender_obj.id,
-
-                "count":count
-            }
-        )
-                
 
 # PROFILE IMAGE
         avatar = settings.STATIC_URL + "image/logo1.png"
@@ -683,7 +573,67 @@ class ChatConsumer(AsyncWebsocketConsumer):
        # ==========================
 # DM Notification
 # ==========================
-       
+        print("===== DM START =====")
+        print("ROOM:", self.room_name)
+        print("SENDER:", sender_obj.username if sender_obj else None)
+        if self.room_name.startswith("pm_") and sender_obj:
+
+           try:
+
+              parts = self.room_name.split("_", 2)
+
+              user1 = await database_sync_to_async(
+              User.objects.get
+               )(username=parts[1])
+
+              user2 = await database_sync_to_async(
+              User.objects.get
+               )(username=parts[2])
+
+              receiver = user2 if sender_obj.username == user1.username else user1
+              print("Trying notification...")
+
+              parts = self.room_name.split("_", 2)
+              print(parts)
+
+              user1 = await database_sync_to_async(User.objects.get)(
+              username=parts[1]
+              )
+
+              user2 = await database_sync_to_async(User.objects.get)(
+              username=parts[2]
+               )
+
+              print("USER1:", user1.username)
+              print("USER2:", user2.username)
+              key = f"unread_{receiver.id}_{sender_obj.id}"
+
+              count = await database_sync_to_async(
+                  lambda: cache.incr(key) if cache.get(key) else cache.set(key,1,86400)
+               )()
+
+
+              await self.channel_layer.group_send(
+
+                f"user_{receiver.id}",
+
+      {
+        "type": "dm_notification",
+
+         "from": sender_obj.username,
+
+             "sender_id": sender_obj.id,
+
+                 "count": cache.get(key)
+
+                   }
+
+                 )
+
+           except Exception as e:
+
+              print("DM Notification Error:", e)
+
         await self.channel_layer.group_send(
 
            self.group_name,
@@ -727,72 +677,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
     )
     async def dm_notification(self,event):
 
-        print("NOTIFICATION RECEIVED:", event)
-
         await self.send(
-        text_data=json.dumps({
+                text_data=json.dumps({
+
             "type":"dm_notification",
+
             "from":event["from"],
+
             "sender_id":event["sender_id"],
+
             "count":event["count"]
+
         })
-    )
-    @database_sync_to_async
-    def get_all_users_except_sender(self, sender):
-
-     return list(
-        User.objects
-        .exclude(id=sender.id)
-        .values_list(
-            "id",
-            flat=True
-        )
-    ) 
-    @database_sync_to_async
-    def get_public_users(self, sender):
-
-      return list(
-        User.objects
-        .exclude(id=sender.id)
-        .values_list(
-            "id",
-            flat=True
-        )
-    )
-    def get_active_room(self, user_id):
-    
-            return redis_client.get(
-            f"active_room_{user_id}"
-        )
-    @database_sync_to_async
-    def get_private_receiver(self, room, sender):
-
-        parts = room.split("_")
-
-        if len(parts) != 3:
-         return None
-
-
-        user1 = parts[1]
-        user2 = parts[2]
-
-
-        if sender.username.lower() == user1.lower():
-
-             username = user2
-
-        else:
-
-             username = user1
-        try:
-
-             user = User.objects.get(
-               username=username
-             )
-
-             return user.id
-
-        except User.DoesNotExist:
-
-           return None
-    
+    )    
