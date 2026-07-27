@@ -5,76 +5,74 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import ChatMessage
-import redis
 from django.conf import settings
 from django.core.cache import cache
+from asgiref.sync import sync_to_async
 User = get_user_model()
-redis_client = redis.from_url(
-    settings.REDIS_URL,
-    decode_responses=True
-)
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    
     @database_sync_to_async
     def set_user_online(self):
 
-       user = self.scope["user"]
+        user = self.scope["user"]
 
-       if user.is_authenticated:
+        if user.is_authenticated:
 
-        key = f"user_online_{user.id}"
+          key = f"user_online_{user.id}"
 
+          count = cache.get(key, 0)
 
-        count = redis_client.incr(key)
+          count += 1
 
-
-        # expire baada ya saa moja kama connection imekufa vibaya
-        redis_client.expire(
+          cache.set(
             key,
+            count,
             3600
-        )
+            )
 
-
-        # connection ya kwanza ndiyo inamfanya online
-        if count == 1:
+          if count == 1:
 
             profile = user.profile
-
             profile.is_online = True
-
             profile.save()
-
+            
     @database_sync_to_async
     def set_user_offline(self):
 
       user = self.scope["user"]
 
-
       if user.is_authenticated:
-
 
         key = f"user_online_{user.id}"
 
+        count = cache.get(key,0)
 
-        count = redis_client.decr(key)
+        count -= 1
 
 
-
-        # hakuna connection tena
         if count <= 0:
 
-
-            redis_client.delete(key)
-
+            cache.delete(key)
 
             profile = user.profile
-
 
             profile.is_online = False
 
             profile.last_seen = timezone.now()
 
             profile.save()
+
+        else:
+
+            cache.set(
+                key,
+                count,
+                3600
+            )      
+
+    
     async def connect(self):
 
         # Room name from URL
@@ -96,7 +94,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
              parts[2].lower()
             ])
 
-        self.room_name = f"pm_{users[0]}_{users[1]}"
+              self.room_name = f"pm_{users[0]}_{users[1]}"
 
         self.group_name = f'chat_{self.room_name}'
         print(
@@ -347,7 +345,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
         return default
-   
+    @sync_to_async
+    def update_unread_count(self, receiver_id, sender_id):
+
+        key = f"unread_{receiver_id}_{sender_id}"
+
+        try:
+
+           count = cache.incr(key)
+
+        except ValueError:
+
+            cache.set(
+            key,
+            1,
+            86400
+            )
+
+            count = 1
+
+
+        return count
     # =====================================
     # RECEIVE MESSAGE
     # =====================================
@@ -596,39 +614,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
               parts = self.room_name.split("_", 2)
               print(parts)
 
-              user1 = await database_sync_to_async(User.objects.get)(
-              username=parts[1]
-              )
-
-              user2 = await database_sync_to_async(User.objects.get)(
-              username=parts[2]
-               )
-
               print("USER1:", user1.username)
               print("USER2:", user2.username)
-              key = f"unread_{receiver.id}_{sender_obj.id}"
-
-              count = await database_sync_to_async(
-                  lambda: cache.incr(key) if cache.get(key) else cache.set(key,1,86400)
-               )()
-
-
+              
+              count = await self.update_unread_count(
+                   receiver.id,
+                   sender_obj.id
+                )
               await self.channel_layer.group_send(
-
-                f"user_{receiver.id}",
-
-      {
-        "type": "dm_notification",
-
-         "from": sender_obj.username,
-
-             "sender_id": sender_obj.id,
-
-                 "count": cache.get(key)
-
-                   }
-
-                 )
+              f"user_{receiver.id}",
+                {
+               "type":"dm_notification",
+               "from":sender_obj.username,
+               "sender_id":sender_obj.id,
+                   "count":count
+               }
+               )
 
            except Exception as e:
 
