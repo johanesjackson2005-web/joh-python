@@ -178,7 +178,7 @@ function showDMNotification(username){
     playBeep();
 
 }
-function updateUserStatus(username, status){
+function updateUserStatus(username, status, last_seen){
 
     const users = document.querySelectorAll(".user");
 
@@ -207,7 +207,7 @@ function updateUserStatus(username, status){
 
                     statusBox.innerHTML = `
                     <span style="color:red">
-                    ● Offline
+                    Last seen ${last_seen || ""}
                     </span>
                     `;
 
@@ -218,6 +218,33 @@ function updateUserStatus(username, status){
         }
 
     });
+
+}
+// Update status kwenye chat header
+const currentTarget = document.querySelector("#page-chat-target");
+const headerStatus = document.querySelector("#chat-user-status");
+
+if (currentTarget && headerStatus) {
+
+    if (
+        currentTarget.value.toLowerCase() ===
+        username.toLowerCase()
+    ) {
+
+        if (status === "online") {
+
+            headerStatus.style.color = "#00ff66";
+            headerStatus.innerHTML = "● Online";
+
+        } else {
+
+            headerStatus.style.color = "#aaa";
+            headerStatus.innerHTML =
+                "Last seen " + (last_seen || "");
+
+        }
+
+    }
 
 }
  function connect(){
@@ -434,7 +461,8 @@ if (data.type === "user_status") {
 
     updateUserStatus(
         data.username,
-        data.status
+        data.status,
+        data.last_seen
     );
 
     return;

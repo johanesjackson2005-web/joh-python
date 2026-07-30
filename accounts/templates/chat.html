@@ -149,19 +149,23 @@ style="display:none;">
 
 {% if u.profile.is_online %}
 
-<span style="color:#00ff66">
+<span style="color: #00ff66">
 ● Online
+</span>
+
+{% elif u.profile.last_seen %}
+
+<span style="color: #defa0bf9">
+Last seen {{ u.profile.last_seen|date:"d M H:i" }}
 </span>
 
 {% else %}
 
 <span style="color:red">
-● Offline
+Offline
 </span>
 
 {% endif %}
-
-
 </div>
 
             </div>
@@ -238,7 +242,6 @@ value="{{ request.session.previous_page }}">
 
 </select>
 
-       
     </div>
        
 
@@ -265,28 +268,31 @@ value="{{ request.session.previous_page }}">
 <img src="{% static 'image/logo1.png' %}">
 
 {% endif %}
-    
+ 
     <div>
         <h3>{{ selected_user.username }}</h3>
-        {% if selected_user.profile.is_online %}
+      
+{% if selected_user.profile.is_online %}
 
-<small style="color:green">
+<small id="chat-user-status" style="color:#00ff66">
 ● Online
+</small>
+
+{% elif selected_user.profile.last_seen %}
+
+<small id="chat-user-status" style="color: #d1ff06">
+Last seen {{ selected_user.profile.last_seen|date:"d M Y H:i" }}
 </small>
 
 {% else %}
 
-<small style="color:red">
-● Offline
+<small id="chat-user-status" style="color:red">
+Offline
 </small>
-
 {% endif %}
-    </div>
-
 {% endif %}
-
-        </div>
-
+ </div>
+ 
      <div 
 class="messages"
 id="page-chat-messages"
