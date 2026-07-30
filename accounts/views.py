@@ -1441,3 +1441,44 @@ def live_search(request):
         })
 
     return JsonResponse(results,safe=False)
+
+
+def mark_messages_read(request):
+
+    user=request.user
+
+
+    ChatMessage.objects.filter(
+        is_read=False
+    ).exclude(
+        sender=user
+    ).update(
+        is_read=True
+    )
+
+
+    return JsonResponse({
+        "status":"ok"
+    })
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+
+User=get_user_model()
+
+
+def user_status(request,username):
+
+    user=User.objects.get(
+        username=username
+    )
+
+
+    return JsonResponse({
+
+        "online":user.profile.is_online,
+
+        "last_seen":
+        user.profile.last_seen
+
+    })
+    

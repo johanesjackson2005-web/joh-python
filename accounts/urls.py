@@ -111,4 +111,9 @@ path(
     views.live_search,
     name="live_search"
 ),
+path(
+"chat/read/",
+views.mark_messages_read,
+name="mark_read"
+)
 ]

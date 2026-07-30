@@ -246,7 +246,11 @@ wsUrl = protocol + '://' + CHAT_SOCKET_HOST + '/ws/chat/' + roomName + '/';
 console.log("WEBSOCKET URL:", wsUrl);
 
 socket = new WebSocket(wsUrl);
-    socket.onopen = function(){ console.log('Chat connected to', wsUrl); qs('#chat-status') && (qs('#chat-status').innerText='online'); };
+    socket.onopen = function(){ console.log('Chat connected to', wsUrl); qs('#chat-status') && (qs('#chat-status').innerText='online');
+        socket.send(JSON.stringify({
+    type:"read"
+}));
+     };
     socket.onclose = function(){
     console.log('Chat disconnected');
     qs('#chat-status') && (qs('#chat-status').innerText='offline');
@@ -254,30 +258,61 @@ socket = new WebSocket(wsUrl);
    socket.onmessage = function(e){
 
 const data = JSON.parse(e.data);
+if(data.type==="unread_count"){
 
+const badge = document.querySelector(
+"#chat-badge"
+);
+
+
+if(badge){
+
+    if(data.count > 0){
+
+        badge.innerText=data.count;
+
+        badge.style.display="flex";
+
+    }else{
+
+        badge.style.display="none";
+
+    }
+
+}
+
+
+return;
+
+}
 console.log(data.type);
 console.log(data.from);
 console.log(data.sender_id);
 // DM NOTIFICATION
 
 if(data.type==="dm_notification"){
+
 console.log("DM Notification", data);
-    const activeRoom = computeRoomName();
 
-    const sender = data.from.toLowerCase();
 
-    const current = username.toLowerCase();
+const sender = data.from.toLowerCase();
 
-    const expectedRoom = [
-        sender,
-        current
-    ].sort();
+const current = username.toLowerCase();
 
-    const room = "pm_"+expectedRoom[0]+"_"+expectedRoom[1];
 
-    if(room===activeRoom){
-        return;
-    }
+const expectedRoom = [
+    sender,
+    current
+].sort();
+
+
+const room = "pm_"+expectedRoom[0]+"_"+expectedRoom[1];
+
+
+// angalia room ambayo websocket imefungulia sasa
+if(roomName === room){
+    return;
+}
 const userBox = [...document.querySelectorAll(".user-info")]
 .find(el => 
     el.querySelector(".user-name")?.innerText.trim().toLowerCase()
@@ -300,16 +335,36 @@ if(!counter){
 
 }
 
-
-let count = parseInt(counter.innerText || "0");
-
-
-counter.innerText = count + 1;
+counter.innerText = data.count;
 
 counter.style.display = "inline-flex";
 }
    
     playBeep();
+
+    return;
+}
+if(data.type==="seen"){
+
+    console.log("Seen:", data.ids);
+
+    data.ids.forEach(function(id){
+
+        const msg = document.querySelector(
+            '[data-message-id="' + id + '"]'
+        );
+
+        if(!msg) return;
+
+        const status = msg.querySelector(".message-status");
+
+        if(status){
+
+            status.classList.add("seen");
+
+        }
+
+    });
 
     return;
 }
@@ -334,7 +389,8 @@ appendMessage(
     data.message,
     data.user === username,
     data.id,
-    data.avatar
+    data.avatar,
+    data.time
 );
 
 }
@@ -388,21 +444,23 @@ if (data.type === "user_status") {
 };
  }
 
-  function appendMessage(user, text, outgoing, id, avatar){
+function appendMessage(user, text, outgoing, id, avatar, time){
 
-    const list = isChatPage
-        ? qs('#page-chat-messages')
-        : qs('#chat-messages');
+const list = isChatPage
+    ? qs('#page-chat-messages')
+    : qs('#chat-messages');
 
-    if(!list) return;
-  const el = document.createElement('div');
-  el.className = 'chat-line' + (outgoing ? ' outgoing' : ' incoming');
+if(!list) return;
 
-  // 🔥 muhimu sana kwa delete feature
-  if(id) el.setAttribute('data-message-id', id);
+const el = document.createElement('div');
+el.className = 'chat-line' + (outgoing ? ' outgoing' : ' incoming');
 
-  el.innerHTML = `
- <img src="${avatar || '/static/image/logo1.png'}" alt="Avatar"
+// 🔥 muhimu sana kwa delete feature
+if(id) el.setAttribute('data-message-id', id);
+
+// HII TU NDIYO INABADILIKA
+el.innerHTML = `
+<img src="${avatar || '/static/image/logo1.png'}" alt="Avatar"
 style="
 width:35px;
 height:35px;
@@ -411,42 +469,59 @@ object-fit:cover;
 margin-right:8px;
 ">
 
-<strong>${escapeHtml(user)}:</strong> 
-${escapeHtml(text)}
+<strong>${escapeHtml(user)}:</strong>
 
-${'<button type="button" class="delete-btn">🗑delete</button>'}
+<span class="message-text">
+    ${escapeHtml(text)}
+</span>
+
+<span class="message-time">
+    ${time || ""}
+</span>
+
+${
+outgoing
+?
+`<span class="message-status">✓✓</span>`
+:
+""
+}
+
+<button type="button" class="delete-btn">
+🗑 Delete
+</button>
 `;
 
-  list.appendChild(el);
-  list.scrollTop = list.scrollHeight;
+// HIZI ZINABAKI KAMA ZILIVYO
+list.appendChild(el);
+list.scrollTop = list.scrollHeight;
 
-  // unread + notification logic (unchanged)
-  const modal = qs('#chat-modal');
+// unread + notification logic (unchanged)
+const modal = qs('#chat-modal');
 
 const modalHidden = !modal || window.getComputedStyle(modal).display === 'none';
 
 if(!outgoing && modalHidden){
 
-  unreadCount += 1;
+    unreadCount += 1;
 
-  if(badgeEl){
-    badgeEl.style.display = 'flex';
-    badgeEl.classList.add('pulse');
-    badgeEl.innerText = unreadCount;
-  }
-
-  try{
-    if(window.Notification && Notification.permission === 'granted'){
-      new Notification(user || 'Chat', {
-        body: String(text).slice(0,120)
-      });
+    if(badgeEl){
+        badgeEl.style.display = 'flex';
+        badgeEl.classList.add('pulse');
+        badgeEl.innerText = unreadCount;
     }
-  }catch(e){}
 
-  playBeep();
+    try{
+        if(window.Notification && Notification.permission === 'granted'){
+            new Notification(user || 'Chat', {
+                body: String(text).slice(0,120)
+            });
+        }
+    }catch(e){}
+
+    playBeep();
 }
-  }
- 
+}
 function appendFile(id, name, url){
 
     const list = isChatPage
@@ -1029,7 +1104,16 @@ if(targetEl){
         const activeUser = document.querySelector(
     '.user[data-username="' + this.value.toLowerCase() + '"]'
 );
-
+fetch("/chat/read/",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json",
+        "X-CSRFToken":getCookie("csrftoken")
+    },
+    body:JSON.stringify({
+        room: roomName
+    })
+});
 if(activeUser){
 
     const badge = activeUser.querySelector(".dm-counter");

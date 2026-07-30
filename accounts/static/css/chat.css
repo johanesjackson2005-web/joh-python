@@ -2603,3 +2603,25 @@ justify-content:center;
 margin-left:auto;
 
 }
+.message-status{
+    color:#e60606;
+    margin-left:6px;
+    font-size:14px;
+}
+
+.message-status.seen{
+    color:#f21da0;
+}
+.chat-line{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    margin:10px 0;
+}
+
+.message-time{
+    font-size:11px;
+    color:white;
+    margin-left:8px;
+    vertical-align:bottom;
+}

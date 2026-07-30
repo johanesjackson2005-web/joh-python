@@ -9,7 +9,23 @@ from django.conf import settings
 from django.core.cache import cache
 from asgiref.sync import sync_to_async
 User = get_user_model()
+def format_last_seen(date):
 
+    now = timezone.now()
+
+    if date.date() == now.date():
+
+        return "Today " + date.strftime("%I:%M %p")
+
+
+    elif date.date() == (now - timezone.timedelta(days=1)).date():
+
+        return "Yesterday " + date.strftime("%I:%M %p")
+
+
+    else:
+
+        return date.strftime("%A %I:%M %p")
 
 class ChatConsumer(AsyncWebsocketConsumer):
     
@@ -72,7 +88,44 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 3600
             )      
 
-    
+    @database_sync_to_async
+    def get_user_status(self, username):
+
+       try:
+
+        user = User.objects.get(
+            username=username
+        )
+
+        profile = user.profile
+
+
+        if profile.is_online:
+
+            return {
+                "status":"online",
+                "last_seen":None
+            }
+
+        else:
+
+            return {
+                "status":"offline",
+                "last_seen":
+                profile.last_seen.strftime(
+                    "%d %b %Y %I:%M %p"
+                )
+                if profile.last_seen
+                else None
+            }
+
+
+       except Exception:
+
+        return {
+            "status":"offline",
+            "last_seen":None
+        }
     async def connect(self):
 
         # Room name from URL
@@ -207,7 +260,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
              {
             "type": "user_status",
             "username": self.scope["user"].username,
-            "status": "online"
+            "status": "online",
+            "last_seen": None
            }
               )
            if self.scope["user"].is_authenticated:
@@ -216,6 +270,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
              f"user_{self.scope['user'].id}",
               self.channel_name
     )
+             unread = await self.get_user_unread(
+               self.scope["user"]
+                )
+
+
+             await self.send(
+               text_data=json.dumps({
+
+                 "type":"unread_count",
+
+                 "count":unread
+
+                   })
+                   )
            print("JOINED:", f"user_{self.scope['user'].id}")
 
            user_id = self.scope['user'].id
@@ -236,7 +304,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
       ),
     "message": msg.message,
     "avatar": await self.get_user_avatar(msg.sender),
-     
+    "time": msg.created_at.strftime("%I:%M %p"),
      }))
          
     async def disconnect(self, close_code):
@@ -278,8 +346,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 "type": "user_status",
                 "username": user.username,
-                "status": "offline"
-            }
+                "status": "offline",
+                "last_seen": format_last_seen(timezone.now())
+                }
         )
     
     async def user_status(self, event):
@@ -288,7 +357,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data=json.dumps({
             "type": "user_status",
             "username": event["username"],
-            "status": event["status"]
+            "status": event["status"],
+            "last_seen": event.get("last_seen")
         })
     )  
     @database_sync_to_async
@@ -345,27 +415,45 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
         return default
-    @sync_to_async
-    def update_unread_count(self, receiver_id, sender_id):
+    @database_sync_to_async
+    def update_unread_count(self, receiver, room):
 
-        key = f"unread_{receiver_id}_{sender_id}"
+       return ChatMessage.objects.filter(
+        room=room,
+        is_read=False
+    ).exclude(
+        sender=receiver
+    ).count()
 
-        try:
+    @database_sync_to_async
+    def mark_room_as_read(self):
 
-           count = cache.incr(key)
+       user = self.scope["user"]
 
-        except ValueError:
+       if not user.is_authenticated:
+         return [],None
 
-            cache.set(
-            key,
-            1,
-            86400
-            )
+       messages = ChatMessage.objects.filter(
+             room=self.room_name,
+              is_read=False
+             ).exclude(
+           sender=user
+              )
 
-            count = 1
+       ids = list(
+        messages.values_list(
+            "id",
+            flat=True
+        )
+    )
+       sender=messages.first().sender if messages.exists() else None
+       messages.update(
+        is_read=True,
+        read_at=timezone.now()
+    )
 
-
-        return count
+       return ids,sender
+    
     # =====================================
     # RECEIVE MESSAGE
     # =====================================
@@ -418,8 +506,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
       )
 
            return
+        if event_type == "read":
 
-             
+           ids,sender= await self.mark_room_as_read()
+
+           if ids and sender:
+
+              await self.channel_layer.group_send(
+                  f"user_{sender.id}",
+            {
+                "type": "messages_seen",
+                "ids": ids
+            }
+        )
+
+           return
+        
 
         # =================================
         # DELETE MESSAGE EVENT
@@ -533,7 +635,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
           guest_name=None if sender_obj else username,
           room=self.room_name,
           message=message,
-          
+          is_read=False
     )
 
           print("MESSAGE SAVED:", saved_message.id)
@@ -584,7 +686,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     "user": username,
 
-    "avatar": avatar
+    "avatar": avatar,
+    "time": saved_message.created_at.strftime("%I:%M %p"),
+    
 
      }
 
@@ -602,24 +706,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
               user1 = await database_sync_to_async(
               User.objects.get
-               )(username=parts[1])
+               )(username__iexact=parts[1])
 
               user2 = await database_sync_to_async(
               User.objects.get
-               )(username=parts[2])
+               )(username__iexact=parts[2])
 
-              receiver = user2 if sender_obj.username == user1.username else user1
+              receiver = user2 if sender_obj.username.lower() == user1.username.lower() else user1
               print("Trying notification...")
-
+              print("RECEIVER:", receiver.username)
+              print("RECEIVER ID:", receiver.id)
+              print("GROUP:", f"user_{receiver.id}")
+              
+              
               parts = self.room_name.split("_", 2)
               print(parts)
 
               print("USER1:", user1.username)
               print("USER2:", user2.username)
-              
+              print(
+                  "NOTIFICATION GROUP:",
+                  f"user_{receiver.id}"
+                       )
               count = await self.update_unread_count(
-                   receiver.id,
-                   sender_obj.id
+                   receiver,
+                   self.room_name
                 )
               await self.channel_layer.group_send(
               f"user_{receiver.id}",
@@ -630,7 +741,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                    "count":count
                }
                )
-
+              print("DM NOTIFICATION SENT")
            except Exception as e:
 
               print("DM Notification Error:", e)
@@ -660,7 +771,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "delete",
             "message_id": event["message_id"]
         })
- )   
+ )  
+    async def messages_seen(self, event):
+
+           await self.send(
+        text_data=json.dumps({
+            "type": "seen",
+            "ids": event["ids"]
+        })
+    )
     
     async def chat_file(self,event):
 
@@ -677,9 +796,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         })
     )
     async def dm_notification(self,event):
-
-        await self.send(
-                text_data=json.dumps({
+       print("DM EVENT RECEIVED:", event)
+       await self.send(
+          text_data=json.dumps({
 
             "type":"dm_notification",
 
@@ -690,4 +809,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "count":event["count"]
 
         })
-    )    
+    )
+    @database_sync_to_async
+    def get_user_unread(self, user):
+
+     return ChatMessage.objects.filter(
+        room__contains=user.username,
+        is_read=False
+    ).exclude(
+        sender=user
+    ).count() 
