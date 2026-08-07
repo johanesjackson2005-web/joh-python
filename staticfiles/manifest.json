@@ -1,0 +1,25 @@
+{
+  "name": "JMJ SOFTWARES",
+  "short_name": "JMJ",
+  "description": "Verified software distribution system",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#121e3b",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/image/logo2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/image/logo2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
