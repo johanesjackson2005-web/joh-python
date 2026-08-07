@@ -18,12 +18,14 @@ from django.contrib import admin  # type: ignore[import]
 from django.urls import path, include  # type: ignore[import]
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
+from django.urls import re_path
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
-    
+    re_path(r'^manifest\.json$', RedirectView.as_view(url='/static/manifest.json', permanent=True)),
 ]
 urlpatterns += static(
     settings.MEDIA_URL,
