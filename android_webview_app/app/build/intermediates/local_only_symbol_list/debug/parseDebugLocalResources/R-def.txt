@@ -1,7 +1,5 @@
 R_DEF: Internal format may change without notice
 local
-drawable ic_launcher_background
-drawable ic_launcher_foreground
 drawable logo1
 drawable logo2
 id btnRetry
