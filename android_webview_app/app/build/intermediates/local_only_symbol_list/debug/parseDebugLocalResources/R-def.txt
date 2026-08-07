@@ -1,0 +1,24 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+drawable logo1
+drawable logo2
+id btnRetry
+id layoutOffline
+id logo
+id progressBar
+id swipeRefreshLayout
+id webView
+layout activity_main
+layout activity_splash
+mipmap ic_launcher
+mipmap ic_launcher_background
+mipmap ic_launcher_foreground
+mipmap ic_launcher_monochrome
+mipmap ic_launcher_round
+mipmap joh_icon
+mipmap joh_icon_background
+mipmap joh_icon_foreground
+mipmap joh_icon_monochrome
+mipmap joh_icon_round

@@ -1,0 +1,94 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.jmj.webviewapp"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:5:5-67
+11-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:5:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:6:5-79
+12-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:6:22-76
+13
+14    <permission
+14-->[androidx.core:core:1.9.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\0b1543d70f5c0b4fae2196a7dba9cb3e\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
+15        android:name="com.jmj.webviewapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+15-->[androidx.core:core:1.9.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\0b1543d70f5c0b4fae2196a7dba9cb3e\transformed\core-1.9.0\AndroidManifest.xml:23:9-81
+16        android:protectionLevel="signature" />
+16-->[androidx.core:core:1.9.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\0b1543d70f5c0b4fae2196a7dba9cb3e\transformed\core-1.9.0\AndroidManifest.xml:24:9-44
+17
+18    <uses-permission android:name="com.jmj.webviewapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+18-->[androidx.core:core:1.9.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\0b1543d70f5c0b4fae2196a7dba9cb3e\transformed\core-1.9.0\AndroidManifest.xml:26:5-97
+18-->[androidx.core:core:1.9.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\0b1543d70f5c0b4fae2196a7dba9cb3e\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
+19
+20    <application
+20-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:8:5-29:19
+21        android:allowBackup="true"
+21-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:9:9-35
+22        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+22-->[androidx.core:core:1.9.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\0b1543d70f5c0b4fae2196a7dba9cb3e\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
+23        android:debuggable="true"
+24        android:extractNativeLibs="false"
+25        android:icon="@drawable/logo1"
+25-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:10:9-39
+26        android:label="JMJ SOFTWARE"
+26-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:11:9-37
+27        android:roundIcon="@drawable/logo2"
+27-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:12:9-44
+28        android:supportsRtl="true"
+28-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:13:9-35
+29        android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+29-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:14:9-65
+30        <activity
+30-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:16:9-23:20
+31            android:name="com.jmj.webviewapp.SplashActivity"
+31-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:17:13-43
+32            android:exported="true" >
+32-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:18:13-36
+33            <intent-filter>
+33-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:19:13-22:29
+34                <action android:name="android.intent.action.MAIN" />
+34-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:20:17-69
+34-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:20:25-66
+35
+36                <category android:name="android.intent.category.LAUNCHER" />
+36-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:21:17-77
+36-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:21:27-74
+37            </intent-filter>
+38        </activity>
+39        <activity
+39-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:25:9-27:40
+40            android:name="com.jmj.webviewapp.MainActivity"
+40-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:26:13-41
+41            android:exported="false" />
+41-->C:\Users\JOHBOY\OneDrive\Desktop\joh-python\android_webview_app\app\src\main\AndroidManifest.xml:27:13-37
+42
+43        <provider
+43-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+44            android:name="androidx.startup.InitializationProvider"
+44-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:25:13-67
+45            android:authorities="com.jmj.webviewapp.androidx-startup"
+45-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:26:13-68
+46            android:exported="false" >
+46-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:27:13-37
+47            <meta-data
+47-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+48                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+48-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:30:17-75
+49                android:value="androidx.startup" />
+49-->[androidx.emoji2:emoji2:1.2.0] C:\Users\JOHBOY\.gradle\caches\transforms-4\9456310b725003957977eb810fc4f042\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:31:17-49
+50            <meta-data
+50-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\JOHBOY\.gradle\caches\transforms-4\6de79d24125cc7be7cb52ffeb528b79c\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+51                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+51-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\JOHBOY\.gradle\caches\transforms-4\6de79d24125cc7be7cb52ffeb528b79c\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+52                android:value="androidx.startup" />
+52-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\JOHBOY\.gradle\caches\transforms-4\6de79d24125cc7be7cb52ffeb528b79c\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+53        </provider>
+54    </application>
+55
+56</manifest>

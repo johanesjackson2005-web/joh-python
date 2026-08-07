@@ -14,13 +14,10 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         // Subiri sekunde 3 kisha fungua MainActivity
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.class, MainActivity.class);
-                startActivity(intent);
-                finish(); // Funga SplashActivity ili isirudi nyuma
-            }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }, 3000);
     }
 }
